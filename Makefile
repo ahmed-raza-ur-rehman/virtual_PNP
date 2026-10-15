@@ -19,8 +19,8 @@ REPORTS    := verification/reports
 .DEFAULT_GOAL := help
 .PHONY: help bootstrap venv lint fmt typecheck test cov \
         cpp-test asm-test fw-test rust-test go-test \
-        hdl-lint hdl-synth formal rtl-sim asic \
-        verify-all clean reports web-report
+        hdl-lint hdl-synth formal rtl-sim asic asic-all \
+        verify-all clean reports web
 
 help: ## show available targets
 	@grep -hE '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -74,11 +74,19 @@ hdl-synth: ## synthesise every RTL block and write area/timing reports
 formal: ## run the SymbiYosys property proofs
 	$(PY) tools/hdl_flow.py formal --sby "$(SBY)" --yosys "$(YOSYS)"
 
-rtl-sim: ## simulate the RTL with the netlist simulator and dump waveforms
-	$(PY) -m rtlsim.testbenches --all --waves $(REPORTS)/waves
+rtl-sim: ## simulate the synthesised netlists and dump waveforms
+	PYTHONPATH=tools $(PY) -m rtlsim.testbenches --all --waves $(REPORTS)/waves
 
-asic: ## full RTL -> netlist -> place & route -> GDSII -> DRC/LVS/STA
-	$(PY) -m asic.flow --design pwm_axis --out asic/build
+DESIGN ?= crc16_ccitt
+
+asic: ## RTL -> netlist -> place & route -> GDSII -> DRC/connectivity/timing
+	$(PY) -m asic.miniflow.flow --design $(DESIGN) --out asic/build
+
+asic-all: ## run the layout flow on every supported design
+	$(PY) -m asic.miniflow.flow --all --out asic/build
+
+web: ## serve the simulator on http://localhost:8000
+	$(PY) -m http.server 8000 --bind 0.0.0.0
 
 reports: ## regenerate every machine-readable report
 	mkdir -p $(REPORTS)

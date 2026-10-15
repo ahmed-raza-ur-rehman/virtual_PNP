@@ -1,0 +1,663 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/motion/pid_axis.sv
+hierarchy -top pid_axis
+synth -top pid_axis -flatten
+opt -fast
+write_verilog -noattr synthesis/build/pid_axis_netlist.sv
+write_json synthesis/build/pid_axis.json
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/motion/pid_axis.sv
+hierarchy -top pid_axis
+synth -top pid_axis -flatten
+opt -fast
+write_verilog -noattr synthesis/build/pid_axis_netlist.sv
+write_json synthesis/build/pid_axis.json
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/motion/pid_axis.sv
+Parsing SystemVerilog input from `rtl/motion/pid_axis.sv' to AST representation.
+Generating RTLIL representation for module `\pid_axis'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \pid_axis
+
+2.2. Analyzing design hierarchy..
+Top module:  \pid_axis
+Removed 0 unused modules.
+
+3. Executing SYNTH pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \pid_axis
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \pid_axis
+Removed 0 unused modules.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$rtl/motion/pid_axis.sv:41$17 in module pid_axis.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~2 debug messages>
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+     1/6: $0\integ[48:0]
+     2/6: $0\prev_meas[31:0]
+     3/6: $0\err[31:0]
+     4/6: $0\error_dbg[31:0]
+     5/6: $0\saturated[0:0]
+     6/6: $0\out[31:0]
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\pid_axis.\out' using process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+  created $adff cell `$procdff$47' with positive edge clock and positive level reset.
+Creating register for signal `\pid_axis.\saturated' using process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+  created $adff cell `$procdff$52' with positive edge clock and positive level reset.
+Creating register for signal `\pid_axis.\error_dbg' using process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+  created $adff cell `$procdff$57' with positive edge clock and positive level reset.
+Creating register for signal `\pid_axis.\err' using process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+  created $adff cell `$procdff$62' with positive edge clock and positive level reset.
+Creating register for signal `\pid_axis.\prev_meas' using process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+  created $adff cell `$procdff$67' with positive edge clock and positive level reset.
+Creating register for signal `\pid_axis.\integ' using process `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+  created $adff cell `$procdff$72' with positive edge clock and positive level reset.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+Removing empty process `pid_axis.$proc$rtl/motion/pid_axis.sv:41$17'.
+Cleaned up 2 empty switches.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+<suppressed ~16 debug messages>
+
+3.3. Executing CHECK pass (checking for obvious problems).
+Checking module pid_axis...
+Found and reported 0 problems.
+
+3.4. Executing FLATTEN pass (flatten design).
+
+3.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.6. Executing CHECK pass (checking for obvious problems).
+Checking module pid_axis...
+Found and reported 0 problems.
+
+3.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+Removed 8 unused cells and 38 unused wires.
+<suppressed ~11 debug messages>
+
+3.8. Executing OPT pass (performing simple optimizations).
+
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 33 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 29 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+<suppressed ~15 debug messages>
+Removed a total of 5 cells.
+
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~15 debug messages>
+
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+Removed 0 unused cells and 5 unused wires.
+<suppressed ~1 debug messages>
+
+3.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~15 debug messages>
+
+3.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.9. Executing FSM pass (extract and optimize FSM).
+
+3.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.10. Executing OPT pass (performing simple optimizations).
+
+3.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~15 debug messages>
+
+3.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$62 ($adff) from module pid_axis (D = $sub$rtl/motion/pid_axis.sv:46$19_Y, Q = \err).
+Adding EN signal on $procdff$47 ($adff) from module pid_axis (D = \out_lim, Q = \out).
+Adding EN signal on $procdff$72 ($adff) from module pid_axis (D = $add$rtl/motion/pid_axis.sv:50$23_Y, Q = \integ).
+Adding EN signal on $procdff$67 ($adff) from module pid_axis (D = \measured, Q = \prev_meas).
+Adding EN signal on $procdff$52 ($adff) from module pid_axis (D = $logic_or$rtl/motion/pid_axis.sv:52$28_Y, Q = \saturated).
+Adding EN signal on $procdff$57 ($adff) from module pid_axis (D = $sub$rtl/motion/pid_axis.sv:46$19_Y, Q = \error_dbg).
+
+3.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+Removed 7 unused cells and 7 unused wires.
+<suppressed ~8 debug messages>
+
+3.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 23 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 22 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+3.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.10.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 22 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.10.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.10.23. Finished fast OPT passes. (There is nothing left to do.)
+
+3.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 49) from port Y of cell pid_axis.$mul$rtl/motion/pid_axis.sv:33$2 ($mul).
+Removed top 1 bits (of 49) from port Y of cell pid_axis.$mul$rtl/motion/pid_axis.sv:35$4 ($mul).
+Converting cell pid_axis.$add$rtl/motion/pid_axis.sv:36$7 ($add) from unsigned to signed.
+Removed top 13 bits (of 49) from port A of cell pid_axis.$add$rtl/motion/pid_axis.sv:36$7 ($add).
+Removed top 12 bits (of 49) from port B of cell pid_axis.$add$rtl/motion/pid_axis.sv:36$7 ($add).
+Removed top 11 bits (of 49) from port Y of cell pid_axis.$add$rtl/motion/pid_axis.sv:36$7 ($add).
+Converting cell pid_axis.$sub$rtl/motion/pid_axis.sv:36$9 ($sub) from unsigned to signed.
+Removed top 11 bits (of 49) from port A of cell pid_axis.$sub$rtl/motion/pid_axis.sv:36$9 ($sub).
+Removed top 13 bits (of 49) from port B of cell pid_axis.$sub$rtl/motion/pid_axis.sv:36$9 ($sub).
+Removed top 10 bits (of 49) from port Y of cell pid_axis.$sub$rtl/motion/pid_axis.sv:36$9 ($sub).
+Removed top 10 bits (of 49) from port A of cell pid_axis.$gt$rtl/motion/pid_axis.sv:52$24 ($gt).
+Removed top 17 bits (of 49) from port A of cell pid_axis.$neg$rtl/motion/pid_axis.sv:52$26 ($neg).
+Removed top 10 bits (of 49) from port A of cell pid_axis.$lt$rtl/motion/pid_axis.sv:52$27 ($lt).
+
+3.12. Executing PEEPOPT pass (run peephole optimizers).
+
+3.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module pid_axis:
+  creating $macc model for $add$rtl/motion/pid_axis.sv:50$23 ($add).
+  creating $macc model for $sub$rtl/motion/pid_axis.sv:50$22 ($sub).
+  creating $macc model for $neg$rtl/motion/pid_axis.sv:52$26 ($neg).
+  creating $macc model for $neg$rtl/motion/pid_axis.sv:39$14 ($neg).
+  creating $macc model for $sub$rtl/motion/pid_axis.sv:36$9 ($sub).
+  creating $macc model for $add$rtl/motion/pid_axis.sv:36$7 ($add).
+  creating $macc model for $mul$rtl/motion/pid_axis.sv:35$4 ($mul).
+  creating $macc model for $mul$rtl/motion/pid_axis.sv:34$3 ($mul).
+  creating $macc model for $mul$rtl/motion/pid_axis.sv:33$2 ($mul).
+  creating $macc model for $sub$rtl/motion/pid_axis.sv:30$1 ($sub).
+  merging $macc model for $add$rtl/motion/pid_axis.sv:36$7 into $sub$rtl/motion/pid_axis.sv:36$9.
+  creating $alu model for $macc $sub$rtl/motion/pid_axis.sv:30$1.
+  creating $alu model for $macc $neg$rtl/motion/pid_axis.sv:39$14.
+  creating $alu model for $macc $sub$rtl/motion/pid_axis.sv:50$22.
+  creating $alu model for $macc $add$rtl/motion/pid_axis.sv:50$23.
+  creating $macc cell for $sub$rtl/motion/pid_axis.sv:36$9: $auto$alumacc.cc:427:replace_macc$83
+  creating $macc cell for $mul$rtl/motion/pid_axis.sv:35$4: $auto$alumacc.cc:427:replace_macc$84
+  creating $macc cell for $neg$rtl/motion/pid_axis.sv:52$26: $auto$alumacc.cc:427:replace_macc$85
+  creating $macc cell for $mul$rtl/motion/pid_axis.sv:34$3: $auto$alumacc.cc:427:replace_macc$86
+  creating $macc cell for $mul$rtl/motion/pid_axis.sv:33$2: $auto$alumacc.cc:427:replace_macc$87
+  creating $alu model for $lt$rtl/motion/pid_axis.sv:52$27 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/pid_axis.sv:52$24 ($gt): new $alu
+  creating $alu cell for $gt$rtl/motion/pid_axis.sv:52$24: $auto$alumacc.cc:578:replace_alu$90
+  creating $alu cell for $lt$rtl/motion/pid_axis.sv:52$27: $auto$alumacc.cc:578:replace_alu$103
+  creating $alu cell for $add$rtl/motion/pid_axis.sv:50$23: $auto$alumacc.cc:578:replace_alu$110
+  creating $alu cell for $sub$rtl/motion/pid_axis.sv:50$22: $auto$alumacc.cc:578:replace_alu$113
+  creating $alu cell for $neg$rtl/motion/pid_axis.sv:39$14: $auto$alumacc.cc:578:replace_alu$116
+  creating $alu cell for $sub$rtl/motion/pid_axis.sv:30$1: $auto$alumacc.cc:578:replace_alu$119
+  created 6 $alu and 5 $macc cells.
+
+3.15. Executing SHARE pass (SAT-based resource sharing).
+
+3.16. Executing OPT pass (performing simple optimizations).
+
+3.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+<suppressed ~1 debug messages>
+
+3.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 29 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 29 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+Removed 1 unused cells and 3 unused wires.
+<suppressed ~2 debug messages>
+
+3.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.17. Executing MEMORY pass.
+
+3.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.19. Executing OPT pass (performing simple optimizations).
+
+3.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.19.5. Finished fast OPT passes.
+
+3.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.21. Executing OPT pass (performing simple optimizations).
+
+3.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \pid_axis..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \pid_axis.
+Performed a total of 0 changes.
+
+3.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 28 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Removed a total of 0 cells.
+
+3.21.6. Executing OPT_SHARE pass.
+
+3.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+
+3.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+
+3.21.10. Finished fast OPT passes. (There is nothing left to do.)
+
+3.22. Executing TECHMAP pass (map to technology primitives).
+
+3.22.1. Executing Verilog-2005 frontend: /share/techmap.v
+Parsing Verilog input from `/share/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.22.2. Continuing TECHMAP pass.
+Using template $paramod$2653f68ddb8eab7b1907b4a20767b72a824a7a36\_90_alu for cells of type $alu.
+Using template $paramod$c6baa65225090ac0a120feab1b920965244aa496\_90_alu for cells of type $alu.
+Using template $paramod$959c9ddbaba0966d253c0f5ab1a5eabdad847a18\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$7a0ad7d8a4f5b1db6117d89b426cf7a2ebc2ac9b\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$0041f0be45a0f14c564b5127e4da61c8c9b18587\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \error_dbg * \kp (32x16 bits, signed)
+  add \integ * \ki (49x16 bits, signed)
+  sub \out_max (32 bits, signed)
+  add \dmeas * \kd (32x16 bits, signed)
+  add \p_term [47:12] (36 bits, signed)
+  add \i_term [48:12] (37 bits, signed)
+  sub \d_term [47:12] (36 bits, signed)
+  packed 1 (1) bits / 1 words into adder tree
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $logic_or.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000110001 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000110000 for cells of type $fa.
+Using template $paramod$88aad6f8473fb7e4e5fbfb8335ddebad03429eaa\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100111 for cells of type $fa.
+Using template $paramod$9c7d13c1edbd4d27a85edb6208279a64037aa7b0\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $and.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000110001 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100111 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000110000 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~3322 debug messages>
+
+3.23. Executing OPT pass (performing simple optimizations).
+
+3.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module pid_axis.
+<suppressed ~4957 debug messages>
+
+3.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\pid_axis'.
+Computing hashes of 14708 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 14310 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 14132 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13970 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13886 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13776 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13715 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13677 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13658 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13645 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13640 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13636 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13632 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+Computing hashes of 13630 cells of `\pid_axis'.
+Finding duplicate cells in `\pid_axis'.
+<suppressed ~3234 debug messages>
+Removed a total of 1078 cells.
+
+3.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \pid_axis..
+Removed 650 unused cells and 1346 unused wires.
+<suppressed ~651 debug messages>
+
+3.23.5. Finished fast OPT passes.
+
+3.24. Executing ABC pass (technology mapping using ABC).
+
+3.24.1. Summary of detected clock domains:
+  1075 cells in clk=\clk, en=$auto$simple.cc:210:make_patterns_logic$78, arst=!\rst_n, srst={ }
+  11905 cells in clk=\clk, en=\sample_en, arst=!\rst_n, srst={ }
+
+3.24.2. Extracting gate netlist of module `\pid_axis' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, enabled by $auto$simple.cc:210:make_patterns_logic$78, asynchronously reset by !\rst_n

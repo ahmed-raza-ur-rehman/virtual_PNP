@@ -1,0 +1,1985 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/common/seq_div.sv rtl/motion/profile_gen.sv
+hierarchy -top profile_gen
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/common/seq_div.sv rtl/motion/profile_gen.sv
+hierarchy -top profile_gen
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/common/seq_div.sv
+Parsing SystemVerilog input from `rtl/common/seq_div.sv' to AST representation.
+Generating RTLIL representation for module `\seq_div'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/motion/profile_gen.sv
+Parsing SystemVerilog input from `rtl/motion/profile_gen.sv' to AST representation.
+Generating RTLIL representation for module `\profile_gen'.
+Successfully finished Verilog frontend.
+
+3. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     \seq_div
+Parameter \W = 64
+
+3.2. Executing AST frontend in derive mode using pre-parsed AST for module `\seq_div'.
+Parameter \W = 64
+Generating RTLIL representation for module `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+
+3.3. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     $paramod\seq_div\W=s32'00000000000000000000000001000000
+
+3.4. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     $paramod\seq_div\W=s32'00000000000000000000000001000000
+Removing unused module `\seq_div'.
+Removed 1 unused modules.
+
+4. Executing PROC pass (convert processes to netlists).
+
+4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 35 switch rules as full_case in process $proc$rtl/motion/profile_gen.sv:97$33 in module profile_gen.
+Marked 2 switch rules as full_case in process $proc$rtl/common/seq_div.sv:50$400 in module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+Removed a total of 0 dead cases.
+
+4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 49 assignments to connections.
+
+4.4. Executing PROC_INIT pass (extract init attributes).
+
+4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+Found async reset \rst_n in `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+
+4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~39 debug messages>
+
+4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:67$391'.
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:66$385'.
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:65$379'.
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+     1/245: $4\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$364
+     2/245: $3\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$362
+     3/245: $8\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$359
+     4/245: $7\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$357
+     5/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$351
+     6/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$354
+     7/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$353
+     8/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$352
+     9/245: $8\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$349
+    10/245: $7\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$347
+    11/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$341
+    12/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$344
+    13/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$343
+    14/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$342
+    15/245: $8\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$339
+    16/245: $7\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$337
+    17/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$331
+    18/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$334
+    19/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$333
+    20/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$332
+    21/245: $8\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$329
+    22/245: $7\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$327
+    23/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$320
+    24/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$323
+    25/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$322
+    26/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$321
+    27/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$309
+    28/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$308
+    29/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$307
+    30/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$306
+    31/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$305
+    32/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$304
+    33/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$303
+    34/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$302
+    35/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$317
+    36/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$316
+    37/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$315
+    38/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$314
+    39/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$313
+    40/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$312
+    41/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$311
+    42/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$310
+    43/245: $8\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$300
+    44/245: $7\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$298
+    45/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$292
+    46/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$295
+    47/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$294
+    48/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$293
+    49/245: $8\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$289
+    50/245: $7\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$287
+    51/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$280
+    52/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$283
+    53/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$282
+    54/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$281
+    55/245: $8\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$277
+    56/245: $7\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$275
+    57/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$269
+    58/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$272
+    59/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$271
+    60/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$270
+    61/245: $8\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$267
+    62/245: $7\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$265
+    63/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$259
+    64/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$262
+    65/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$261
+    66/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$260
+    67/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$249
+    68/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$248
+    69/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$247
+    70/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$246
+    71/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$245
+    72/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$244
+    73/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$243
+    74/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$242
+    75/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$257
+    76/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$256
+    77/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$255
+    78/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$254
+    79/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$253
+    80/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$252
+    81/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$251
+    82/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$250
+    83/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$224
+    84/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$223
+    85/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$222
+    86/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$221
+    87/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$220
+    88/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$219
+    89/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$218
+    90/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$217
+    91/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$216
+    92/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$215
+    93/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$214
+    94/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$213
+    95/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$212
+    96/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$211
+    97/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$210
+    98/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$209
+    99/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$240
+   100/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$239
+   101/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$238
+   102/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$237
+   103/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$236
+   104/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$235
+   105/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$234
+   106/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$233
+   107/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$232
+   108/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$231
+   109/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$230
+   110/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$229
+   111/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$228
+   112/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$227
+   113/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$226
+   114/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$225
+   115/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$204
+   116/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$203
+   117/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$202
+   118/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$201
+   119/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$200
+   120/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$199
+   121/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$198
+   122/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$197
+   123/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$196
+   124/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$195
+   125/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$194
+   126/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$193
+   127/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$192
+   128/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$191
+   129/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$190
+   130/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$189
+   131/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$188
+   132/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$187
+   133/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$186
+   134/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$185
+   135/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$184
+   136/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$183
+   137/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$182
+   138/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$181
+   139/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$180
+   140/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$179
+   141/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$178
+   142/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$177
+   143/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$176
+   144/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$175
+   145/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$174
+   146/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$173
+   147/245: $3\abs_s$func$rtl/motion/profile_gen.sv:145$19.v[31:0]$172
+   148/245: $3\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result[31:0]$171
+   149/245: $4\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$164
+   150/245: $4\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$165
+   151/245: $3\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$162
+   152/245: $3\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$161
+   153/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.wide[32:0]$154
+   154/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.b[31:0]$153
+   155/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.a[31:0]$152
+   156/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$151
+   157/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$150
+   158/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$149
+   159/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$148
+   160/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$147
+   161/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$146
+   162/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$145
+   163/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$144
+   164/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$143
+   165/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$142
+   166/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$141
+   167/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$140
+   168/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$139
+   169/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$138
+   170/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$137
+   171/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$136
+   172/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$135
+   173/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$134
+   174/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$133
+   175/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$132
+   176/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$131
+   177/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$130
+   178/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$129
+   179/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$128
+   180/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$127
+   181/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$126
+   182/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$125
+   183/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$124
+   184/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$123
+   185/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$122
+   186/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$121
+   187/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$120
+   188/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$119
+   189/245: $2\abs_s$func$rtl/motion/profile_gen.sv:145$19.v[31:0]$118
+   190/245: $2\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result[31:0]$117
+   191/245: $2\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$116
+   192/245: $2\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$115
+   193/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.wide[32:0]$114
+   194/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.b[31:0]$113
+   195/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.a[31:0]$112
+   196/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$111
+   197/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$110
+   198/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$109
+   199/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$108
+   200/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$107
+   201/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$106
+   202/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$105
+   203/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$104
+   204/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$103
+   205/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$102
+   206/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$101
+   207/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$100
+   208/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$99
+   209/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$98
+   210/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$97
+   211/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$96
+   212/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$95
+   213/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$94
+   214/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$93
+   215/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$92
+   216/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$91
+   217/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$90
+   218/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$89
+   219/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$88
+   220/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$87
+   221/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$86
+   222/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$85
+   223/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$84
+   224/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$83
+   225/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$82
+   226/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$81
+   227/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$80
+   228/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$79
+   229/245: $1\abs_s$func$rtl/motion/profile_gen.sv:145$19.v[31:0]$78
+   230/245: $1\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result[31:0]$77
+   231/245: $1\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$76
+   232/245: $1\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$75
+   233/245: $0\at_target[0:0]
+   234/245: $0\triangular[0:0]
+   235/245: $0\state[2:0]
+   236/245: $0\div_start[0:0]
+   237/245: $0\divis[63:0]
+   238/245: $0\divid[63:0]
+   239/245: $0\brake[31:0]
+   240/245: $0\dir[31:0]
+   241/245: $0\dist[31:0]
+   242/245: $0\accel[31:0]
+   243/245: $0\velocity[31:0]
+   244/245: $0\position[31:0]
+   245/245: $0\busy[0:0]
+Creating decoders for process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+     1/10: $0\done[0:0]
+     2/10: $0\cnt[6:0]
+     3/10: $0\zero_div[0:0]
+     4/10: $0\div[63:0]
+     5/10: $0\dend[63:0]
+     6/10: $0\quo[63:0]
+     7/10: $0\rem[63:0]
+     8/10: $0\busy[0:0]
+     9/10: $0\remainder[63:0]
+    10/10: $0\quotient[63:0]
+
+4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:67$17.$result' from process `\profile_gen.$proc$rtl/motion/profile_gen.sv:67$391'.
+No latch inferred for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:66$16.$result' from process `\profile_gen.$proc$rtl/motion/profile_gen.sv:66$385'.
+No latch inferred for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:65$15.$result' from process `\profile_gen.$proc$rtl/motion/profile_gen.sv:65$379'.
+
+4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\profile_gen.\busy' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2663' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\position' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2668' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\velocity' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2673' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\accel' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2678' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\at_target' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2683' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\dist' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2688' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\dir' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2693' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\brake' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2698' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\divid' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2703' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\divis' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2708' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\div_start' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2713' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\state' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2718' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\triangular' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2723' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2728' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:129$18.v' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2733' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2738' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:145$19.v' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2743' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2748' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2753' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2758' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2763' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2768' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2773' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2778' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2783' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2788' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2793' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2798' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2803' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2808' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2813' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2818' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2823' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2828' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2833' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2838' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2843' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2848' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2853' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2858' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2863' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2868' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2873' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2878' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2883' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2888' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2893' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2898' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2903' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2908' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2913' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2918' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2923' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\quotient' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2928' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\remainder' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2933' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\busy' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2938' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\done' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2943' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\rem' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2948' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\quo' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2953' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\dend' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2958' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\div' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2963' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\zero_div' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2968' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\cnt' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2973' with positive edge clock and positive level reset.
+
+4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:67$391'.
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:66$385'.
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:65$379'.
+Found and cleaned up 36 empty switches in `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+Found and cleaned up 3 empty switches in `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+Removing empty process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+Cleaned up 39 empty switches.
+
+4.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~112 debug messages>
+Optimizing module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+<suppressed ~22 debug messages>
+
+5. Executing OPT pass (performing simple optimizations).
+
+5.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+Optimizing module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+
+5.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 1058 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 746 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 736 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 734 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~972 debug messages>
+Finding identical cells in module `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 55 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 45 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+<suppressed ~30 debug messages>
+Removed a total of 334 cells.
+
+5.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$396: \j_max -> { 1'0 \j_max [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$390: \a_max -> { 1'0 \a_max [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$384: \v_max -> { 1'0 \v_max [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$206: \dist -> { 1'0 \dist [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$168: \dist -> { 1'0 \dist [30:0] }
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$2112.
+    dead port 2/2 on $mux $procmux$2112.
+    dead port 1/2 on $mux $procmux$2107.
+    dead port 2/2 on $mux $procmux$2107.
+    dead port 1/2 on $mux $procmux$2105.
+    dead port 2/2 on $mux $procmux$2105.
+    dead port 1/2 on $mux $procmux$2100.
+    dead port 2/2 on $mux $procmux$2100.
+    dead port 1/2 on $mux $procmux$2098.
+    dead port 2/2 on $mux $procmux$2098.
+    dead port 1/2 on $mux $procmux$2093.
+    dead port 2/2 on $mux $procmux$2093.
+    dead port 1/2 on $mux $procmux$2091.
+    dead port 2/2 on $mux $procmux$2091.
+    dead port 1/2 on $mux $procmux$2086.
+    dead port 2/2 on $mux $procmux$2086.
+    dead port 1/2 on $mux $procmux$2084.
+    dead port 2/2 on $mux $procmux$2084.
+    dead port 1/2 on $mux $procmux$2079.
+    dead port 2/2 on $mux $procmux$2079.
+    dead port 1/2 on $mux $procmux$2077.
+    dead port 2/2 on $mux $procmux$2077.
+    dead port 1/2 on $mux $procmux$2072.
+    dead port 2/2 on $mux $procmux$2072.
+    dead port 1/2 on $mux $procmux$2440.
+    dead port 2/2 on $mux $procmux$2440.
+    dead port 1/2 on $mux $procmux$2070.
+    dead port 2/2 on $mux $procmux$2070.
+    dead port 1/2 on $mux $procmux$2065.
+    dead port 2/2 on $mux $procmux$2065.
+    dead port 1/2 on $mux $procmux$2063.
+    dead port 2/2 on $mux $procmux$2063.
+    dead port 1/2 on $mux $procmux$2058.
+    dead port 2/2 on $mux $procmux$2058.
+    dead port 1/2 on $mux $procmux$2435.
+    dead port 2/2 on $mux $procmux$2435.
+    dead port 1/2 on $mux $procmux$2056.
+    dead port 2/2 on $mux $procmux$2056.
+    dead port 1/2 on $mux $procmux$2051.
+    dead port 2/2 on $mux $procmux$2051.
+    dead port 1/2 on $mux $procmux$2049.
+    dead port 2/2 on $mux $procmux$2049.
+    dead port 1/2 on $mux $procmux$2044.
+    dead port 2/2 on $mux $procmux$2044.
+    dead port 1/2 on $mux $procmux$2430.
+    dead port 2/2 on $mux $procmux$2430.
+    dead port 1/2 on $mux $procmux$2042.
+    dead port 2/2 on $mux $procmux$2042.
+    dead port 1/2 on $mux $procmux$2037.
+    dead port 2/2 on $mux $procmux$2037.
+    dead port 1/2 on $mux $procmux$2035.
+    dead port 2/2 on $mux $procmux$2035.
+    dead port 1/2 on $mux $procmux$2030.
+    dead port 2/2 on $mux $procmux$2030.
+    dead port 1/2 on $mux $procmux$2426.
+    dead port 2/2 on $mux $procmux$2426.
+    dead port 1/2 on $mux $procmux$2028.
+    dead port 2/2 on $mux $procmux$2028.
+    dead port 1/2 on $mux $procmux$2023.
+    dead port 2/2 on $mux $procmux$2023.
+    dead port 1/2 on $mux $procmux$2021.
+    dead port 2/2 on $mux $procmux$2021.
+    dead port 1/2 on $mux $procmux$2016.
+    dead port 2/2 on $mux $procmux$2016.
+    dead port 1/2 on $mux $procmux$2422.
+    dead port 2/2 on $mux $procmux$2422.
+    dead port 1/2 on $mux $procmux$2014.
+    dead port 2/2 on $mux $procmux$2014.
+    dead port 1/2 on $mux $procmux$2009.
+    dead port 2/2 on $mux $procmux$2009.
+    dead port 1/2 on $mux $procmux$2007.
+    dead port 2/2 on $mux $procmux$2007.
+    dead port 1/2 on $mux $procmux$2002.
+    dead port 2/2 on $mux $procmux$2002.
+    dead port 1/2 on $mux $procmux$2418.
+    dead port 2/2 on $mux $procmux$2418.
+    dead port 1/2 on $mux $procmux$2000.
+    dead port 2/2 on $mux $procmux$2000.
+    dead port 1/2 on $mux $procmux$1997.
+    dead port 2/2 on $mux $procmux$1997.
+    dead port 1/2 on $mux $procmux$1992.
+    dead port 2/2 on $mux $procmux$1992.
+    dead port 1/2 on $mux $procmux$1990.
+    dead port 2/2 on $mux $procmux$1990.
+    dead port 1/2 on $mux $procmux$1987.
+    dead port 2/2 on $mux $procmux$1987.
+    dead port 1/2 on $mux $procmux$1982.
+    dead port 2/2 on $mux $procmux$1982.
+    dead port 1/2 on $mux $procmux$2414.
+    dead port 2/2 on $mux $procmux$2414.
+    dead port 1/2 on $mux $procmux$1980.
+    dead port 2/2 on $mux $procmux$1980.
+    dead port 1/2 on $mux $procmux$1977.
+    dead port 2/2 on $mux $procmux$1977.
+    dead port 1/2 on $mux $procmux$1972.
+    dead port 2/2 on $mux $procmux$1972.
+    dead port 1/2 on $mux $procmux$1970.
+    dead port 2/2 on $mux $procmux$1970.
+    dead port 1/2 on $mux $procmux$1967.
+    dead port 2/2 on $mux $procmux$1967.
+    dead port 1/2 on $mux $procmux$1962.
+    dead port 2/2 on $mux $procmux$1962.
+    dead port 1/2 on $mux $procmux$2410.
+    dead port 2/2 on $mux $procmux$2410.
+    dead port 1/2 on $mux $procmux$1960.
+    dead port 2/2 on $mux $procmux$1960.
+    dead port 1/2 on $mux $procmux$1957.
+    dead port 2/2 on $mux $procmux$1957.
+    dead port 1/2 on $mux $procmux$1952.
+    dead port 2/2 on $mux $procmux$1952.
+    dead port 1/2 on $mux $procmux$1950.
+    dead port 2/2 on $mux $procmux$1950.
+    dead port 1/2 on $mux $procmux$1947.
+    dead port 2/2 on $mux $procmux$1947.
+    dead port 1/2 on $mux $procmux$1942.
+    dead port 2/2 on $mux $procmux$1942.
+    dead port 1/2 on $mux $procmux$2406.
+    dead port 2/2 on $mux $procmux$2406.
+    dead port 1/2 on $mux $procmux$1940.
+    dead port 2/2 on $mux $procmux$1940.
+    dead port 1/2 on $mux $procmux$1937.
+    dead port 2/2 on $mux $procmux$1937.
+    dead port 1/2 on $mux $procmux$1932.
+    dead port 2/2 on $mux $procmux$1932.
+    dead port 1/2 on $mux $procmux$1930.
+    dead port 2/2 on $mux $procmux$1930.
+    dead port 1/2 on $mux $procmux$1927.
+    dead port 2/2 on $mux $procmux$1927.
+    dead port 1/2 on $mux $procmux$1922.
+    dead port 2/2 on $mux $procmux$1922.
+    dead port 1/2 on $mux $procmux$2402.
+    dead port 2/2 on $mux $procmux$2402.
+    dead port 1/2 on $mux $procmux$1920.
+    dead port 2/2 on $mux $procmux$1920.
+    dead port 1/2 on $mux $procmux$1917.
+    dead port 2/2 on $mux $procmux$1917.
+    dead port 1/2 on $mux $procmux$1912.
+    dead port 2/2 on $mux $procmux$1912.
+    dead port 1/2 on $mux $procmux$1910.
+    dead port 2/2 on $mux $procmux$1910.
+    dead port 1/2 on $mux $procmux$1907.
+    dead port 2/2 on $mux $procmux$1907.
+    dead port 1/2 on $mux $procmux$1902.
+    dead port 2/2 on $mux $procmux$1902.
+    dead port 1/2 on $mux $procmux$2398.
+    dead port 2/2 on $mux $procmux$2398.
+    dead port 1/2 on $mux $procmux$1900.
+    dead port 2/2 on $mux $procmux$1900.
+    dead port 1/2 on $mux $procmux$1897.
+    dead port 2/2 on $mux $procmux$1897.
+    dead port 1/2 on $mux $procmux$1892.
+    dead port 2/2 on $mux $procmux$1892.
+    dead port 1/2 on $mux $procmux$1890.
+    dead port 2/2 on $mux $procmux$1890.
+    dead port 1/2 on $mux $procmux$1887.
+    dead port 2/2 on $mux $procmux$1887.
+    dead port 1/2 on $mux $procmux$1882.
+    dead port 2/2 on $mux $procmux$1882.
+    dead port 1/2 on $mux $procmux$2394.
+    dead port 2/2 on $mux $procmux$2394.
+    dead port 1/2 on $mux $procmux$1880.
+    dead port 2/2 on $mux $procmux$1880.
+    dead port 1/2 on $mux $procmux$1877.
+    dead port 2/2 on $mux $procmux$1877.
+    dead port 1/2 on $mux $procmux$1872.
+    dead port 2/2 on $mux $procmux$1872.
+    dead port 1/2 on $mux $procmux$1870.
+    dead port 2/2 on $mux $procmux$1870.
+    dead port 1/2 on $mux $procmux$1867.
+    dead port 2/2 on $mux $procmux$1867.
+    dead port 1/2 on $mux $procmux$1862.
+    dead port 2/2 on $mux $procmux$1862.
+    dead port 1/2 on $mux $procmux$2390.
+    dead port 2/2 on $mux $procmux$2390.
+    dead port 1/2 on $mux $procmux$1860.
+    dead port 2/2 on $mux $procmux$1860.
+    dead port 1/2 on $mux $procmux$1857.
+    dead port 2/2 on $mux $procmux$1857.
+    dead port 1/2 on $mux $procmux$1852.
+    dead port 2/2 on $mux $procmux$1852.
+    dead port 1/2 on $mux $procmux$1850.
+    dead port 2/2 on $mux $procmux$1850.
+    dead port 1/2 on $mux $procmux$1847.
+    dead port 2/2 on $mux $procmux$1847.
+    dead port 1/2 on $mux $procmux$1842.
+    dead port 2/2 on $mux $procmux$1842.
+    dead port 1/2 on $mux $procmux$2386.
+    dead port 2/2 on $mux $procmux$2386.
+    dead port 1/2 on $mux $procmux$1840.
+    dead port 2/2 on $mux $procmux$1840.
+    dead port 1/2 on $mux $procmux$1837.
+    dead port 2/2 on $mux $procmux$1837.
+    dead port 1/2 on $mux $procmux$1832.
+    dead port 2/2 on $mux $procmux$1832.
+    dead port 1/2 on $mux $procmux$1830.
+    dead port 2/2 on $mux $procmux$1830.
+    dead port 1/2 on $mux $procmux$1827.
+    dead port 2/2 on $mux $procmux$1827.
+    dead port 1/2 on $mux $procmux$1822.
+    dead port 2/2 on $mux $procmux$1822.
+    dead port 1/2 on $mux $procmux$2382.
+    dead port 2/2 on $mux $procmux$2382.
+    dead port 1/2 on $mux $procmux$1820.
+    dead port 2/2 on $mux $procmux$1820.
+    dead port 1/2 on $mux $procmux$1817.
+    dead port 2/2 on $mux $procmux$1817.
+    dead port 1/2 on $mux $procmux$1812.
+    dead port 2/2 on $mux $procmux$1812.
+    dead port 1/2 on $mux $procmux$1810.
+    dead port 2/2 on $mux $procmux$1810.
+    dead port 1/2 on $mux $procmux$1807.
+    dead port 2/2 on $mux $procmux$1807.
+    dead port 1/2 on $mux $procmux$1802.
+    dead port 2/2 on $mux $procmux$1802.
+    dead port 1/2 on $mux $procmux$2378.
+    dead port 2/2 on $mux $procmux$2378.
+    dead port 1/2 on $mux $procmux$1800.
+    dead port 2/2 on $mux $procmux$1800.
+    dead port 1/2 on $mux $procmux$1797.
+    dead port 2/2 on $mux $procmux$1797.
+    dead port 1/2 on $mux $procmux$1792.
+    dead port 2/2 on $mux $procmux$1792.
+    dead port 1/2 on $mux $procmux$1790.
+    dead port 2/2 on $mux $procmux$1790.
+    dead port 1/2 on $mux $procmux$1787.
+    dead port 2/2 on $mux $procmux$1787.
+    dead port 1/2 on $mux $procmux$1782.
+    dead port 2/2 on $mux $procmux$1782.
+    dead port 1/2 on $mux $procmux$2374.
+    dead port 2/2 on $mux $procmux$2374.
+    dead port 1/2 on $mux $procmux$1780.
+    dead port 2/2 on $mux $procmux$1780.
+    dead port 1/2 on $mux $procmux$1777.
+    dead port 2/2 on $mux $procmux$1777.
+    dead port 1/2 on $mux $procmux$1772.
+    dead port 2/2 on $mux $procmux$1772.
+    dead port 1/2 on $mux $procmux$1770.
+    dead port 2/2 on $mux $procmux$1770.
+    dead port 1/2 on $mux $procmux$1767.
+    dead port 2/2 on $mux $procmux$1767.
+    dead port 1/2 on $mux $procmux$1762.
+    dead port 2/2 on $mux $procmux$1762.
+    dead port 1/2 on $mux $procmux$2370.
+    dead port 2/2 on $mux $procmux$2370.
+    dead port 1/2 on $mux $procmux$1760.
+    dead port 2/2 on $mux $procmux$1760.
+    dead port 1/2 on $mux $procmux$1757.
+    dead port 2/2 on $mux $procmux$1757.
+    dead port 1/2 on $mux $procmux$1752.
+    dead port 2/2 on $mux $procmux$1752.
+    dead port 1/2 on $mux $procmux$1750.
+    dead port 2/2 on $mux $procmux$1750.
+    dead port 1/2 on $mux $procmux$1747.
+    dead port 2/2 on $mux $procmux$1747.
+    dead port 1/2 on $mux $procmux$1742.
+    dead port 2/2 on $mux $procmux$1742.
+    dead port 1/2 on $mux $procmux$2366.
+    dead port 2/2 on $mux $procmux$2366.
+    dead port 1/2 on $mux $procmux$1740.
+    dead port 2/2 on $mux $procmux$1740.
+    dead port 1/2 on $mux $procmux$1737.
+    dead port 2/2 on $mux $procmux$1737.
+    dead port 1/2 on $mux $procmux$1732.
+    dead port 2/2 on $mux $procmux$1732.
+    dead port 1/2 on $mux $procmux$1730.
+    dead port 2/2 on $mux $procmux$1730.
+    dead port 1/2 on $mux $procmux$1727.
+    dead port 2/2 on $mux $procmux$1727.
+    dead port 1/2 on $mux $procmux$1722.
+    dead port 2/2 on $mux $procmux$1722.
+    dead port 1/2 on $mux $procmux$2362.
+    dead port 2/2 on $mux $procmux$2362.
+    dead port 1/2 on $mux $procmux$1720.
+    dead port 2/2 on $mux $procmux$1720.
+    dead port 1/2 on $mux $procmux$1717.
+    dead port 2/2 on $mux $procmux$1717.
+    dead port 1/2 on $mux $procmux$1712.
+    dead port 2/2 on $mux $procmux$1712.
+    dead port 1/2 on $mux $procmux$1710.
+    dead port 2/2 on $mux $procmux$1710.
+    dead port 1/2 on $mux $procmux$1707.
+    dead port 2/2 on $mux $procmux$1707.
+    dead port 1/2 on $mux $procmux$1702.
+    dead port 2/2 on $mux $procmux$1702.
+    dead port 1/2 on $mux $procmux$2358.
+    dead port 2/2 on $mux $procmux$2358.
+    dead port 1/2 on $mux $procmux$1700.
+    dead port 2/2 on $mux $procmux$1700.
+    dead port 1/2 on $mux $procmux$1697.
+    dead port 2/2 on $mux $procmux$1697.
+    dead port 1/2 on $mux $procmux$1692.
+    dead port 2/2 on $mux $procmux$1692.
+    dead port 1/2 on $mux $procmux$1690.
+    dead port 2/2 on $mux $procmux$1690.
+    dead port 1/2 on $mux $procmux$1687.
+    dead port 2/2 on $mux $procmux$1687.
+    dead port 1/2 on $mux $procmux$1682.
+    dead port 2/2 on $mux $procmux$1682.
+    dead port 1/2 on $mux $procmux$2354.
+    dead port 2/2 on $mux $procmux$2354.
+    dead port 1/2 on $mux $procmux$1680.
+    dead port 2/2 on $mux $procmux$1680.
+    dead port 1/2 on $mux $procmux$1677.
+    dead port 2/2 on $mux $procmux$1677.
+    dead port 1/2 on $mux $procmux$1675.
+    dead port 2/2 on $mux $procmux$1675.
+    dead port 1/2 on $mux $procmux$1669.
+    dead port 2/2 on $mux $procmux$1669.
+    dead port 1/2 on $mux $procmux$1667.
+    dead port 2/2 on $mux $procmux$1667.
+    dead port 1/2 on $mux $procmux$1664.
+    dead port 2/2 on $mux $procmux$1664.
+    dead port 1/2 on $mux $procmux$1662.
+    dead port 2/2 on $mux $procmux$1662.
+    dead port 1/2 on $mux $procmux$1656.
+    dead port 2/2 on $mux $procmux$1656.
+    dead port 1/2 on $mux $procmux$2350.
+    dead port 2/2 on $mux $procmux$2350.
+    dead port 1/2 on $mux $procmux$1654.
+    dead port 2/2 on $mux $procmux$1654.
+    dead port 1/2 on $mux $procmux$1651.
+    dead port 2/2 on $mux $procmux$1651.
+    dead port 1/2 on $mux $procmux$1649.
+    dead port 2/2 on $mux $procmux$1649.
+    dead port 1/2 on $mux $procmux$1643.
+    dead port 2/2 on $mux $procmux$1643.
+    dead port 1/2 on $mux $procmux$1641.
+    dead port 2/2 on $mux $procmux$1641.
+    dead port 1/2 on $mux $procmux$1638.
+    dead port 2/2 on $mux $procmux$1638.
+    dead port 1/2 on $mux $procmux$1636.
+    dead port 2/2 on $mux $procmux$1636.
+    dead port 1/2 on $mux $procmux$1630.
+    dead port 2/2 on $mux $procmux$1630.
+    dead port 1/2 on $mux $procmux$2346.
+    dead port 2/2 on $mux $procmux$2346.
+    dead port 1/2 on $mux $procmux$1628.
+    dead port 2/2 on $mux $procmux$1628.
+    dead port 1/2 on $mux $procmux$1625.
+    dead port 2/2 on $mux $procmux$1625.
+    dead port 1/2 on $mux $procmux$1623.
+    dead port 2/2 on $mux $procmux$1623.
+    dead port 1/2 on $mux $procmux$1617.
+    dead port 2/2 on $mux $procmux$1617.
+    dead port 1/2 on $mux $procmux$1615.
+    dead port 2/2 on $mux $procmux$1615.
+    dead port 1/2 on $mux $procmux$1612.
+    dead port 2/2 on $mux $procmux$1612.
+    dead port 1/2 on $mux $procmux$1610.
+    dead port 2/2 on $mux $procmux$1610.
+    dead port 1/2 on $mux $procmux$1604.
+    dead port 2/2 on $mux $procmux$1604.
+    dead port 1/2 on $mux $procmux$2342.
+    dead port 2/2 on $mux $procmux$2342.
+    dead port 1/2 on $mux $procmux$1602.
+    dead port 2/2 on $mux $procmux$1602.
+    dead port 1/2 on $mux $procmux$1599.
+    dead port 2/2 on $mux $procmux$1599.
+    dead port 1/2 on $mux $procmux$1597.
+    dead port 2/2 on $mux $procmux$1597.
+    dead port 1/2 on $mux $procmux$1591.
+    dead port 2/2 on $mux $procmux$1591.
+    dead port 1/2 on $mux $procmux$1589.
+    dead port 2/2 on $mux $procmux$1589.
+    dead port 1/2 on $mux $procmux$1586.
+    dead port 2/2 on $mux $procmux$1586.
+    dead port 1/2 on $mux $procmux$1584.
+    dead port 2/2 on $mux $procmux$1584.
+    dead port 1/2 on $mux $procmux$1578.
+    dead port 2/2 on $mux $procmux$1578.
+    dead port 1/2 on $mux $procmux$2338.
+    dead port 2/2 on $mux $procmux$2338.
+    dead port 1/2 on $mux $procmux$1576.
+    dead port 2/2 on $mux $procmux$1576.
+    dead port 1/2 on $mux $procmux$1573.
+    dead port 2/2 on $mux $procmux$1573.
+    dead port 1/2 on $mux $procmux$1571.
+    dead port 2/2 on $mux $procmux$1571.
+    dead port 1/2 on $mux $procmux$1565.
+    dead port 2/2 on $mux $procmux$1565.
+    dead port 1/2 on $mux $procmux$1563.
+    dead port 2/2 on $mux $procmux$1563.
+    dead port 1/2 on $mux $procmux$1560.
+    dead port 2/2 on $mux $procmux$1560.
+    dead port 1/2 on $mux $procmux$1558.
+    dead port 2/2 on $mux $procmux$1558.
+    dead port 1/2 on $mux $procmux$1552.
+    dead port 2/2 on $mux $procmux$1552.
+    dead port 1/2 on $mux $procmux$2334.
+    dead port 2/2 on $mux $procmux$2334.
+    dead port 1/2 on $mux $procmux$1550.
+    dead port 2/2 on $mux $procmux$1550.
+    dead port 1/2 on $mux $procmux$1547.
+    dead port 2/2 on $mux $procmux$1547.
+    dead port 1/2 on $mux $procmux$1545.
+    dead port 2/2 on $mux $procmux$1545.
+    dead port 1/2 on $mux $procmux$1539.
+    dead port 2/2 on $mux $procmux$1539.
+    dead port 1/2 on $mux $procmux$1537.
+    dead port 2/2 on $mux $procmux$1537.
+    dead port 1/2 on $mux $procmux$1534.
+    dead port 2/2 on $mux $procmux$1534.
+    dead port 1/2 on $mux $procmux$1532.
+    dead port 2/2 on $mux $procmux$1532.
+    dead port 1/2 on $mux $procmux$1526.
+    dead port 2/2 on $mux $procmux$1526.
+    dead port 1/2 on $mux $procmux$2330.
+    dead port 2/2 on $mux $procmux$2330.
+    dead port 1/2 on $mux $procmux$1524.
+    dead port 2/2 on $mux $procmux$1524.
+    dead port 1/2 on $mux $procmux$1521.
+    dead port 2/2 on $mux $procmux$1521.
+    dead port 1/2 on $mux $procmux$1519.
+    dead port 2/2 on $mux $procmux$1519.
+    dead port 1/2 on $mux $procmux$1513.
+    dead port 2/2 on $mux $procmux$1513.
+    dead port 1/2 on $mux $procmux$1511.
+    dead port 2/2 on $mux $procmux$1511.
+    dead port 1/2 on $mux $procmux$1508.
+    dead port 2/2 on $mux $procmux$1508.
+    dead port 1/2 on $mux $procmux$1506.
+    dead port 2/2 on $mux $procmux$1506.
+    dead port 1/2 on $mux $procmux$1500.
+    dead port 2/2 on $mux $procmux$1500.
+    dead port 1/2 on $mux $procmux$2326.
+    dead port 2/2 on $mux $procmux$2326.
+    dead port 1/2 on $mux $procmux$1498.
+    dead port 2/2 on $mux $procmux$1498.
+    dead port 1/2 on $mux $procmux$1495.
+    dead port 2/2 on $mux $procmux$1495.
+    dead port 1/2 on $mux $procmux$1493.
+    dead port 2/2 on $mux $procmux$1493.
+    dead port 1/2 on $mux $procmux$1487.
+    dead port 2/2 on $mux $procmux$1487.
+    dead port 1/2 on $mux $procmux$1485.
+    dead port 2/2 on $mux $procmux$1485.
+    dead port 1/2 on $mux $procmux$1482.
+    dead port 2/2 on $mux $procmux$1482.
+    dead port 1/2 on $mux $procmux$1480.
+    dead port 2/2 on $mux $procmux$1480.
+    dead port 1/2 on $mux $procmux$1474.
+    dead port 2/2 on $mux $procmux$1474.
+    dead port 1/2 on $mux $procmux$2322.
+    dead port 2/2 on $mux $procmux$2322.
+    dead port 1/2 on $mux $procmux$1472.
+    dead port 2/2 on $mux $procmux$1472.
+    dead port 1/2 on $mux $procmux$1469.
+    dead port 2/2 on $mux $procmux$1469.
+    dead port 1/2 on $mux $procmux$1467.
+    dead port 2/2 on $mux $procmux$1467.
+    dead port 1/2 on $mux $procmux$1465.
+    dead port 2/2 on $mux $procmux$1465.
+    dead port 1/2 on $mux $procmux$1458.
+    dead port 2/2 on $mux $procmux$1458.
+    dead port 1/2 on $mux $procmux$1456.
+    dead port 2/2 on $mux $procmux$1456.
+    dead port 1/2 on $mux $procmux$1453.
+    dead port 2/2 on $mux $procmux$1453.
+    dead port 1/2 on $mux $procmux$1451.
+    dead port 2/2 on $mux $procmux$1451.
+    dead port 1/2 on $mux $procmux$1449.
+    dead port 2/2 on $mux $procmux$1449.
+    dead port 1/2 on $mux $procmux$1442.
+    dead port 2/2 on $mux $procmux$1442.
+    dead port 1/2 on $mux $procmux$2318.
+    dead port 2/2 on $mux $procmux$2318.
+    dead port 1/2 on $mux $procmux$1440.
+    dead port 2/2 on $mux $procmux$1440.
+    dead port 1/2 on $mux $procmux$1437.
+    dead port 2/2 on $mux $procmux$1437.
+    dead port 1/2 on $mux $procmux$1435.
+    dead port 2/2 on $mux $procmux$1435.
+    dead port 1/2 on $mux $procmux$1433.
+    dead port 2/2 on $mux $procmux$1433.
+    dead port 1/2 on $mux $procmux$1426.
+    dead port 2/2 on $mux $procmux$1426.
+    dead port 1/2 on $mux $procmux$1424.
+    dead port 2/2 on $mux $procmux$1424.
+    dead port 1/2 on $mux $procmux$1421.
+    dead port 2/2 on $mux $procmux$1421.
+    dead port 1/2 on $mux $procmux$1419.
+    dead port 2/2 on $mux $procmux$1419.
+    dead port 1/2 on $mux $procmux$1417.
+    dead port 2/2 on $mux $procmux$1417.
+    dead port 2/2 on $mux $procmux$1410.
+    dead port 1/2 on $mux $procmux$2314.
+    dead port 2/2 on $mux $procmux$2314.
+    dead port 1/2 on $mux $procmux$1408.
+    dead port 2/2 on $mux $procmux$1405.
+    dead port 2/2 on $mux $procmux$1403.
+    dead port 2/2 on $mux $procmux$1401.
+    dead port 2/2 on $mux $procmux$1391.
+    dead port 1/2 on $mux $procmux$1389.
+    dead port 2/2 on $mux $procmux$1386.
+    dead port 2/2 on $mux $procmux$1384.
+    dead port 2/2 on $mux $procmux$1382.
+    dead port 1/2 on $mux $procmux$1380.
+    dead port 1/2 on $mux $procmux$1369.
+    dead port 2/2 on $mux $procmux$1369.
+    dead port 1/2 on $mux $procmux$2310.
+    dead port 2/2 on $mux $procmux$2310.
+    dead port 1/2 on $mux $procmux$1367.
+    dead port 2/2 on $mux $procmux$1367.
+    dead port 1/2 on $mux $procmux$1364.
+    dead port 2/2 on $mux $procmux$1364.
+    dead port 1/2 on $mux $procmux$1362.
+    dead port 2/2 on $mux $procmux$1362.
+    dead port 1/2 on $mux $procmux$1360.
+    dead port 2/2 on $mux $procmux$1360.
+    dead port 1/2 on $mux $procmux$1353.
+    dead port 2/2 on $mux $procmux$1353.
+    dead port 1/2 on $mux $procmux$1351.
+    dead port 2/2 on $mux $procmux$1351.
+    dead port 1/2 on $mux $procmux$1348.
+    dead port 2/2 on $mux $procmux$1348.
+    dead port 1/2 on $mux $procmux$1346.
+    dead port 2/2 on $mux $procmux$1346.
+    dead port 1/2 on $mux $procmux$1344.
+    dead port 2/2 on $mux $procmux$1344.
+    dead port 1/2 on $mux $procmux$1337.
+    dead port 2/2 on $mux $procmux$1337.
+    dead port 1/2 on $mux $procmux$2306.
+    dead port 2/2 on $mux $procmux$2306.
+    dead port 1/2 on $mux $procmux$1335.
+    dead port 2/2 on $mux $procmux$1335.
+    dead port 1/2 on $mux $procmux$1332.
+    dead port 2/2 on $mux $procmux$1332.
+    dead port 1/2 on $mux $procmux$1330.
+    dead port 2/2 on $mux $procmux$1330.
+    dead port 1/2 on $mux $procmux$1328.
+    dead port 2/2 on $mux $procmux$1328.
+    dead port 1/2 on $mux $procmux$1321.
+    dead port 2/2 on $mux $procmux$1321.
+    dead port 1/2 on $mux $procmux$1319.
+    dead port 2/2 on $mux $procmux$1319.
+    dead port 1/2 on $mux $procmux$1316.
+    dead port 2/2 on $mux $procmux$1316.
+    dead port 1/2 on $mux $procmux$1314.
+    dead port 2/2 on $mux $procmux$1314.
+    dead port 1/2 on $mux $procmux$1312.
+    dead port 2/2 on $mux $procmux$1312.
+    dead port 2/2 on $mux $procmux$1305.
+    dead port 1/2 on $mux $procmux$2302.
+    dead port 2/2 on $mux $procmux$2302.
+    dead port 1/2 on $mux $procmux$1303.
+    dead port 2/2 on $mux $procmux$1300.
+    dead port 2/2 on $mux $procmux$1298.
+    dead port 2/2 on $mux $procmux$1296.
+    dead port 2/2 on $mux $procmux$1286.
+    dead port 1/2 on $mux $procmux$1284.
+    dead port 2/2 on $mux $procmux$1281.
+    dead port 2/2 on $mux $procmux$1279.
+    dead port 2/2 on $mux $procmux$1277.
+    dead port 1/2 on $mux $procmux$1275.
+    dead port 1/2 on $mux $procmux$1264.
+    dead port 2/2 on $mux $procmux$1264.
+    dead port 1/2 on $mux $procmux$2298.
+    dead port 2/2 on $mux $procmux$2298.
+    dead port 1/2 on $mux $procmux$1262.
+    dead port 2/2 on $mux $procmux$1262.
+    dead port 1/2 on $mux $procmux$1259.
+    dead port 2/2 on $mux $procmux$1259.
+    dead port 1/2 on $mux $procmux$1257.
+    dead port 2/2 on $mux $procmux$1257.
+    dead port 1/2 on $mux $procmux$1254.
+    dead port 2/2 on $mux $procmux$1254.
+    dead port 1/2 on $mux $procmux$1248.
+    dead port 2/2 on $mux $procmux$1248.
+    dead port 1/2 on $mux $procmux$1246.
+    dead port 2/2 on $mux $procmux$1246.
+    dead port 1/2 on $mux $procmux$1243.
+    dead port 2/2 on $mux $procmux$1243.
+    dead port 1/2 on $mux $procmux$1241.
+    dead port 2/2 on $mux $procmux$1241.
+    dead port 1/2 on $mux $procmux$1238.
+    dead port 2/2 on $mux $procmux$1238.
+    dead port 1/2 on $mux $procmux$1232.
+    dead port 2/2 on $mux $procmux$1232.
+    dead port 1/2 on $mux $procmux$2294.
+    dead port 2/2 on $mux $procmux$2294.
+    dead port 1/2 on $mux $procmux$1230.
+    dead port 2/2 on $mux $procmux$1230.
+    dead port 1/2 on $mux $procmux$1227.
+    dead port 2/2 on $mux $procmux$1227.
+    dead port 1/2 on $mux $procmux$1225.
+    dead port 2/2 on $mux $procmux$1225.
+    dead port 1/2 on $mux $procmux$1222.
+    dead port 2/2 on $mux $procmux$1222.
+    dead port 1/2 on $mux $procmux$1216.
+    dead port 2/2 on $mux $procmux$1216.
+    dead port 1/2 on $mux $procmux$1214.
+    dead port 2/2 on $mux $procmux$1214.
+    dead port 1/2 on $mux $procmux$1211.
+    dead port 2/2 on $mux $procmux$1211.
+    dead port 1/2 on $mux $procmux$1209.
+    dead port 2/2 on $mux $procmux$1209.
+    dead port 1/2 on $mux $procmux$1206.
+    dead port 2/2 on $mux $procmux$1206.
+    dead port 2/2 on $mux $procmux$1200.
+    dead port 1/2 on $mux $procmux$2290.
+    dead port 2/2 on $mux $procmux$2290.
+    dead port 1/2 on $mux $procmux$1198.
+    dead port 2/2 on $mux $procmux$1195.
+    dead port 1/2 on $mux $procmux$1193.
+    dead port 2/2 on $mux $procmux$1190.
+    dead port 2/2 on $mux $procmux$1181.
+    dead port 1/2 on $mux $procmux$1179.
+    dead port 2/2 on $mux $procmux$1176.
+    dead port 1/2 on $mux $procmux$1174.
+    dead port 2/2 on $mux $procmux$1171.
+    dead port 1/2 on $mux $procmux$1169.
+    dead port 1/2 on $mux $procmux$1159.
+    dead port 2/2 on $mux $procmux$1159.
+    dead port 1/2 on $mux $procmux$2286.
+    dead port 2/2 on $mux $procmux$2286.
+    dead port 1/2 on $mux $procmux$1157.
+    dead port 2/2 on $mux $procmux$1157.
+    dead port 1/2 on $mux $procmux$1154.
+    dead port 2/2 on $mux $procmux$1154.
+    dead port 1/2 on $mux $procmux$1152.
+    dead port 2/2 on $mux $procmux$1152.
+    dead port 1/2 on $mux $procmux$1149.
+    dead port 2/2 on $mux $procmux$1149.
+    dead port 1/2 on $mux $procmux$1143.
+    dead port 2/2 on $mux $procmux$1143.
+    dead port 1/2 on $mux $procmux$1141.
+    dead port 2/2 on $mux $procmux$1141.
+    dead port 1/2 on $mux $procmux$1138.
+    dead port 2/2 on $mux $procmux$1138.
+    dead port 1/2 on $mux $procmux$1136.
+    dead port 2/2 on $mux $procmux$1136.
+    dead port 1/2 on $mux $procmux$1133.
+    dead port 2/2 on $mux $procmux$1133.
+    dead port 1/2 on $mux $procmux$1127.
+    dead port 2/2 on $mux $procmux$1127.
+    dead port 1/2 on $mux $procmux$2282.
+    dead port 2/2 on $mux $procmux$2282.
+    dead port 1/2 on $mux $procmux$1125.
+    dead port 2/2 on $mux $procmux$1125.
+    dead port 1/2 on $mux $procmux$1122.
+    dead port 2/2 on $mux $procmux$1122.
+    dead port 1/2 on $mux $procmux$1120.
+    dead port 2/2 on $mux $procmux$1120.
+    dead port 1/2 on $mux $procmux$1117.
+    dead port 2/2 on $mux $procmux$1117.
+    dead port 1/2 on $mux $procmux$1111.
+    dead port 2/2 on $mux $procmux$1111.
+    dead port 1/2 on $mux $procmux$1109.
+    dead port 2/2 on $mux $procmux$1109.
+    dead port 1/2 on $mux $procmux$1106.
+    dead port 2/2 on $mux $procmux$1106.
+    dead port 1/2 on $mux $procmux$1104.
+    dead port 2/2 on $mux $procmux$1104.
+    dead port 1/2 on $mux $procmux$1101.
+    dead port 2/2 on $mux $procmux$1101.
+    dead port 2/2 on $mux $procmux$1095.
+    dead port 1/2 on $mux $procmux$2278.
+    dead port 2/2 on $mux $procmux$2278.
+    dead port 1/2 on $mux $procmux$1093.
+    dead port 2/2 on $mux $procmux$1090.
+    dead port 1/2 on $mux $procmux$1088.
+    dead port 2/2 on $mux $procmux$1085.
+    dead port 2/2 on $mux $procmux$1076.
+    dead port 1/2 on $mux $procmux$1074.
+    dead port 2/2 on $mux $procmux$1071.
+    dead port 1/2 on $mux $procmux$1069.
+    dead port 2/2 on $mux $procmux$1066.
+    dead port 1/2 on $mux $procmux$1064.
+    dead port 1/2 on $mux $procmux$1054.
+    dead port 2/2 on $mux $procmux$1054.
+    dead port 1/2 on $mux $procmux$2276.
+    dead port 2/2 on $mux $procmux$2276.
+    dead port 1/2 on $mux $procmux$1052.
+    dead port 2/2 on $mux $procmux$1052.
+    dead port 1/2 on $mux $procmux$1049.
+    dead port 2/2 on $mux $procmux$1049.
+    dead port 1/2 on $mux $procmux$1046.
+    dead port 2/2 on $mux $procmux$1046.
+    dead port 1/2 on $mux $procmux$1041.
+    dead port 2/2 on $mux $procmux$1041.
+    dead port 1/2 on $mux $procmux$2270.
+    dead port 2/2 on $mux $procmux$2270.
+    dead port 1/2 on $mux $procmux$1039.
+    dead port 2/2 on $mux $procmux$1039.
+    dead port 1/2 on $mux $procmux$1036.
+    dead port 2/2 on $mux $procmux$1036.
+    dead port 1/2 on $mux $procmux$1033.
+    dead port 2/2 on $mux $procmux$1033.
+    dead port 1/2 on $mux $procmux$1028.
+    dead port 2/2 on $mux $procmux$1028.
+    dead port 1/2 on $mux $procmux$1026.
+    dead port 2/2 on $mux $procmux$1026.
+    dead port 1/2 on $mux $procmux$1023.
+    dead port 2/2 on $mux $procmux$1023.
+    dead port 1/2 on $mux $procmux$1020.
+    dead port 2/2 on $mux $procmux$1020.
+    dead port 1/2 on $mux $procmux$1015.
+    dead port 2/2 on $mux $procmux$1015.
+    dead port 1/2 on $mux $procmux$2268.
+    dead port 2/2 on $mux $procmux$2268.
+    dead port 1/2 on $mux $procmux$1013.
+    dead port 2/2 on $mux $procmux$1013.
+    dead port 1/2 on $mux $procmux$1010.
+    dead port 2/2 on $mux $procmux$1010.
+    dead port 1/2 on $mux $procmux$1007.
+    dead port 2/2 on $mux $procmux$1007.
+    dead port 1/2 on $mux $procmux$1002.
+    dead port 2/2 on $mux $procmux$1002.
+    dead port 1/2 on $mux $procmux$2262.
+    dead port 2/2 on $mux $procmux$2262.
+    dead port 1/2 on $mux $procmux$1000.
+    dead port 2/2 on $mux $procmux$1000.
+    dead port 1/2 on $mux $procmux$997.
+    dead port 2/2 on $mux $procmux$997.
+    dead port 1/2 on $mux $procmux$994.
+    dead port 2/2 on $mux $procmux$994.
+    dead port 1/2 on $mux $procmux$989.
+    dead port 2/2 on $mux $procmux$989.
+    dead port 1/2 on $mux $procmux$987.
+    dead port 2/2 on $mux $procmux$987.
+    dead port 1/2 on $mux $procmux$984.
+    dead port 2/2 on $mux $procmux$984.
+    dead port 1/2 on $mux $procmux$981.
+    dead port 2/2 on $mux $procmux$981.
+    dead port 1/2 on $mux $procmux$976.
+    dead port 2/2 on $mux $procmux$976.
+    dead port 1/2 on $mux $procmux$2260.
+    dead port 2/2 on $mux $procmux$2260.
+    dead port 1/2 on $mux $procmux$974.
+    dead port 2/2 on $mux $procmux$974.
+    dead port 1/2 on $mux $procmux$971.
+    dead port 2/2 on $mux $procmux$971.
+    dead port 1/2 on $mux $procmux$968.
+    dead port 2/2 on $mux $procmux$968.
+    dead port 1/2 on $mux $procmux$963.
+    dead port 2/2 on $mux $procmux$963.
+    dead port 1/2 on $mux $procmux$2257.
+    dead port 2/2 on $mux $procmux$2257.
+    dead port 1/2 on $mux $procmux$961.
+    dead port 2/2 on $mux $procmux$961.
+    dead port 1/2 on $mux $procmux$958.
+    dead port 2/2 on $mux $procmux$958.
+    dead port 1/2 on $mux $procmux$955.
+    dead port 2/2 on $mux $procmux$955.
+    dead port 1/2 on $mux $procmux$950.
+    dead port 2/2 on $mux $procmux$950.
+    dead port 1/2 on $mux $procmux$2251.
+    dead port 2/2 on $mux $procmux$2251.
+    dead port 1/2 on $mux $procmux$948.
+    dead port 2/2 on $mux $procmux$948.
+    dead port 1/2 on $mux $procmux$945.
+    dead port 2/2 on $mux $procmux$945.
+    dead port 1/2 on $mux $procmux$942.
+    dead port 2/2 on $mux $procmux$942.
+    dead port 1/2 on $mux $procmux$937.
+    dead port 2/2 on $mux $procmux$937.
+    dead port 1/2 on $mux $procmux$935.
+    dead port 2/2 on $mux $procmux$935.
+    dead port 1/2 on $mux $procmux$932.
+    dead port 2/2 on $mux $procmux$932.
+    dead port 1/2 on $mux $procmux$929.
+    dead port 2/2 on $mux $procmux$929.
+    dead port 1/2 on $mux $procmux$924.
+    dead port 2/2 on $mux $procmux$924.
+    dead port 1/2 on $mux $procmux$2249.
+    dead port 2/2 on $mux $procmux$2249.
+    dead port 1/2 on $mux $procmux$922.
+    dead port 2/2 on $mux $procmux$922.
+    dead port 1/2 on $mux $procmux$919.
+    dead port 2/2 on $mux $procmux$919.
+    dead port 1/2 on $mux $procmux$916.
+    dead port 2/2 on $mux $procmux$916.
+    dead port 1/2 on $mux $procmux$911.
+    dead port 2/2 on $mux $procmux$911.
+    dead port 1/2 on $mux $procmux$2246.
+    dead port 2/2 on $mux $procmux$2246.
+    dead port 1/2 on $mux $procmux$909.
+    dead port 2/2 on $mux $procmux$909.
+    dead port 1/2 on $mux $procmux$906.
+    dead port 2/2 on $mux $procmux$906.
+    dead port 1/2 on $mux $procmux$903.
+    dead port 2/2 on $mux $procmux$903.
+    dead port 1/2 on $mux $procmux$898.
+    dead port 2/2 on $mux $procmux$898.
+    dead port 1/2 on $mux $procmux$2240.
+    dead port 2/2 on $mux $procmux$2240.
+    dead port 1/2 on $mux $procmux$896.
+    dead port 2/2 on $mux $procmux$896.
+    dead port 1/2 on $mux $procmux$893.
+    dead port 2/2 on $mux $procmux$893.
+    dead port 1/2 on $mux $procmux$890.
+    dead port 2/2 on $mux $procmux$890.
+    dead port 1/2 on $mux $procmux$885.
+    dead port 2/2 on $mux $procmux$885.
+    dead port 1/2 on $mux $procmux$883.
+    dead port 2/2 on $mux $procmux$883.
+    dead port 1/2 on $mux $procmux$880.
+    dead port 2/2 on $mux $procmux$880.
+    dead port 1/2 on $mux $procmux$877.
+    dead port 2/2 on $mux $procmux$877.
+    dead port 1/2 on $mux $procmux$872.
+    dead port 2/2 on $mux $procmux$872.
+    dead port 1/2 on $mux $procmux$2238.
+    dead port 2/2 on $mux $procmux$2238.
+    dead port 1/2 on $mux $procmux$870.
+    dead port 2/2 on $mux $procmux$870.
+    dead port 1/2 on $mux $procmux$867.
+    dead port 2/2 on $mux $procmux$867.
+    dead port 1/2 on $mux $procmux$864.
+    dead port 2/2 on $mux $procmux$864.
+    dead port 1/2 on $mux $procmux$859.
+    dead port 2/2 on $mux $procmux$859.
+    dead port 1/2 on $mux $procmux$2233.
+    dead port 2/2 on $mux $procmux$2233.
+    dead port 1/2 on $mux $procmux$857.
+    dead port 2/2 on $mux $procmux$857.
+    dead port 1/2 on $mux $procmux$854.
+    dead port 2/2 on $mux $procmux$854.
+    dead port 1/2 on $mux $procmux$851.
+    dead port 2/2 on $mux $procmux$851.
+    dead port 1/2 on $mux $procmux$846.
+    dead port 2/2 on $mux $procmux$846.
+    dead port 1/2 on $mux $procmux$844.
+    dead port 2/2 on $mux $procmux$844.
+    dead port 1/2 on $mux $procmux$841.
+    dead port 2/2 on $mux $procmux$841.
+    dead port 1/2 on $mux $procmux$838.
+    dead port 2/2 on $mux $procmux$838.
+    dead port 1/2 on $mux $procmux$836.
+    dead port 2/2 on $mux $procmux$836.
+    dead port 1/2 on $mux $procmux$830.
+    dead port 2/2 on $mux $procmux$830.
+    dead port 1/2 on $mux $procmux$2231.
+    dead port 2/2 on $mux $procmux$2231.
+    dead port 1/2 on $mux $procmux$828.
+    dead port 2/2 on $mux $procmux$828.
+    dead port 1/2 on $mux $procmux$825.
+    dead port 2/2 on $mux $procmux$825.
+    dead port 1/2 on $mux $procmux$822.
+    dead port 2/2 on $mux $procmux$822.
+    dead port 1/2 on $mux $procmux$820.
+    dead port 2/2 on $mux $procmux$820.
+    dead port 1/2 on $mux $procmux$814.
+    dead port 2/2 on $mux $procmux$814.
+    dead port 1/2 on $mux $procmux$2226.
+    dead port 2/2 on $mux $procmux$2226.
+    dead port 1/2 on $mux $procmux$812.
+    dead port 2/2 on $mux $procmux$812.
+    dead port 1/2 on $mux $procmux$809.
+    dead port 2/2 on $mux $procmux$809.
+    dead port 1/2 on $mux $procmux$806.
+    dead port 2/2 on $mux $procmux$806.
+    dead port 1/2 on $mux $procmux$804.
+    dead port 2/2 on $mux $procmux$804.
+    dead port 1/2 on $mux $procmux$798.
+    dead port 2/2 on $mux $procmux$798.
+    dead port 1/2 on $mux $procmux$796.
+    dead port 2/2 on $mux $procmux$796.
+    dead port 1/2 on $mux $procmux$793.
+    dead port 2/2 on $mux $procmux$793.
+    dead port 1/2 on $mux $procmux$790.
+    dead port 2/2 on $mux $procmux$790.
+    dead port 1/2 on $mux $procmux$788.
+    dead port 2/2 on $mux $procmux$788.
+    dead port 2/2 on $mux $procmux$782.
+    dead port 1/2 on $mux $procmux$2224.
+    dead port 2/2 on $mux $procmux$2224.
+    dead port 1/2 on $mux $procmux$780.
+    dead port 1/2 on $mux $procmux$777.
+    dead port 2/2 on $mux $procmux$774.
+    dead port 2/2 on $mux $procmux$772.
+    dead port 2/2 on $mux $procmux$763.
+    dead port 1/2 on $mux $procmux$2219.
+    dead port 2/2 on $mux $procmux$2219.
+    dead port 1/2 on $mux $procmux$761.
+    dead port 1/2 on $mux $procmux$758.
+    dead port 2/2 on $mux $procmux$755.
+    dead port 2/2 on $mux $procmux$753.
+    dead port 1/2 on $mux $procmux$751.
+    dead port 1/2 on $mux $procmux$741.
+    dead port 2/2 on $mux $procmux$741.
+    dead port 1/2 on $mux $procmux$739.
+    dead port 2/2 on $mux $procmux$739.
+    dead port 1/2 on $mux $procmux$736.
+    dead port 2/2 on $mux $procmux$736.
+    dead port 1/2 on $mux $procmux$733.
+    dead port 2/2 on $mux $procmux$733.
+    dead port 1/2 on $mux $procmux$731.
+    dead port 2/2 on $mux $procmux$731.
+    dead port 1/2 on $mux $procmux$725.
+    dead port 2/2 on $mux $procmux$725.
+    dead port 1/2 on $mux $procmux$2217.
+    dead port 2/2 on $mux $procmux$2217.
+    dead port 1/2 on $mux $procmux$723.
+    dead port 2/2 on $mux $procmux$723.
+    dead port 1/2 on $mux $procmux$720.
+    dead port 2/2 on $mux $procmux$720.
+    dead port 1/2 on $mux $procmux$717.
+    dead port 2/2 on $mux $procmux$717.
+    dead port 1/2 on $mux $procmux$715.
+    dead port 2/2 on $mux $procmux$715.
+    dead port 1/2 on $mux $procmux$709.
+    dead port 2/2 on $mux $procmux$709.
+    dead port 1/2 on $mux $procmux$2212.
+    dead port 2/2 on $mux $procmux$2212.
+    dead port 1/2 on $mux $procmux$707.
+    dead port 2/2 on $mux $procmux$707.
+    dead port 1/2 on $mux $procmux$704.
+    dead port 2/2 on $mux $procmux$704.
+    dead port 1/2 on $mux $procmux$701.
+    dead port 2/2 on $mux $procmux$701.
+    dead port 1/2 on $mux $procmux$699.
+    dead port 2/2 on $mux $procmux$699.
+    dead port 1/2 on $mux $procmux$693.
+    dead port 2/2 on $mux $procmux$693.
+    dead port 1/2 on $mux $procmux$691.
+    dead port 2/2 on $mux $procmux$691.
+    dead port 1/2 on $mux $procmux$688.
+    dead port 2/2 on $mux $procmux$688.
+    dead port 1/2 on $mux $procmux$685.
+    dead port 2/2 on $mux $procmux$685.
+    dead port 1/2 on $mux $procmux$683.
+    dead port 2/2 on $mux $procmux$683.
+    dead port 2/2 on $mux $procmux$677.
+    dead port 1/2 on $mux $procmux$2210.
+    dead port 2/2 on $mux $procmux$2210.
+    dead port 1/2 on $mux $procmux$675.
+    dead port 1/2 on $mux $procmux$672.
+    dead port 2/2 on $mux $procmux$669.
+    dead port 2/2 on $mux $procmux$667.
+    dead port 2/2 on $mux $procmux$658.
+    dead port 1/2 on $mux $procmux$2205.
+    dead port 2/2 on $mux $procmux$2205.
+    dead port 1/2 on $mux $procmux$656.
+    dead port 1/2 on $mux $procmux$653.
+    dead port 2/2 on $mux $procmux$650.
+    dead port 2/2 on $mux $procmux$648.
+    dead port 1/2 on $mux $procmux$646.
+    dead port 1/2 on $mux $procmux$636.
+    dead port 2/2 on $mux $procmux$636.
+    dead port 1/2 on $mux $procmux$634.
+    dead port 2/2 on $mux $procmux$634.
+    dead port 1/2 on $mux $procmux$631.
+    dead port 2/2 on $mux $procmux$631.
+    dead port 1/2 on $mux $procmux$628.
+    dead port 2/2 on $mux $procmux$628.
+    dead port 1/2 on $mux $procmux$625.
+    dead port 2/2 on $mux $procmux$625.
+    dead port 1/2 on $mux $procmux$620.
+    dead port 2/2 on $mux $procmux$620.
+    dead port 1/2 on $mux $procmux$2203.
+    dead port 2/2 on $mux $procmux$2203.
+    dead port 1/2 on $mux $procmux$618.
+    dead port 2/2 on $mux $procmux$618.
+    dead port 1/2 on $mux $procmux$615.
+    dead port 2/2 on $mux $procmux$615.
+    dead port 1/2 on $mux $procmux$612.
+    dead port 2/2 on $mux $procmux$612.
+    dead port 1/2 on $mux $procmux$609.
+    dead port 2/2 on $mux $procmux$609.
+    dead port 1/2 on $mux $procmux$604.
+    dead port 2/2 on $mux $procmux$604.
+    dead port 1/2 on $mux $procmux$2198.
+    dead port 2/2 on $mux $procmux$2198.
+    dead port 1/2 on $mux $procmux$602.
+    dead port 2/2 on $mux $procmux$602.
+    dead port 1/2 on $mux $procmux$599.
+    dead port 2/2 on $mux $procmux$599.
+    dead port 1/2 on $mux $procmux$596.
+    dead port 2/2 on $mux $procmux$596.
+    dead port 1/2 on $mux $procmux$593.
+    dead port 2/2 on $mux $procmux$593.
+    dead port 1/2 on $mux $procmux$588.
+    dead port 2/2 on $mux $procmux$588.
+    dead port 1/2 on $mux $procmux$586.
+    dead port 2/2 on $mux $procmux$586.
+    dead port 1/2 on $mux $procmux$583.
+    dead port 2/2 on $mux $procmux$583.
+    dead port 1/2 on $mux $procmux$580.
+    dead port 2/2 on $mux $procmux$580.
+    dead port 1/2 on $mux $procmux$577.
+    dead port 2/2 on $mux $procmux$577.
+    dead port 2/2 on $mux $procmux$572.
+    dead port 1/2 on $mux $procmux$2196.
+    dead port 2/2 on $mux $procmux$2196.
+    dead port 1/2 on $mux $procmux$570.
+    dead port 1/2 on $mux $procmux$567.
+    dead port 1/2 on $mux $procmux$564.
+    dead port 2/2 on $mux $procmux$561.
+    dead port 2/2 on $mux $procmux$553.
+    dead port 1/2 on $mux $procmux$2191.
+    dead port 2/2 on $mux $procmux$2191.
+    dead port 1/2 on $mux $procmux$551.
+    dead port 1/2 on $mux $procmux$548.
+    dead port 1/2 on $mux $procmux$545.
+    dead port 2/2 on $mux $procmux$542.
+    dead port 1/2 on $mux $procmux$540.
+    dead port 1/2 on $mux $procmux$531.
+    dead port 2/2 on $mux $procmux$531.
+    dead port 1/2 on $mux $procmux$529.
+    dead port 2/2 on $mux $procmux$529.
+    dead port 1/2 on $mux $procmux$526.
+    dead port 2/2 on $mux $procmux$526.
+    dead port 1/2 on $mux $procmux$523.
+    dead port 2/2 on $mux $procmux$523.
+    dead port 1/2 on $mux $procmux$520.
+    dead port 2/2 on $mux $procmux$520.
+    dead port 1/2 on $mux $procmux$515.
+    dead port 2/2 on $mux $procmux$515.
+    dead port 1/2 on $mux $procmux$2189.
+    dead port 2/2 on $mux $procmux$2189.
+    dead port 1/2 on $mux $procmux$513.
+    dead port 2/2 on $mux $procmux$513.
+    dead port 1/2 on $mux $procmux$510.
+    dead port 2/2 on $mux $procmux$510.
+    dead port 1/2 on $mux $procmux$507.
+    dead port 2/2 on $mux $procmux$507.
+    dead port 1/2 on $mux $procmux$504.
+    dead port 2/2 on $mux $procmux$504.
+    dead port 1/2 on $mux $procmux$499.
+    dead port 2/2 on $mux $procmux$499.
+    dead port 1/2 on $mux $procmux$2184.
+    dead port 2/2 on $mux $procmux$2184.
+    dead port 1/2 on $mux $procmux$497.
+    dead port 2/2 on $mux $procmux$497.
+    dead port 1/2 on $mux $procmux$494.
+    dead port 2/2 on $mux $procmux$494.
+    dead port 1/2 on $mux $procmux$491.
+    dead port 2/2 on $mux $procmux$491.
+    dead port 1/2 on $mux $procmux$488.
+    dead port 2/2 on $mux $procmux$488.
+    dead port 1/2 on $mux $procmux$483.
+    dead port 2/2 on $mux $procmux$483.
+    dead port 1/2 on $mux $procmux$481.
+    dead port 2/2 on $mux $procmux$481.
+    dead port 1/2 on $mux $procmux$478.
+    dead port 2/2 on $mux $procmux$478.
+    dead port 1/2 on $mux $procmux$475.
+    dead port 2/2 on $mux $procmux$475.
+    dead port 1/2 on $mux $procmux$472.
+    dead port 2/2 on $mux $procmux$472.
+    dead port 2/2 on $mux $procmux$467.
+    dead port 1/2 on $mux $procmux$2182.
+    dead port 2/2 on $mux $procmux$2182.
+    dead port 1/2 on $mux $procmux$465.
+    dead port 1/2 on $mux $procmux$462.
+    dead port 1/2 on $mux $procmux$459.
+    dead port 2/2 on $mux $procmux$456.
+    dead port 2/2 on $mux $procmux$448.
+    dead port 1/2 on $mux $procmux$2177.
+    dead port 2/2 on $mux $procmux$2177.
+    dead port 1/2 on $mux $procmux$446.
+    dead port 1/2 on $mux $procmux$443.
+    dead port 1/2 on $mux $procmux$440.
+    dead port 2/2 on $mux $procmux$437.
+    dead port 1/2 on $mux $procmux$435.
+    dead port 2/2 on $mux $procmux$426.
+    dead port 2/2 on $mux $procmux$419.
+    dead port 1/2 on $mux $procmux$2175.
+    dead port 2/2 on $mux $procmux$2175.
+    dead port 1/2 on $mux $procmux$417.
+    dead port 1/2 on $mux $procmux$2170.
+    dead port 2/2 on $mux $procmux$2170.
+    dead port 1/2 on $mux $procmux$2140.
+    dead port 2/2 on $mux $procmux$2140.
+    dead port 1/2 on $mux $procmux$2135.
+    dead port 2/2 on $mux $procmux$2135.
+    dead port 1/2 on $mux $procmux$2168.
+    dead port 2/2 on $mux $procmux$2168.
+    dead port 1/2 on $mux $procmux$2163.
+    dead port 2/2 on $mux $procmux$2163.
+    dead port 1/2 on $mux $procmux$2133.
+    dead port 2/2 on $mux $procmux$2133.
+    dead port 1/2 on $mux $procmux$2114.
+    dead port 2/2 on $mux $procmux$2114.
+    dead port 1/2 on $mux $procmux$2128.
+    dead port 2/2 on $mux $procmux$2128.
+    dead port 1/2 on $mux $procmux$2161.
+    dead port 2/2 on $mux $procmux$2161.
+    dead port 1/2 on $mux $procmux$2156.
+    dead port 2/2 on $mux $procmux$2156.
+    dead port 1/2 on $mux $procmux$2126.
+    dead port 2/2 on $mux $procmux$2126.
+    dead port 1/2 on $mux $procmux$2121.
+    dead port 2/2 on $mux $procmux$2121.
+    dead port 1/2 on $mux $procmux$2119.
+    dead port 2/2 on $mux $procmux$2119.
+    dead port 1/2 on $mux $procmux$2154.
+    dead port 2/2 on $mux $procmux$2154.
+    dead port 1/2 on $mux $procmux$2149.
+    dead port 2/2 on $mux $procmux$2149.
+    dead port 1/2 on $mux $procmux$2147.
+    dead port 2/2 on $mux $procmux$2147.
+    dead port 1/2 on $mux $procmux$2142.
+    dead port 2/2 on $mux $procmux$2142.
+Running muxtree optimizer on module $paramod\seq_div\W=s32'00000000000000000000000001000000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $procmux$2640: \busy -> 1'0
+      Replacing known input bits on port A of cell $procmux$2638: \busy -> 1'1
+  Analyzing evaluation results.
+Removed 1095 multiplexer ports.
+<suppressed ~338 debug messages>
+
+5.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+  Optimizing cells in module \profile_gen.
+  Optimizing cells in module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+Performed a total of 1 changes.
+
+5.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 140 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 134 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 129 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 127 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~39 debug messages>
+Finding identical cells in module `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 45 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Removed a total of 13 cells.
+
+5.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$2673 ($adff) from module profile_gen (D = $procmux$2561_Y, Q = \velocity).
+Adding EN signal on $procdff$2688 ($adff) from module profile_gen (D = $procmux$2520_Y, Q = \dist).
+Adding EN signal on $procdff$2698 ($adff) from module profile_gen (D = $shr$rtl/motion/profile_gen.sv:128$166_Y, Q = \brake).
+Adding EN signal on $procdff$2663 ($adff) from module profile_gen (D = $procmux$2600_Y, Q = \busy).
+Adding EN signal on $procdff$2668 ($adff) from module profile_gen (D = $procmux$2596_Y, Q = \position).
+Adding EN signal on $procdff$2713 ($adff) from module profile_gen (D = $procmux$2476_Y, Q = \div_start).
+Adding EN signal on $procdff$2678 ($adff) from module profile_gen (D = $procmux$2526_Y, Q = \accel).
+Adding EN signal on $procdff$2708 ($adff) from module profile_gen (D = { 31'0000000000000000000000000000000 \abs_s$func$rtl/motion/profile_gen.sv:66$16.$result 1'0 }, Q = \divis).
+Adding EN signal on $procdff$2703 ($adff) from module profile_gen (D = $mul$rtl/motion/profile_gen.sv:120$163_Y, Q = \divid).
+Adding EN signal on $procdff$2693 ($adff) from module profile_gen (D = $ternary$rtl/motion/profile_gen.sv:111$157_Y, Q = \dir).
+Adding EN signal on $procdff$2718 ($adff) from module profile_gen (D = $procmux$2460_Y, Q = \state).
+Adding EN signal on $procdff$2723 ($adff) from module profile_gen (D = $lt$rtl/motion/profile_gen.sv:129$170_Y, Q = \triangular).
+Setting constant 0-bit at position 0 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 1 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 2 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 3 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 4 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 5 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 6 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 7 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 8 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 9 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 10 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 11 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 12 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 13 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 14 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 15 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 16 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 17 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 18 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 19 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 20 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 21 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 22 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 23 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 24 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 25 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 26 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 27 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 28 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 29 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 30 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 31 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 32 on $procdff$2823 ($adff) from module profile_gen.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 33 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 34 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 35 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 36 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 37 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 38 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 39 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 40 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 41 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 42 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 43 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 44 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 45 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 46 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 47 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 48 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 49 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 50 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 51 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 52 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 53 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 54 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 55 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 56 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 57 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 58 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 59 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 60 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 61 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 62 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 63 on $auto$ff.cc:337:slice$3019 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 28 on $auto$ff.cc:337:slice$2998 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 29 on $auto$ff.cc:337:slice$2998 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 30 on $auto$ff.cc:337:slice$2998 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 31 on $auto$ff.cc:337:slice$2998 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 0 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 1 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 2 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 3 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 4 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 5 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 6 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 7 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 8 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 9 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 10 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 11 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 12 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 13 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 14 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 15 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 16 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 17 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 18 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 19 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 20 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 21 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 22 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 23 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 24 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 25 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 26 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 27 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 28 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 29 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 30 on $procdff$2893 ($adff) from module profile_gen.
+Setting constant 0-bit at position 31 on $procdff$2893 ($adff) from module profile_gen.
+Adding EN signal on $procdff$2963 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $ternary$rtl/common/seq_div.sv:67$405_Y, Q = \div).
+Adding EN signal on $procdff$2958 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $procmux$2626_Y, Q = \dend).
+Adding EN signal on $procdff$2928 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $ternary$rtl/common/seq_div.sv:82$409_Y, Q = \quotient).
+Adding EN signal on $procdff$2953 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $procmux$2631_Y, Q = \quo).
+Adding EN signal on $procdff$2933 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $ternary$rtl/common/seq_div.sv:83$410_Y, Q = \remainder).
+Adding EN signal on $procdff$2948 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $procmux$2636_Y, Q = \rem).
+Adding EN signal on $procdff$2968 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $eq$rtl/common/seq_div.sv:68$406_Y, Q = \zero_div).
+Adding EN signal on $procdff$2973 ($adff) from module $paramod\seq_div\W=s32'00000000000000000000000001000000 (D = $procmux$2615_Y, Q = \cnt).
+
+5.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Finding unused cells or wires in module $paramod\seq_div\W=s32'00000000000000000000000001000000..
+Removed 30 unused cells and 1800 unused wires.
+<suppressed ~34 debug messages>
+
+5.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~5 debug messages>
+Optimizing module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+<suppressed ~4 debug messages>
+
+5.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\seq_div\W=s32'00000000000000000000000001000000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~111 debug messages>
+
+5.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+  Optimizing cells in module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+Performed a total of 0 changes.
+
+5.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 134 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 126 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 125 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~27 debug messages>
+Finding identical cells in module `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 43 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 39 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 38 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+<suppressed ~15 debug messages>
+Removed a total of 14 cells.
+
+5.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Finding unused cells or wires in module $paramod\seq_div\W=s32'00000000000000000000000001000000..
+Removed 0 unused cells and 14 unused wires.
+<suppressed ~2 debug messages>
+
+5.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+Optimizing module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+
+5.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\seq_div\W=s32'00000000000000000000000001000000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~114 debug messages>
+
+5.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+  Optimizing cells in module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+Performed a total of 0 changes.
+
+5.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 125 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Finding identical cells in module `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Computing hashes of 38 cells of `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Finding duplicate cells in `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+Removed a total of 0 cells.
+
+5.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Finding unused cells or wires in module $paramod\seq_div\W=s32'00000000000000000000000001000000..
+
+5.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+Optimizing module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+
+5.23. Finished fast OPT passes. (There is nothing left to do.)
+
+6. Executing CHECK pass (checking for obvious problems).
+Checking module profile_gen...
+Checking module $paramod\seq_div\W=s32'00000000000000000000000001000000...
+Found and reported 0 problems.
+
+7. Printing statistics.
+
+=== profile_gen ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      169 wires
+     3330 wire bits
+       60 public wires
+     1749 public wire bits
+       13 ports
+      230 port bits
+      124 cells
+        5   $add
+        1   $adff
+       11   $adffe
+        3   $eq
+        3   $ge
+        9   $gt
+        2   $le
+        5   $logic_and
+        3   $logic_not
+        1   $logic_or
+        8   $lt
+        1   $mul
+       37   $mux
+        8   $ne
+        7   $neg
+        1   $not
+        6   $pmux
+        7   $reduce_and
+        4   $reduce_bool
+        2   $sub
+        1 submodules
+        1   $paramod\seq_div\W=s32'00000000000000000000000001000000
+
+=== $paramod\seq_div\W=s32'00000000000000000000000001000000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       44 wires
+     1329 wire bits
+       18 public wires
+      655 public wire bits
+        9 ports
+      261 port bits
+       38 cells
+        2   $adff
+        8   $adffe
+        1   $eq
+        1   $ge
+        1   $logic_and
+        2   $logic_not
+       18   $mux
+        1   $not
+        1   $reduce_and
+        1   $reduce_bool
+        2   $sub
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+      162 profile_gen
+       38 $paramod\seq_div\W=s32'00000000000000000000000001000000
+
+        +----------Count including submodules.
+        | 
+      213 wires
+     4659 wire bits
+       78 public wires
+     2404 public wire bits
+       22 ports
+      491 port bits
+        - memories
+        - memory bits
+        - processes
+      162 cells
+        5   $add
+        3   $adff
+       19   $adffe
+        4   $eq
+        4   $ge
+        9   $gt
+        2   $le
+        6   $logic_and
+        5   $logic_not
+        1   $logic_or
+        8   $lt
+        1   $mul
+       55   $mux
+        8   $ne
+        7   $neg
+        2   $not
+        6   $pmux
+        8   $reduce_and
+        5   $reduce_bool
+        4   $sub
+        1 submodules
+        1   $paramod\seq_div\W=s32'00000000000000000000000001000000
+
+End of script. Logfile hash: 663019a1b3, time: 0.41s, user: 0.41s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 51% 1x proc_mux (0 sec), 10% 5x opt_expr (0 sec), ...

@@ -79,3 +79,37 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
   window bound, making the effective window one cycle longer than specified.
 - `limit_monitor` registered `motion_inhibit`, adding a clock of latency to the
   emergency-stop path; it is now combinational behind the debounce filter.
+
+## [2.1.0] - 2026-10-15
+
+### Added
+- **RTL subsystem** (`rtl/`): jerk-limited `profile_gen`, quadrature
+  `quad_decoder`, `stepgen` DDA, `pid_axis` with anti-windup, `seq_div`, CRC-16
+  framing, UART/SPI links, `packet_if` command parser, `csr_bank`, window
+  watchdog, latching `limit_monitor`, streaming `centroid_accel` and the
+  `pnp_core` top level.
+- **Formal verification** (`verification/formal/`): SymbiYosys tasks with
+  reachability covers proving divider arithmetic, watchdog windows, limit
+  latching and encoder monotonicity.  `make formal`.
+- **Netlist simulator** (`tools/rtlsim/`): yosys JSON reader, cycle-accurate
+  gate/DFF evaluator, VCD writer and six functional testbenches driven against
+  the synthesised gate netlists.  `make rtl-sim`.
+- **RTL-to-GDSII mini-flow** (`asic/miniflow/`): netlist mapping, row-based
+  placement with legal rotation moves, five-layer maze routing, GDSII writer and
+  reader, DRC, layout connectivity extraction and RC timing.  `make asic`.
+- Documentation set: `docs/SRS.md`, `docs/ICD.md`, `docs/evidence.md`,
+  `docs/TRACEABILITY.md`, `docs/asic_miniflow.md`, plus a rewritten `README.md`.
+
+### Fixed
+- `seq_div` computed repeated subtractions instead of restoring division.
+- `watchdog_wwdg` did not restart its window on fault acknowledgement and
+  tripped one cycle late; `limit_monitor` delayed the stop path by a clock.
+- `packet_if` folded the second sync byte and both CRC bytes into the running
+  CRC, so every well-formed frame failed verification.
+- Library cells could place two pins on one routing column and the placer could
+  overlap cells; the layout DRC drew wires a full pitch wide.
+
+### Changed
+- Repository layout: `rtl/` is now the canonical RTL root, `firmware/fpga`
+  configuration points at it, and `synthesis/build/` is generated rather than
+  tracked.

@@ -1,0 +1,82 @@
+$ .venv/bin/yowasp-sby quad_decoder_props.sby
+
+SBY 10:20:20 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] Removing directory '/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props'.
+SBY 10:20:20 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] Copy '/home/user/virtual_PNP/verification/formal/props/quad_decoder_props.sv' to '/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props/src/quad_decoder_props.sv'.
+SBY 10:20:20 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] Copy '/home/user/virtual_PNP/rtl/motion/quad_decoder.sv' to '/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props/src/quad_decoder.sv'.
+SBY 10:20:20 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: smtbmc z3
+SBY 10:20:20 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] base: starting process "cd /home/user/virtual_PNP/verification/reports/formal/quad_decoder_props/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] base: finished (returncode=0)
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] prep: starting process "cd /home/user/virtual_PNP/verification/reports/formal/quad_decoder_props/model; yosys -ql design_prep.log design_prep.ys"
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] prep: finished (returncode=0)
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] smt2: starting process "cd /home/user/virtual_PNP/verification/reports/formal/quad_decoder_props/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] smt2: finished (returncode=0)
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: starting process "cd /home/user/virtual_PNP/verification/reports/formal/quad_decoder_props; yosys-smtbmc -s z3 --presat --noprogress -t 30  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Solver: z3
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 1..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 1..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 2..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 2..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 3..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 3..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 4..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 4..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 5..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 5..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 6..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 6..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 7..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 7..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 8..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 8..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 9..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 9..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 10..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 10..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 11..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 11..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 12..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 12..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 13..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 13..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 14..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 14..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 15..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 15..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 16..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 16..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 17..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 17..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 18..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 18..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 19..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 19..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 20..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 20..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 21..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 21..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 22..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 22..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 23..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 23..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 24..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 24..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 25..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 25..
+SBY 10:20:21 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 26..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 26..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 27..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 27..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 28..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 28..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assumptions in step 29..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Checking assertions in step 29..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: ##   0:00:00  Status: passed
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: finished (returncode=0)
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] engine_0: Status returned by engine: pass
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] summary: engine_0 (smtbmc z3) returned pass
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] summary: engine_0 did not produce any traces
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] DONE (PASS, rc=0)

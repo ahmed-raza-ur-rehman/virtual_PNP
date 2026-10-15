@@ -1,0 +1,298 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/safety/limit_monitor.sv
+hierarchy -top limit_monitor
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/safety/limit_monitor.sv
+hierarchy -top limit_monitor
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/safety/limit_monitor.sv
+Parsing SystemVerilog input from `rtl/safety/limit_monitor.sv' to AST representation.
+Generating RTLIL representation for module `\limit_monitor'.
+Warning: Replacing memory \cnt with list of registers. See rtl/safety/limit_monitor.sv:31
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \limit_monitor
+
+2.2. Analyzing design hierarchy..
+Top module:  \limit_monitor
+Removed 0 unused modules.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 15 switch rules as full_case in process $proc$rtl/safety/limit_monitor.sv:28$3 in module limit_monitor.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 7 redundant assignments.
+Promoted 1 assignment to connection.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~16 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+     1/17: $0\cnt[6][15:0]
+     2/17: $0\chan_filt[6:0] [6]
+     3/17: $0\chan_filt[6:0] [5]
+     4/17: $0\cnt[5][15:0]
+     5/17: $0\chan_filt[6:0] [4]
+     6/17: $0\cnt[4][15:0]
+     7/17: $0\chan_filt[6:0] [3]
+     8/17: $0\cnt[3][15:0]
+     9/17: $0\chan_filt[6:0] [2]
+    10/17: $0\cnt[2][15:0]
+    11/17: $0\chan_filt[6:0] [1]
+    12/17: $0\cnt[1][15:0]
+    13/17: $0\chan_filt[6:0] [0]
+    14/17: $1\i[31:0]
+    15/17: $0\cnt[0][15:0]
+    16/17: $0\latched[6:0]
+    17/17: $0\fault[0:0]
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\limit_monitor.\i' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$132' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\fault' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$137' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\latched' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$142' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\chan_filt' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$147' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[0]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$152' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[1]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$157' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[2]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$162' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[3]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$167' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[4]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$172' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[5]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$177' with positive edge clock and positive level reset.
+Creating register for signal `\limit_monitor.\cnt[6]' using process `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+  created $adff cell `$procdff$182' with positive edge clock and positive level reset.
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 16 empty switches in `\limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+Removing empty process `limit_monitor.$proc$rtl/safety/limit_monitor.sv:28$3'.
+Cleaned up 16 empty switches.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module limit_monitor.
+<suppressed ~22 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module limit_monitor.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\limit_monitor'.
+Computing hashes of 86 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+Computing hashes of 74 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+Computing hashes of 73 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+<suppressed ~39 debug messages>
+Removed a total of 13 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \limit_monitor..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~48 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \limit_monitor.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\limit_monitor'.
+Computing hashes of 73 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [6], Q = \chan_filt [6]).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [5], Q = \chan_filt [5]).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [4], Q = \chan_filt [4]).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [3], Q = \chan_filt [3]).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [2], Q = \chan_filt [2]).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [1], Q = \chan_filt [1]).
+Adding EN signal on $procdff$147 ($adff) from module limit_monitor (D = \chan_raw [0], Q = \chan_filt [0]).
+Adding EN signal on $procdff$137 ($adff) from module limit_monitor (D = $procmux$126_Y, Q = \fault).
+Adding EN signal on $procdff$142 ($adff) from module limit_monitor (D = $procmux$122_Y, Q = \latched).
+Setting constant 1-bit at position 0 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 1-bit at position 1 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 1-bit at position 2 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 3 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 4 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 5 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 6 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 7 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 8 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 9 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 10 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 11 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 12 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 13 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 14 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 15 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 16 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 17 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 18 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 19 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 20 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 21 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 22 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 23 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 24 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 25 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 26 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 27 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 28 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 29 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 30 on $procdff$132 ($adff) from module limit_monitor.
+Setting constant 0-bit at position 31 on $procdff$132 ($adff) from module limit_monitor.
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \limit_monitor..
+Removed 16 unused cells and 85 unused wires.
+<suppressed ~17 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module limit_monitor.
+<suppressed ~2 debug messages>
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \limit_monitor..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~27 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \limit_monitor.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\limit_monitor'.
+Computing hashes of 78 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+Computing hashes of 77 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \limit_monitor..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module limit_monitor.
+
+4.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \limit_monitor..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~27 debug messages>
+
+4.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \limit_monitor.
+Performed a total of 0 changes.
+
+4.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\limit_monitor'.
+Computing hashes of 77 cells of `\limit_monitor'.
+Finding duplicate cells in `\limit_monitor'.
+Removed a total of 0 cells.
+
+4.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \limit_monitor..
+
+4.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module limit_monitor.
+
+4.23. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing CHECK pass (checking for obvious problems).
+Checking module limit_monitor...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== limit_monitor ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       77 wires
+      570 wire bits
+       17 public wires
+      171 public wire bits
+        9 ports
+       27 port bits
+       77 cells
+        7   $add
+        7   $adff
+        9   $adffe
+       14   $eq
+        2   $logic_and
+       18   $mux
+        8   $not
+        2   $or
+        8   $reduce_and
+        1   $reduce_bool
+        1   $reduce_or
+
+Warnings: 1 unique messages, 1 total
+End of script. Logfile hash: edc2bc87dd, time: 0.02s, user: 0.02s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 30% 2x read_verilog (0 sec), 16% 5x opt_expr (0 sec), ...

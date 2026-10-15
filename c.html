@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SMD Pick & Place Simulator - Essemtec EXPERT Style</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body,html{width:100%;height:100%;overflow:hidden;background:#0a0a14;font-family:'Segoe UI',system-ui,sans-serif;color:#ccc;user-select:none;}
+#canvas-container{width:100%;height:100%;position:absolute;top:0;left:0;}
+canvas{display:block;}
+
+.panel{position:absolute;background:rgba(10,12,20,0.92);border:1px solid rgba(78,204,163,0.25);border-radius:6px;backdrop-filter:blur(8px);z-index:100;font-size:12px;}
+.panel h3{color:#4ecca3;font-size:13px;padding:8px 12px;border-bottom:1px solid rgba(78,204,163,0.15);display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.panel h3 .toggle-icon{font-size:10px;opacity:0.6;}
+.panel-content{padding:8px 12px;}
+
+#controls-panel{top:12px;left:12px;width:240px;}
+#controls-panel .key{display:inline-block;background:rgba(78,204,163,0.15);border:1px solid rgba(78,204,163,0.3);border-radius:3px;padding:1px 6px;font-size:11px;color:#4ecca3;min-width:20px;text-align:center;margin-right:4px;}
+#controls-panel .ctrl-row{display:flex;align-items:center;padding:3px 0;gap:6px;}
+#controls-panel .ctrl-label{color:#999;font-size:11px;}
+
+#state-panel{top:12px;left:260px;width:200px;}
+.state-item{display:flex;align-items:center;gap:8px;padding:3px 0;}
+.state-dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);}
+.state-dot.active{box-shadow:0 0 8px currentColor;border-color:currentColor;}
+.state-dot.idle{color:#4ecca3;background:#4ecca3;}
+.state-dot.moving{color:#f0c040;background:#f0c040;}
+.state-dot.picking{color:#4090f0;background:#4090f0;}
+.state-dot.holding{color:#f06040;background:#f06040;}
+.state-dot.placing{color:#a040f0;background:#a040f0;}
+.state-dot.error{color:#f04040;background:#f04040;}
+
+#stats-panel{top:12px;right:12px;width:220px;}
+.stat-row{display:flex;justify-content:space-between;padding:3px 0;}
+.stat-label{color:#777;}
+.stat-value{color:#4ecca3;font-weight:600;font-variant-numeric:tabular-nums;}
+
+#position-panel{top:200px;right:12px;width:220px;}
+.pos-row{display:flex;justify-content:space-between;padding:2px 0;}
+.pos-axis{font-weight:700;width:20px;}
+.pos-axis.x{color:#f06060;}
+.pos-axis.y{color:#60f060;}
+.pos-axis.z{color:#6060f0;}
+.pos-axis.r{color:#f0f060;}
+.pos-val{font-variant-numeric:tabular-nums;color:#ddd;}
+.pos-bar{flex:1;margin:0 8px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;position:relative;align-self:center;}
+.pos-bar-fill{height:100%;border-radius:2px;position:absolute;left:0;top:0;transition:width 0.05s;}
+
+#dev-panel{bottom:12px;right:12px;width:280px;max-height:45vh;overflow-y:auto;}
+#dev-panel::-webkit-scrollbar{width:4px;}
+#dev-panel::-webkit-scrollbar-thumb{background:rgba(78,204,163,0.3);border-radius:2px;}
+.dev-section{border-bottom:1px solid rgba(255,255,255,0.05);padding:6px 0;}
+.dev-section:last-child{border-bottom:none;}
+.dev-section-title{color:#4ecca3;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:4px 0;cursor:pointer;}
+.dev-row{display:flex;align-items:center;justify-content:space-between;padding:3px 0;gap:8px;}
+.dev-label{color:#888;font-size:11px;white-space:nowrap;}
+.dev-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:3px;color:#ddd;padding:2px 6px;width:60px;font-size:11px;text-align:right;}
+.dev-input:focus{border-color:#4ecca3;outline:none;}
+.dev-slider{-webkit-appearance:none;width:80px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;outline:none;}
+.dev-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#4ecca3;cursor:pointer;}
+.dev-toggle{position:relative;width:32px;height:18px;background:rgba(255,255,255,0.1);border-radius:9px;cursor:pointer;border:none;transition:background 0.2s;}
+.dev-toggle.active{background:rgba(78,204,163,0.5);}
+.dev-toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#ccc;top:2px;left:2px;transition:transform 0.2s;}
+.dev-toggle.active::after{transform:translateX(14px);background:#4ecca3;}
+
+#inventory-panel{bottom:12px;left:12px;right:300px;height:80px;}
+.inv-grid{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding:4px 0;}
+.inv-slot{display:flex;flex-direction:column;align-items:center;min-width:65px;padding:4px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;cursor:pointer;transition:all 0.2s;}
+.inv-slot:hover{border-color:rgba(78,204,163,0.4);background:rgba(78,204,163,0.05);}
+.inv-slot.active{border-color:#4ecca3;background:rgba(78,204,163,0.1);}
+.inv-slot .inv-icon{width:30px;height:20px;border-radius:2px;margin-bottom:3px;}
+.inv-slot .inv-name{font-size:9px;color:#aaa;white-space:nowrap;}
+.inv-slot .inv-count{font-size:11px;color:#4ecca3;font-weight:700;}
+
+#camera-mode{position:absolute;top:50%;left:12px;transform:translateY(-50%);z-index:100;}
+.cam-btn{display:block;width:36px;height:36px;margin:4px 0;background:rgba(10,12,20,0.8);border:1px solid rgba(78,204,163,0.2);border-radius:4px;color:#888;font-size:14px;cursor:pointer;transition:all 0.2s;text-align:center;line-height:36px;}
+.cam-btn:hover{border-color:#4ecca3;color:#4ecca3;}
+.cam-btn.active{background:rgba(78,204,163,0.15);border-color:#4ecca3;color:#4ecca3;}
+
+#collision-alert{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(240,40,40,0.9);color:white;padding:8px 20px;border-radius:4px;font-weight:700;font-size:14px;display:none;z-index:200;pointer-events:none;animation:pulse 0.3s ease-in-out;}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.1);}}
+
+#status-bar{position:absolute;bottom:0;left:0;right:0;height:24px;background:rgba(10,12,20,0.95);border-top:1px solid rgba(78,204,163,0.15);display:flex;align-items:center;padding:0 12px;gap:20px;z-index:100;font-size:11px;}
+.sb-item{display:flex;align-items:center;gap:6px;}
+.sb-dot{width:6px;height:6px;border-radius:50%;}
+.sb-dot.green{background:#4ecca3;}
+.sb-dot.yellow{background:#f0c040;}
+.sb-dot.red{background:#f04040;}
+
+#tooltip{position:absolute;background:rgba(10,12,20,0.95);border:1px solid rgba(78,204,163,0.3);border-radius:4px;padding:6px 10px;font-size:11px;color:#ddd;pointer-events:none;display:none;z-index:300;max-width:200px;}
+</style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<div id="collision-alert">⚠ COLLISION DETECTED</div>
+<div id="tooltip"></div>
+
+<div class="panel" id="controls-panel">
+    <h3>🎮 Controls <span class="toggle-icon">▼</span></h3>
+    <div class="panel-content" id="controls-content">
+        <div class="ctrl-row"><span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span><span class="ctrl-label">Move gantry XY</span></div>
+        <div class="ctrl-row"><span class="key">Q</span><span class="ctrl-label">Nozzle down</span></div>
+        <div class="ctrl-row"><span class="key">E</span><span class="ctrl-label">Nozzle up</span></div>
+        <div class="ctrl-row"><span class="key">Space</span><span class="ctrl-label">Vacuum pick/place</span></div>
+        <div class="ctrl-row"><span class="key">R</span><span class="ctrl-label">Rotate component</span></div>
+        <div class="ctrl-row"><span class="key">T</span><span class="ctrl-label">Rotate tray</span></div>
+        <div class="ctrl-row"><span class="key">Tab</span><span class="ctrl-label">Auto mode</span></div>
+        <div class="ctrl-row"><span class="key">C</span><span class="ctrl-label">Cycle camera</span></div>
+        <div class="ctrl-row"><span class="key">1-5</span><span class="ctrl-label">Camera presets</span></div>
+        <div class="ctrl-row"><span class="key">G</span><span class="ctrl-label">Toggle grid</span></div>
+        <div class="ctrl-row"><span class="key">B</span><span class="ctrl-label">Bounding boxes</span></div>
+    </div>
+</div>
+
+<div class="panel" id="state-panel">
+    <h3>⚙ Machine State</h3>
+    <div class="panel-content">
+        <div class="state-item"><div class="state-dot idle active" id="dot-idle"></div><span>IDLE</span></div>
+        <div class="state-item"><div class="state-dot moving" id="dot-moving"></div><span>MOVING</span></div>
+        <div class="state-item"><div class="state-dot picking" id="dot-picking"></div><span>PICKING</span></div>
+        <div class="state-item"><div class="state-dot holding" id="dot-holding"></div><span>HOLDING</span></div>
+        <div class="state-item"><div class="state-dot placing" id="dot-placing"></div><span>PLACING</span></div>
+        <div class="state-item"><div class="state-dot error" id="dot-error"></div><span>ERROR/COLLISION</span></div>
+        <div style="margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05);">
+            <div class="stat-row"><span class="stat-label">Vacuum:</span><span class="stat-value" id="vacuum-display">OFF</span></div>
+            <div class="stat-row"><span class="stat-label">Nozzle:</span><span class="stat-value" id="nozzle-state">RETRACTED</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="panel" id="stats-panel">
+    <h3>📊 Statistics</h3>
+    <div class="panel-content">
+        <div class="stat-row"><span class="stat-label">Time:</span><span class="stat-value" id="time-display">0:00</span></div>
+        <div class="stat-row"><span class="stat-label">Placed:</span><span class="stat-value" id="placed-display">0 / 0</span></div>
+        <div class="stat-row"><span class="stat-label">Accuracy:</span><span class="stat-value" id="accuracy-display">100.0%</span></div>
+        <div class="stat-row"><span class="stat-label">CPH:</span><span class="stat-value" id="cph-display">0</span></div>
+        <div class="stat-row"><span class="stat-label">Collisions:</span><span class="stat-value" id="collision-count">0</span></div>
+        <div class="stat-row"><span class="stat-label">Mode:</span><span class="stat-value" id="mode-display">MANUAL</span></div>
+    </div>
+</div>
+
+<div class="panel" id="position-panel">
+    <h3>📍 Position (mm)</h3>
+    <div class="panel-content">
+        <div class="pos-row"><span class="pos-axis x">X</span><div class="pos-bar"><div class="pos-bar-fill" id="xbar" style="width:50%;background:#f06060;"></div></div><span class="pos-val" id="xpos">0.0</span></div>
+        <div class="pos-row"><span class="pos-axis y">Y</span><div class="pos-bar"><div class="pos-bar-fill" id="ybar" style="width:50%;background:#60f060;"></div></div><span class="pos-val" id="ypos">0.0</span></div>
+        <div class="pos-row"><span class="pos-axis z">Z</span><div class="pos-bar"><div class="pos-bar-fill" id="zbar" style="width:80%;background:#6060f0;"></div></div><span class="pos-val" id="zpos">80.0</span></div>
+        <div class="pos-row"><span class="pos-axis r">R</span><div class="pos-bar"><div class="pos-bar-fill" id="rbar" style="width:0%;background:#f0f060;"></div></div><span class="pos-val" id="rpos">0°</span></div>
+    </div>
+</div>
+
+<div class="panel" id="dev-panel">
+    <h3>🔧 Dev Parameters <span class="toggle-icon">▼</span></h3>
+    <div class="panel-content" id="dev-content">
+        <div class="dev-section">
+            <div class="dev-section-title">▸ Movement</div>
+            <div class="dev-row"><span class="dev-label">XY Speed</span><input type="range" class="dev-slider" id="dev-xy-speed" min="0.5" max="8" step="0.5" value="2"><span class="dev-label" id="dev-xy-speed-val">2.0</span></div>
+            <div class="dev-row"><span class="dev-label">Z Speed</span><input type="range" class="dev-slider" id="dev-z-speed" min="0.5" max="5" step="0.5" value="1.5"><span class="dev-label" id="dev-z-speed-val">1.5</span></div>
+            <div class="dev-row"><span class="dev-label">Accel</span><input type="range" class="dev-slider" id="dev-accel" min="0.01" max="0.3" step="0.01" value="0.08"><span class="dev-label" id="dev-accel-val">0.08</span></div>
+            <div class="dev-row"><span class="dev-label">Damping</span><input type="range" class="dev-slider" id="dev-damping" min="0.8" max="0.99" step="0.01" value="0.92"><span class="dev-label" id="dev-damping-val">0.92</span></div>
+        </div>
+        <div class="dev-section">
+            <div class="dev-section-title">▸ Nozzle & Spindle</div>
+            <div class="dev-row"><span class="dev-label">Nozzle Ø</span><input type="range" class="dev-slider" id="dev-nozzle-dia" min="0.5" max="4" step="0.25" value="1.5"><span class="dev-label" id="dev-nozzle-dia-val">1.5</span></div>
+            <div class="dev-row"><span class="dev-label">Shaft Ø</span><input type="range" class="dev-slider" id="dev-shaft-dia" min="2" max="8" step="0.5" value="4"><span class="dev-label" id="dev-shaft-dia-val">4.0</span></div>
+            <div class="dev-row"><span class="dev-label">Housing Ø</span><input type="range" class="dev-slider" id="dev-housing-dia" min="6" max="16" step="1" value="10"><span class="dev-label" id="dev-housing-dia-val">10</span></div>
+            <div class="dev-row"><span class="dev-label">Spring Coils</span><input type="range" class="dev-slider" id="dev-spring-coils" min="3" max="12" step="1" value="6"><span class="dev-label" id="dev-spring-coils-val">6</span></div>
+            <div class="dev-row"><span class="dev-label">Arm Length</span><input type="range" class="dev-slider" id="dev-arm-len" min="20" max="80" step="5" value="45"><span class="dev-label" id="dev-arm-len-val">45</span></div>
+        </div>
+        <div class="dev-section">
+            <div class="dev-section-title">▸ Visual</div>
+            <div class="dev-row"><span class="dev-label">Shadows</span><button class="dev-toggle active" id="dev-shadows"></button></div>
+            <div class="dev-row"><span class="dev-label">Grid</span><button class="dev-toggle active" id="dev-grid"></button></div>
+            <div class="dev-row"><span class="dev-label">Axes Helper</span><button class="dev-toggle" id="dev-axes"></button></div>
+            <div class="dev-row"><span class="dev-label">Bounding Boxes</span><button class="dev-toggle" id="dev-bbox"></button></div>
+            <div class="dev-row"><span class="dev-label">Wireframe</span><button class="dev-toggle" id="dev-wireframe"></button></div>
+            <div class="dev-row"><span class="dev-label">Contact Points</span><button class="dev-toggle active" id="dev-contacts"></button></div>
+            <div class="dev-row"><span class="dev-label">Trail</span><button class="dev-toggle" id="dev-trail"></button></div>
+            <div class="dev-row"><span class="dev-label">Ambient Int.</span><input type="range" class="dev-slider" id="dev-ambient" min="0.1" max="1.5" step="0.1" value="0.5"><span class="dev-label" id="dev-ambient-val">0.5</span></div>
+            <div class="dev-row"><span class="dev-label">Dir Light Int.</span><input type="range" class="dev-slider" id="dev-dirlight" min="0.1" max="2" step="0.1" value="0.9"><span class="dev-label" id="dev-dirlight-val">0.9</span></div>
+        </div>
+        <div class="dev-section">
+            <div class="dev-section-title">▸ Machine Dims (mm)</div>
+            <div class="dev-row"><span class="dev-label">Table W</span><input class="dev-input" id="dev-table-w" value="500"></div>
+            <div class="dev-row"><span class="dev-label">Table D</span><input class="dev-input" id="dev-table-d" value="400"></div>
+            <div class="dev-row"><span class="dev-label">Rail H</span><input class="dev-input" id="dev-rail-h" value="180"></div>
+            <div class="dev-row"><span class="dev-label">PCB W</span><input class="dev-input" id="dev-pcb-w" value="120"></div>
+            <div class="dev-row"><span class="dev-label">PCB D</span><input class="dev-input" id="dev-pcb-d" value="80"></div>
+            <div class="dev-row"><button style="background:#4ecca3;color:#000;border:none;padding:4px 12px;border-radius:3px;cursor:pointer;font-size:11px;width:100%;" id="dev-rebuild">⟳ Rebuild Machine</button></div>
+        </div>
+        <div class="dev-section">
+            <div class="dev-section-title">▸ Debug Info</div>
+            <div id="debug-log" style="font-family:monospace;font-size:10px;color:#666;max-height:100px;overflow-y:auto;padding:4px;background:rgba(0,0,0,0.3);border-radius:3px;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="panel" id="inventory-panel">
+    <h3>📦 Component Inventory</h3>
+    <div class="panel-content">
+        <div class="inv-grid" id="inv-grid"></div>
+    </div>
+</div>
+
+<div id="camera-mode">
+    <button class="cam-btn active" id="cam-free" title="Free orbit">🔄</button>
+    <button class="cam-btn" id="cam-top" title="Top view">⬆</button>
+    <button class="cam-btn" id="cam-front" title="Front view">⏹</button>
+    <button class="cam-btn" id="cam-follow" title="Follow head">🎯</button>
+    <button class="cam-btn" id="cam-lock" title="Lock/unlock">🔒</button>
+</div>
+
+<div id="status-bar">
+    <div class="sb-item"><div class="sb-dot green" id="sb-conn"></div><span>Connected</span></div>
+    <div class="sb-item"><span style="color:#666;">FPS:</span><span id="fps-display" style="color:#4ecca3;">60</span></div>
+    <div class="sb-item"><span style="color:#666;">Camera:</span><span id="cam-mode-text" style="color:#4ecca3;">FREE</span></div>
+    <div class="sb-item"><span style="color:#666;">Objects:</span><span id="obj-count" style="color:#4ecca3;">0</span></div>
+    <div class="sb-item"><span style="color:#666;">Tray Slot:</span><span id="tray-slot-text" style="color:#4ecca3;">1/8</span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+// ═══════════════════════════════════════════
+// CONFIGURATION
+// ═══════════════════════════════════════════
+const CFG = {
+    table: { w: 500, d: 400, h: 20 },
+    rail: { h: 180, w: 12, d: 14 },
+    beam: { h: 16, d: 14 },
+    carriage: { w: 30, h: 24, d: 28 },
+    arm: { len: 45, w: 14, h: 10 },
+    housing: { r: 10, h: 50 },
+    shaft: { r: 4, h: 60 },
+    nozzle: { r: 1.5, h: 10 },
+    spring: { coils: 6, r: 6 },
+    pcb: { w: 120, d: 80, h: 1.6, x: 0, z: 0 },
+    tray: { r: 70, h: 8, x: -180, z: 0, slots: 8 },
+    speed: { xy: 2, z: 1.5, accel: 0.08, damp: 0.92 },
+    zRange: { min: 2, max: 100 },
+    xyRange: { x: [-200, 200], y: [-160, 160] },
+};
+
+const COMPONENT_TYPES = [
+    { id:'r0402', name:'0402 R', color:0x8B6914, w:1.0, d:0.5, h:0.35, count:25 },
+    { id:'r0603', name:'0603 R', color:0x9B7924, w:1.6, d:0.8, h:0.45, count:20 },
+    { id:'c0402', name:'0402 C', color:0xB89040, w:1.0, d:0.5, h:0.5, count:20 },
+    { id:'c0805', name:'0805 C', color:0xC8A050, w:2.0, d:1.25, h:0.6, count:15 },
+    { id:'led', name:'LED', color:0xFF3030, w:1.6, d:0.8, h:0.6, count:12 },
+    { id:'sot23', name:'SOT-23', color:0x222222, w:2.9, d:1.3, h:1.0, count:10 },
+    { id:'soic8', name:'SOIC-8', color:0x1a1a1a, w:5.0, d:4.0, h:1.5, count:6 },
+    { id:'qfp32', name:'QFP-32', color:0x111111, w:7.0, d:7.0, h:1.2, count:3 },
+];
+
+const PCB_TARGETS = [];
+function generateTargets(){
+    PCB_TARGETS.length = 0;
+    const pw = CFG.pcb.w, pd = CFG.pcb.d;
+    const types = COMPONENT_TYPES;
+    let idx = 0;
+    for(let row=0; row<5; row++){
+        for(let col=0; col<6; col++){
+            const t = types[idx % types.length];
+            PCB_TARGETS.push({
+                id: idx,
+                type: t.id,
+                x: CFG.pcb.x - pw/2 + 15 + col*(pw-30)/5,
+                z: CFG.pcb.z - pd/2 + 12 + row*(pd-24)/4,
+                rotation: (Math.random() > 0.5 ? 90 : 0),
+                placed: false
+            });
+            idx++;
+        }
+    }
+}
+generateTargets();
+
+// ═══════════════════════════════════════════
+// THREE.JS SETUP
+// ═══════════════════════════════════════════
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1c24);
+scene.fog = new THREE.Fog(0x1a1c24, 600, 1200);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.5, 2000);
+camera.position.set(250, 280, 300);
+camera.lookAt(0, 50, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0xc0c8e0, 0.5);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xfff8f0, 0.9);
+dirLight.position.set(200, 400, 250);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.set(2048, 2048);
+dirLight.shadow.camera.left = -300;
+dirLight.shadow.camera.right = 300;
+dirLight.shadow.camera.top = 300;
+dirLight.shadow.camera.bottom = -300;
+dirLight.shadow.camera.near = 100;
+dirLight.shadow.camera.far = 800;
+dirLight.shadow.bias = -0.001;
+scene.add(dirLight);
+
+const fillLight = new THREE.DirectionalLight(0x8090c0, 0.3);
+fillLight.position.set(-150, 200, -100);
+scene.add(fillLight);
+
+const headLight = new THREE.PointLight(0x4eccff, 0.6, 80);
+scene.add(headLight);
+
+// Grid
+const gridHelper = new THREE.GridHelper(600, 60, 0x333344, 0x222233);
+gridHelper.position.y = 0.1;
+scene.add(gridHelper);
+
+const axesHelper = new THREE.AxesHelper(50);
+axesHelper.visible = false;
+scene.add(axesHelper);
+
+// ═══════════════════════════════════════════
+// MATERIALS
+// ═══════════════════════════════════════════
+const MAT = {
+    aluminum: new THREE.MeshStandardMaterial({color:0xd0d0d8, metalness:0.8, roughness:0.25}),
+    darkAlum: new THREE.MeshStandardMaterial({color:0x606068, metalness:0.7, roughness:0.3}),
+    steel: new THREE.MeshStandardMaterial({color:0x999999, metalness:0.9, roughness:0.15}),
+    darkSteel: new THREE.MeshStandardMaterial({color:0x404040, metalness:0.85, roughness:0.2}),
+    black: new THREE.MeshStandardMaterial({color:0x1a1a1a, metalness:0.3, roughness:0.6}),
+    white: new THREE.MeshStandardMaterial({color:0xf0f0f0, metalness:0.1, roughness:0.5}),
+    pcbGreen: new THREE.MeshStandardMaterial({color:0x1a6030, metalness:0.15, roughness:0.7}),
+    pcbMask: new THREE.MeshStandardMaterial({color:0x1a7040, metalness:0.1, roughness:0.8}),
+    copper: new THREE.MeshStandardMaterial({color:0xd4a050, metalness:0.9, roughness:0.3}),
+    gold: new THREE.MeshStandardMaterial({color:0xe8c840, metalness:0.95, roughness:0.2}),
+    rubber: new THREE.MeshStandardMaterial({color:0x222222, metalness:0.0, roughness:0.95}),
+    tray: new THREE.MeshStandardMaterial({color:0x383838, metalness:0.4, roughness:0.5}),
+    redLed: new THREE.MeshStandardMaterial({color:0xff2020, emissive:0xff0000, emissiveIntensity:0.3}),
+    greenLed: new THREE.MeshStandardMaterial({color:0x20ff40, emissive:0x00ff20, emissiveIntensity:0.5}),
+    collision: new THREE.MeshStandardMaterial({color:0xff0000, emissive:0xff0000, emissiveIntensity:0.8, transparent:true, opacity:0.6}),
+    ghost: new THREE.MeshStandardMaterial({color:0x4ecca3, transparent:true, opacity:0.25, wireframe:false}),
+};
+
+// ═══════════════════════════════════════════
+// MACHINE GROUPS
+// ═══════════════════════════════════════════
+const machineBase = new THREE.Group();
+const yGantry = new THREE.Group();
+const xCarriage = new THREE.Group();
+const spindleAssembly = new THREE.Group();
+const nozzleAssembly = new THREE.Group();
+const componentTray = new THREE.Group();
+const pcbGroup = new THREE.Group();
+const placedGroup = new THREE.Group();
+const bbGroup = new THREE.Group();
+const trailGroup = new THREE.Group();
+const contactGroup = new THREE.Group();
+
+scene.add(machineBase, yGantry, componentTray, pcbGroup, placedGroup, bbGroup, trailGroup, contactGroup);
+yGantry.add(xCarriage);
+xCarriage.add(spindleAssembly);
+spindleAssembly.add(nozzleAssembly);
+
+// Helper: create box
+function box(w,h,d,mat,shadows=true){
+    const g=new THREE.BoxGeometry(w,h,d);
+    const m=new THREE.Mesh(g,mat);
+    if(shadows){m.castShadow=true;m.receiveShadow=true;}
+    return m;
+}
+function cyl(rt,rb,h,seg,mat,shadows=true){
+    const g=new THREE.CylinderGeometry(rt,rb,h,seg);
+    const m=new THREE.Mesh(g,mat);
+    if(shadows){m.castShadow=true;m.receiveShadow=true;}
+    return m;
+}
+
+// ═══════════════════════════════════════════
+// BUILD MACHINE
+// ═══════════════════════════════════════════
+let springMesh = null;
+let hosePoints = [];
+let hoseMesh = null;
+let ledMeshes = [];
+
+function clearGroup(g){
+    while(g.children.length){
+        const c = g.children[0];
+        if(c.geometry) c.geometry.dispose();
+        g.remove(c);
+    }
+}
+
+function buildMachine(){
+    clearGroup(machineBase);
+    clearGroup(yGantry);
+    // Note: xCarriage and spindleAssembly are children of yGantry
+    // They get cleared through yGantry clear, so re-add
+    // Actually let's be more careful
+
+    // Remove children of moving groups but keep hierarchy
+    while(xCarriage.children.length > 0){
+        const c = xCarriage.children[0];
+        if(c !== spindleAssembly){ if(c.geometry) c.geometry.dispose(); xCarriage.remove(c); }
+        else xCarriage.remove(c);
+    }
+    while(spindleAssembly.children.length > 0){
+        const c = spindleAssembly.children[0];
+        if(c !== nozzleAssembly){ if(c.geometry) c.geometry.dispose(); spindleAssembly.remove(c); }
+        else spindleAssembly.remove(c);
+    }
+    clearGroup(nozzleAssembly);
+    xCarriage.add(spindleAssembly);
+    spindleAssembly.add(nozzleAssembly);
+
+    // Rebuild yGantry children (keep xCarriage)
+    let hadCarriage = false;
+    for(let i = yGantry.children.length-1; i>=0; i--){
+        if(yGantry.children[i] === xCarriage){ hadCarriage = true; continue; }
+        const c = yGantry.children[i];
+        if(c.geometry) c.geometry.dispose();
+        yGantry.remove(c);
+    }
+    if(!hadCarriage) yGantry.add(xCarriage);
+
+    const tw = CFG.table.w, td = CFG.table.d, th = CFG.table.h;
+    const rh = CFG.rail.h;
+
+    // ─── TABLE ───
+    const tableTop = box(tw, th, td, MAT.darkAlum);
+    tableTop.position.y = -th/2;
+    tableTop.receiveShadow = true;
+    machineBase.add(tableTop);
+
+    // Table legs
+    for(let sx of [-1,1]){
+        for(let sz of [-1,1]){
+            const leg = box(16, 40, 16, MAT.darkSteel);
+            leg.position.set(sx*(tw/2 - 20), -th - 20, sz*(td/2 - 20));
+            machineBase.add(leg);
+        }
+    }
+
+    // ─── FRAME PILLARS ───
+    const pillarW = 20, pillarD = 20;
+    const railSpan = tw - 40;
+    for(let sx of [-1, 1]){
+        // Front pillar
+        const pf = box(pillarW, rh, pillarD, MAT.aluminum);
+        pf.position.set(sx * railSpan/2, rh/2, -td/2 + 15);
+        machineBase.add(pf);
+        // Back pillar
+        const pb = box(pillarW, rh, pillarD, MAT.aluminum);
+        pb.position.set(sx * railSpan/2, rh/2, td/2 - 15);
+        machineBase.add(pb);
+
+        // Y-axis rail (front-back)
+        const yr = box(CFG.rail.w, CFG.rail.w, td - 20, MAT.steel);
+        yr.position.set(sx * railSpan/2, rh - CFG.rail.w/2 - 5, 0);
+        machineBase.add(yr);
+
+        // Rail profile detail
+        const yrDetail = box(CFG.rail.w + 4, 3, td - 20, MAT.darkSteel);
+        yrDetail.position.set(sx * railSpan/2, rh - CFG.rail.w - 5, 0);
+        machineBase.add(yrDetail);
+    }
+
+    // Top cross bars (decorative frame)
+    const topBar = box(tw - 30, 8, 10, MAT.aluminum);
+    topBar.position.set(0, rh + 3, -td/2 + 15);
+    machineBase.add(topBar);
+    const topBar2 = box(tw - 30, 8, 10, MAT.aluminum);
+    topBar2.position.set(0, rh + 3, td/2 - 15);
+    machineBase.add(topBar2);
+
+    // Machine name plate
+    // (We'll skip text for simplicity, but add a small plate)
+    const namePlate = box(60, 10, 1, MAT.white);
+    namePlate.position.set(0, rh + 8, -td/2 + 14);
+    machineBase.add(namePlate);
+
+    // LED status indicators on front
+    ledMeshes = [];
+    for(let i = 0; i < 3; i++){
+        const led = cyl(3, 3, 2, 12, i===1 ? MAT.greenLed : (i===0 ? MAT.redLed : new THREE.MeshStandardMaterial({color:0xf0c020, emissive:0xf0a000, emissiveIntensity:0.2})));
+        led.rotation.x = Math.PI/2;
+        led.position.set(-30 + i*15, rh - 10, -td/2 + 5);
+        machineBase.add(led);
+        ledMeshes.push(led);
+    }
+
+    // ─── Y GANTRY (X-BEAM + BRACKETS) ───
+    const beamH = CFG.beam.h, beamD = CFG.beam.d;
+    const beamY = rh - CFG.rail.w - 10;
+
+    // Left bracket (rides on left Y-rail)
+    const lBrk = box(28, 20, 30, MAT.darkAlum);
+    lBrk.position.set(-railSpan/2, beamY, 0);
+    yGantry.add(lBrk);
+    // Right bracket
+    const rBrk = box(28, 20, 30, MAT.darkAlum);
+    rBrk.position.set(railSpan/2, beamY, 0);
+    yGantry.add(rBrk);
+
+    // X-beam
+    const xBeam = box(railSpan, beamH, beamD, MAT.aluminum);
+    xBeam.position.set(0, beamY - beamH/2 - 10, 0);
+    yGantry.add(xBeam);
+
+    // X-rail on beam
+    const xRail = box(railSpan - 30, 6, 8, MAT.steel);
+    xRail.position.set(0, beamY - beamH - 10 - 3, 0);
+    yGantry.add(xRail);
+
+    // Cable chain mount (decorative)
+    for(let i = 0; i < 8; i++){
+        const link = box(12, 6, 10, MAT.black);
+        link.position.set(-railSpan/2 + 30 + i*20, beamY + 6, -8);
+        yGantry.add(link);
+    }
+
+    // ─── X CARRIAGE ───
+    const cw = CFG.carriage.w, ch = CFG.carriage.h, cd = CFG.carriage.d;
+    const carriageY = beamY - beamH - 10 - 6 - ch/2;
+
+    const carriageBody = box(cw, ch, cd, MAT.darkAlum);
+    carriageBody.position.y = carriageY;
+    xCarriage.add(carriageBody);
+
+    // Carriage rail clamp detail
+    const clamp = box(cw + 6, 4, cd - 4, MAT.darkSteel);
+    clamp.position.y = carriageY + ch/2 + 2;
+    xCarriage.add(clamp);
+
+    // ─── ARM (extends to side - spindle at END) ───
+    const armLen = CFG.arm.len, armW = CFG.arm.w, armH = CFG.arm.h;
+    const armMesh = box(armLen, armH, armW, MAT.aluminum);
+    armMesh.position.set(armLen/2 + cw/2, carriageY - ch/2 + armH/2, 0);
+    xCarriage.add(armMesh);
+
+    // Arm ribbing detail
+    for(let i=0; i<3; i++){
+        const rib = box(2, armH + 4, armW + 2, MAT.darkSteel);
+        rib.position.set(cw/2 + 10 + i*(armLen/3), carriageY - ch/2 + armH/2, 0);
+        xCarriage.add(rib);
+    }
+
+    // ─── SPINDLE ASSEMBLY (at end of arm) ───
+    const spX = cw/2 + armLen;
+    const spY = carriageY - ch/2;
+    spindleAssembly.position.set(spX, spY, 0);
+
+    // Housing outer cylinder
+    const housingR = CFG.housing.r, housingH = CFG.housing.h;
+    const housingOuter = cyl(housingR, housingR, housingH, 20, MAT.darkAlum);
+    housingOuter.position.y = -housingH/2;
+    spindleAssembly.add(housingOuter);
+
+    // Housing top cap
+    const cap = cyl(housingR + 2, housingR + 2, 4, 20, MAT.steel);
+    cap.position.y = 0;
+    spindleAssembly.add(cap);
+
+    // Housing bottom ring
+    const ring = cyl(housingR + 1, housingR + 1, 3, 20, MAT.steel);
+    ring.position.y = -housingH;
+    spindleAssembly.add(ring);
+
+    // Mount bracket connecting arm to housing
+    const mountBrk = box(10, armH + 8, armW, MAT.darkSteel);
+    mountBrk.position.set(-5, armH/2, 0);
+    spindleAssembly.add(mountBrk);
+
+    // Vacuum hose connector (top of housing)
+    const hoseConn = cyl(3, 4, 8, 12, MAT.darkSteel);
+    hoseConn.position.set(0, 5, 0);
+    spindleAssembly.add(hoseConn);
+
+    // Flexible vacuum hose (going up and back to machine)
+    // Simple curved tube using TubeGeometry
+    buildVacuumHose(spX, spY);
+
+    // ─── NOZZLE ASSEMBLY (moves up/down inside housing) ───
+    const shaftR = CFG.shaft.r, shaftH = CFG.shaft.h;
+    const nozzR = CFG.nozzle.r, nozzH = CFG.nozzle.h;
+
+    // Nozzle shaft (tube)
+    const shaft = cyl(shaftR, shaftR, shaftH, 12, MAT.steel);
+    shaft.position.y = -shaftH/2;
+    nozzleAssembly.add(shaft);
+
+    // Shaft detail rings
+    for(let i = 0; i < 3; i++){
+        const dring = cyl(shaftR + 0.5, shaftR + 0.5, 1.5, 12, MAT.darkSteel);
+        dring.position.y = -10 - i * 15;
+        nozzleAssembly.add(dring);
+    }
+
+    // Nozzle tip (cone)
+    const tipGeom = new THREE.ConeGeometry(nozzR, nozzH, 12);
+    const tip = new THREE.Mesh(tipGeom, MAT.darkSteel);
+    tip.position.y = -shaftH - nozzH/2;
+    tip.castShadow = true;
+    nozzleAssembly.add(tip);
+
+    // Nozzle opening (small cylinder at very bottom)
+    const opening = cyl(nozzR * 0.5, nozzR * 0.3, 2, 8, MAT.rubber);
+    opening.position.y = -shaftH - nozzH - 1;
+    nozzleAssembly.add(opening);
+
+    nozzleAssembly.position.y = -housingH;
+
+    // Spring visual
+    buildSpring();
+
+    debugLog('Machine built successfully');
+}
+
+function buildSpring(){
+    // Remove old spring
+    if(springMesh && springMesh.parent) springMesh.parent.remove(springMesh);
+
+    const coils = CFG.spring.coils;
+    const sr = CFG.spring.r;
+    const pts = [];
+    const springH = 20;
+    for(let i = 0; i <= coils * 20; i++){
+        const t = i / (coils * 20);
+        const angle = t * coils * Math.PI * 2;
+        pts.push(new THREE.Vector3(
+            Math.cos(angle) * sr,
+            -t * springH,
+            Math.sin(angle) * sr
+        ));
+    }
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const tubeGeom = new THREE.TubeGeometry(curve, coils * 20, 0.6, 6, false);
+    springMesh = new THREE.Mesh(tubeGeom, MAT.steel);
+    springMesh.position.y = -CFG.housing.h + 5;
+    spindleAssembly.add(springMesh);
+}
+
+function buildVacuumHose(spX, spY){
+    if(hoseMesh && hoseMesh.parent) hoseMesh.parent.remove(hoseMesh);
+
+    const pts = [
+        new THREE.Vector3(0, 8, 0),
+        new THREE.Vector3(-5, 30, -5),
+        new THREE.Vector3(-20, 50, -15),
+        new THREE.Vector3(-40, 55, -20),
+        new THREE.Vector3(-60, 50, -10),
+    ];
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const tubeGeom = new THREE.TubeGeometry(curve, 30, 2.5, 8, false);
+    hoseMesh = new THREE.Mesh(tubeGeom, MAT.rubber);
+    hoseMesh.castShadow = true;
+    spindleAssembly.add(hoseMesh);
+}
+
+// ═══════════════════════════════════════════
+// BUILD PCB
+// ═══════════════════════════════════════════
+function buildPCB(){
+    clearGroup(pcbGroup);
+
+    const pw = CFG.pcb.w, pd = CFG.pcb.d, ph = CFG.pcb.h;
+
+    // PCB board
+    const board = box(pw, ph, pd, MAT.pcbGreen);
+    board.position.set(CFG.pcb.x, ph/2, CFG.pcb.z);
+    board.receiveShadow = true;
+    pcbGroup.add(board);
+
+    // Solder mask layer (slightly larger, thin)
+    const mask = box(pw + 0.5, 0.1, pd + 0.5, MAT.pcbMask);
+    mask.position.set(CFG.pcb.x, ph + 0.05, CFG.pcb.z);
+    pcbGroup.add(mask);
+
+    // Edge cuts / border
+    const edgeMat = new THREE.LineBasicMaterial({color: 0xd4a050});
+    const edgeGeom = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-pw/2, ph+0.2, -pd/2),
+        new THREE.Vector3(pw/2, ph+0.2, -pd/2),
+        new THREE.Vector3(pw/2, ph+0.2, pd/2),
+        new THREE.Vector3(-pw/2, ph+0.2, pd/2),
+        new THREE.Vector3(-pw/2, ph+0.2, -pd/2),
+    ]);
+    const edge = new THREE.Line(edgeGeom, edgeMat);
+    edge.position.set(CFG.pcb.x, 0, CFG.pcb.z);
+    pcbGroup.add(edge);
+
+    // Copper traces (decorative lines)
+    const traceMat = new THREE.LineBasicMaterial({color: 0xa08030, transparent: true, opacity: 0.4});
+    for(let i = 0; i < 15; i++){
+        const pts = [];
+        const sx = -pw/2 + Math.random()*pw;
+        const sz = -pd/2 + Math.random()*pd;
+        pts.push(new THREE.Vector3(sx, ph+0.15, sz));
+        let cx = sx, cz = sz;
+        for(let j = 0; j < 3 + Math.floor(Math.random()*4); j++){
+            if(Math.random() > 0.5) cx += (Math.random()-0.5)*20;
+            else cz += (Math.random()-0.5)*15;
+            cx = Math.max(-pw/2+2, Math.min(pw/2-2, cx));
+            cz = Math.max(-pd/2+2, Math.min(pd/2-2, cz));
+            pts.push(new THREE.Vector3(cx, ph+0.15, cz));
+        }
+        const tg = new THREE.BufferGeometry().setFromPoints(pts);
+        const tr = new THREE.Line(tg, traceMat);
+        tr.position.set(CFG.pcb.x, 0, CFG.pcb.z);
+        pcbGroup.add(tr);
+    }
+
+    // Mounting holes
+    for(let sx of [-1,1]){
+        for(let sz of [-1,1]){
+            const hole = cyl(2, 2, ph+0.5, 12, MAT.copper, false);
+            hole.position.set(CFG.pcb.x + sx*(pw/2-5), ph/2, CFG.pcb.z + sz*(pd/2-5));
+            pcbGroup.add(hole);
+            const holeInner = cyl(1.2, 1.2, ph+0.6, 12, MAT.darkSteel, false);
+            holeInner.position.set(CFG.pcb.x + sx*(pw/2-5), ph/2, CFG.pcb.z + sz*(pd/2-5));
+            pcbGroup.add(holeInner);
+        }
+    }
+
+    // Target pads (where components should be placed)
+    PCB_TARGETS.forEach(t => {
+        const ct = COMPONENT_TYPES.find(c => c.id === t.type);
+        if(!ct) return;
+
+        // Pad
+        const padW = ct.w + 1;
+        const padD = ct.d + 1;
+        const pad = box(padW, 0.15, padD, MAT.gold);
+        pad.position.set(t.x, ph + 0.08, t.z);
+        pad.rotation.y = (t.rotation || 0) * Math.PI / 180;
+        pcbGroup.add(pad);
+
+        // Ghost outline (where component should go)
+        if(!t.placed){
+            const ghostMat = MAT.ghost.clone();
+            const ghost = box(ct.w, ct.h, ct.d, ghostMat);
+            ghost.position.set(t.x, ph + ct.h/2 + 0.15, t.z);
+            ghost.rotation.y = (t.rotation || 0) * Math.PI / 180;
+            ghost.userData.targetId = t.id;
+            ghost.userData.isGhost = true;
+            pcbGroup.add(ghost);
+        }
+    });
+
+    // PCB clamp/holder
+    for(let sx of [-1,1]){
+        const clamp = box(8, 6, pd + 10, MAT.darkSteel);
+        clamp.position.set(CFG.pcb.x + sx*(pw/2 + 5), 3, CFG.pcb.z);
+        pcbGroup.add(clamp);
+    }
+
+    debugLog('PCB built with ' + PCB_TARGETS.length + ' targets');
+}
+
+// ═══════════════════════════════════════════
+// BUILD COMPONENT TRAY (CIRCULAR ROTATABLE)
+// ═══════════════════════════════════════════
+let trayAngle = 0;
+let trayTargetAngle = 0;
+let currentTraySlot = 0;
+const trayComponentMeshes = [];
+
+function buildTray(){
+    clearGroup(componentTray);
+    trayComponentMeshes.length = 0;
+
+    const tr = CFG.tray.r, th = CFG.tray.h;
+    componentTray.position.set(CFG.tray.x, 0, CFG.tray.z);
+
+    // Tray base platform
+    const basePlat = cyl(tr + 15, tr + 15, 4, 32, MAT.darkSteel);
+    basePlat.position.y = 2;
+    componentTray.add(basePlat);
+
+    // Main rotating disc
+    const disc = cyl(tr, tr, th, 32, MAT.tray);
+    disc.position.y = th/2 + 4;
+    disc.userData.isTrayDisc = true;
+    componentTray.add(disc);
+
+    // Center hub
+    const hub = cyl(10, 10, th + 4, 16, MAT.steel);
+    hub.position.y = (th + 4)/2 + 4;
+    componentTray.add(hub);
+
+    // Center axis pin
+    const pin = cyl(3, 3, th + 10, 8, MAT.darkSteel);
+    pin.position.y = (th + 10)/2 + 2;
+    componentTray.add(pin);
+
+    // Slot dividers and components
+    const slots = CFG.tray.slots;
+    const angleStep = (Math.PI * 2) / slots;
+
+    for(let i = 0; i < slots; i++){
+        const angle = i * angleStep;
+        const ct = COMPONENT_TYPES[i % COMPONENT_TYPES.length];
+
+        // Divider wall
+        const divW = box(tr - 15, th - 1, 1.5, MAT.darkSteel, false);
+        divW.position.set(
+            Math.cos(angle + angleStep/2) * (tr/2 + 7),
+            th/2 + 4.5,
+            Math.sin(angle + angleStep/2) * (tr/2 + 7)
+        );
+        divW.rotation.y = -(angle + angleStep/2) + Math.PI/2;
+        componentTray.add(divW);
+
+        // Component stack in slot
+        const slotR = tr * 0.65;
+        const cx = Math.cos(angle) * slotR;
+        const cz = Math.sin(angle) * slotR;
+
+        const slotGroup = new THREE.Group();
+        slotGroup.userData.slotIndex = i;
+        slotGroup.userData.componentType = ct;
+
+        // Stack of components
+        const stackCount = Math.min(ct.count, 5);
+        for(let j = 0; j < stackCount; j++){
+            const compMat = new THREE.MeshStandardMaterial({
+                color: ct.color, metalness: 0.3, roughness: 0.6
+            });
+            const comp = box(ct.w * 2, ct.h, ct.d * 2, compMat);
+            comp.position.y = th + 4 + ct.h/2 + j * ct.h;
+            comp.userData.componentType = ct.id;
+            comp.userData.slotIndex = i;
+            comp.userData.stackIndex = j;
+            slotGroup.add(comp);
+        }
+
+        slotGroup.position.set(cx, 0, cz);
+        componentTray.add(slotGroup);
+        trayComponentMeshes.push(slotGroup);
+
+        // Slot label (small colored indicator)
+        const label = cyl(2, 2, 0.5, 8,
+            new THREE.MeshStandardMaterial({color: ct.color, emissive: ct.color, emissiveIntensity:0.2}));
+        label.position.set(
+            Math.cos(angle) * (tr - 5),
+            th + 4.5,
+            Math.sin(angle) * (tr - 5)
+        );
+        componentTray.add(label);
+    }
+
+    // Slot indicator (pointer showing current slot)
+    const pointer = box(6, 2, 3, MAT.greenLed);
+    pointer.position.set(0, th + 8, -tr - 8);
+    pointer.userData.isPointer = true;
+    componentTray.add(pointer);
+
+    debugLog('Tray built with ' + slots + ' slots');
+}
+
+// ═══════════════════════════════════════════
+// BUILD INVENTORY UI
+// ═══════════════════════════════════════════
+function buildInventoryUI(){
+    const grid = document.getElementById('inv-grid');
+    grid.innerHTML = '';
+    COMPONENT_TYPES.forEach((ct, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'inv-slot' + (i === currentTraySlot ? ' active' : '');
+        slot.innerHTML = `
+            <div class="inv-icon" style="background:${'#'+ct.color.toString(16).padStart(6,'0')};"></div>
+            <div class="inv-name">${ct.name}</div>
+            <div class="inv-count" id="inv-count-${i}">${ct.count}</div>
+        `;
+        slot.onclick = () => {
+            currentTraySlot = i;
+            trayTargetAngle = -i * (Math.PI * 2 / CFG.tray.slots);
+            document.querySelectorAll('.inv-slot').forEach(s => s.classList.remove('active'));
+            slot.classList.add('active');
+        };
+        grid.appendChild(slot);
+    });
+}
+
+// ═══════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════
+const STATE = {
+    machineState: 'IDLE', // IDLE, MOVING, PICKING, HOLDING, PLACING, ERROR
+    pos: { x: 0, y: 0 },  // gantry XY
+    nozzleZ: 80,           // nozzle height above table
+    nozzleTargetZ: 80,
+    rotation: 0,           // component rotation in degrees
+    velocity: { x: 0, y: 0, z: 0 },
+    vacuum: false,
+    heldComponent: null,   // { type, mesh }
+    heldMesh: null,
+    placedCount: 0,
+    totalCollisions: 0,
+    accuracySum: 0,
+    accuracyCount: 0,
+    autoMode: false,
+    autoState: 'GOTO_TRAY',
+    autoTarget: 0,
+    startTime: Date.now(),
+    cameraMode: 'FREE', // FREE, TOP, FRONT, FOLLOW, LOCKED
+    lastCollision: 0,
+};
+
+// ═══════════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════════
+const keys = {};
+window.addEventListener('keydown', e => {
+    keys[e.code] = true;
+    if(e.code === 'Tab'){ e.preventDefault(); toggleAutoMode(); }
+    if(e.code === 'Space'){ e.preventDefault(); toggleVacuum(); }
+    if(e.code === 'KeyR') rotateComponent();
+    if(e.code === 'KeyT') rotateTrayNext();
+    if(e.code === 'KeyC') cycleCamera();
+    if(e.code === 'KeyG') toggleDev('dev-grid');
+    if(e.code === 'KeyB') toggleDev('dev-bbox');
+    if(e.code === 'Digit1') setCameraPreset('FREE');
+    if(e.code === 'Digit2') setCameraPreset('TOP');
+    if(e.code === 'Digit3') setCameraPreset('FRONT');
+    if(e.code === 'Digit4') setCameraPreset('FOLLOW');
+    if(e.code === 'Digit5') setCameraPreset('LOCKED');
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+function toggleAutoMode(){
+    STATE.autoMode = !STATE.autoMode;
+    STATE.autoState = 'GOTO_TRAY';
+    document.getElementById('mode-display').textContent = STATE.autoMode ? 'AUTO' : 'MANUAL';
+    debugLog('Mode: ' + (STATE.autoMode ? 'AUTO' : 'MANUAL'));
+}
+
+function toggleVacuum(){
+    if(STATE.vacuum && STATE.heldComponent){
+        // Try to place
+        tryPlace();
+    } else if(!STATE.vacuum){
+        // Try to pick
+        tryPick();
+    }
+}
+
+function rotateComponent(){
+    STATE.rotation = (STATE.rotation + 90) % 360;
+}
+
+function rotateTrayNext(){
+    currentTraySlot = (currentTraySlot + 1) % CFG.tray.slots;
+    trayTargetAngle = -currentTraySlot * (Math.PI * 2 / CFG.tray.slots);
+    document.querySelectorAll('.inv-slot').forEach((s,i) => {
+        s.classList.toggle('active', i === currentTraySlot);
+    });
+    document.getElementById('tray-slot-text').textContent =
+        (currentTraySlot+1) + '/' + CFG.tray.slots;
+}
+
+// ═══════════════════════════════════════════
+// CAMERA CONTROLS
+// ═══════════════════════════════════════════
+let camTheta = Math.PI / 4;
+let camPhi = Math.PI / 4;
+let camRadius = 420;
+let camTarget = new THREE.Vector3(0, 50, 0);
+let camDragging = false;
+let camPanning = false;
+let camPrevMouse = {x:0, y:0};
+
+renderer.domElement.addEventListener('mousedown', e => {
+    if(STATE.cameraMode === 'LOCKED') return;
+    if(e.button === 0) camDragging = true;
+    if(e.button === 2) camPanning = true;
+    camPrevMouse = {x: e.clientX, y: e.clientY};
+});
+renderer.domElement.addEventListener('mouseup', e => {
+    camDragging = false;
+    camPanning = false;
+});
+renderer.domElement.addEventListener('mousemove', e => {
+    if(STATE.cameraMode === 'LOCKED') return;
+    const dx = e.clientX - camPrevMouse.x;
+    const dy = e.clientY - camPrevMouse.y;
+    if(camDragging && STATE.cameraMode === 'FREE'){
+        camTheta -= dx * 0.005;
+        camPhi = Math.max(0.1, Math.min(Math.PI/2 - 0.05, camPhi - dy * 0.005));
+    }
+    if(camPanning){
+        const right = new THREE.Vector3();
+        camera.getWorldDirection(right).cross(camera.up).normalize();
+        const up = new THREE.Vector3(0,1,0);
+        camTarget.addScaledVector(right, -dx * 0.5);
+        camTarget.addScaledVector(up, dy * 0.5);
+    }
+    camPrevMouse = {x: e.clientX, y: e.clientY};
+});
+renderer.domElement.addEventListener('wheel', e => {
+    if(STATE.cameraMode === 'LOCKED') return;
+    camRadius = Math.max(100, Math.min(800, camRadius + e.deltaY * 0.5));
+});
+renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+
+function cycleCamera(){
+    const modes = ['FREE','TOP','FRONT','FOLLOW','LOCKED'];
+    const idx = modes.indexOf(STATE.cameraMode);
+    setCameraPreset(modes[(idx+1) % modes.length]);
+}
+
+function setCameraPreset(mode){
+    STATE.cameraMode = mode;
+    document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('cam-mode-text').textContent = mode;
+
+    switch(mode){
+        case 'FREE':
+            document.getElementById('cam-free').classList.add('active');
+            break;
+        case 'TOP':
+            document.getElementById('cam-top').classList.add('active');
+            camTheta = 0; camPhi = 0.05; camRadius = 350;
+            camTarget.set(0, 0, 0);
+            break;
+        case 'FRONT':
+            document.getElementById('cam-front').classList.add('active');
+            camTheta = 0; camPhi = Math.PI/6; camRadius = 400;
+            camTarget.set(0, 80, 0);
+            break;
+        case 'FOLLOW':
+            document.getElementById('cam-follow').classList.add('active');
+            camRadius = 200;
+            break;
+        case 'LOCKED':
+            document.getElementById('cam-lock').classList.add('active');
+            break;
+    }
+    debugLog('Camera: ' + mode);
+}
+
+document.getElementById('cam-free').onclick = () => setCameraPreset('FREE');
+document.getElementById('cam-top').onclick = () => setCameraPreset('TOP');
+document.getElementById('cam-front').onclick = () => setCameraPreset('FRONT');
+document.getElementById('cam-follow').onclick = () => setCameraPreset('FOLLOW');
+document.getElementById('cam-lock').onclick = () => setCameraPreset('LOCKED');
+
+// ═══════════════════════════════════════════
+// PICK & PLACE LOGIC
+// ═══════════════════════════════════════════
+function getNozzleTipWorldPos(){
+    const v = new THREE.Vector3(0, -CFG.shaft.h - CFG.nozzle.h - 1, 0);
+    nozzleAssembly.localToWorld(v);
+    return v;
+}
+
+function tryPick(){
+    if(STATE.heldComponent) return;
+
+    const tipPos = getNozzleTipWorldPos();
+
+    // Check if over tray
+    const trayCenter = new THREE.Vector3(CFG.tray.x, 0, CFG.tray.z);
+    const distToTray = new THREE.Vector2(tipPos.x - trayCenter.x, tipPos.z - trayCenter.z).length();
+
+    if(distToTray < CFG.tray.r && tipPos.y < CFG.tray.h + 15){
+        // Find which slot we're near
+        const angle = Math.atan2(tipPos.z - trayCenter.z, tipPos.x - trayCenter.x) - trayAngle;
+        const normalizedAngle = ((angle % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
+        const slotIdx = Math.floor(normalizedAngle / (Math.PI*2/CFG.tray.slots));
+        const ct = COMPONENT_TYPES[slotIdx % COMPONENT_TYPES.length];
+
+        if(ct.count > 0){
+            STATE.vacuum = true;
+            STATE.heldComponent = { type: ct, slotIdx: slotIdx };
+            ct.count--;
+
+            // Create held component mesh
+            const compMat = new THREE.MeshStandardMaterial({
+                color: ct.color, metalness: 0.3, roughness: 0.6
+            });
+            STATE.heldMesh = box(ct.w, ct.h, ct.d, compMat);
+            nozzleAssembly.add(STATE.heldMesh);
+            STATE.heldMesh.position.y = -CFG.shaft.h - CFG.nozzle.h - 1 - ct.h/2;
+
+            updateInventoryUI();
+            setState('HOLDING');
+            debugLog('Picked: ' + ct.name + ' from slot ' + slotIdx);
+        }
+    }
+}
+
+function tryPlace(){
+    if(!STATE.heldComponent) return;
+
+    const tipPos = getNozzleTipWorldPos();
+    const ct = STATE.heldComponent.type;
+
+    // Check if over PCB
+    const pcbLeft = CFG.pcb.x - CFG.pcb.w/2;
+    const pcbRight = CFG.pcb.x + CFG.pcb.w/2;
+    const pcbFront = CFG.pcb.z - CFG.pcb.d/2;
+    const pcbBack = CFG.pcb.z + CFG.pcb.d/2;
+
+    if(tipPos.x >= pcbLeft && tipPos.x <= pcbRight &&
+       tipPos.z >= pcbFront && tipPos.z <= pcbBack &&
+       tipPos.y < CFG.pcb.h + ct.h + 5){
+
+        // Find nearest target
+        let bestTarget = null;
+        let bestDist = Infinity;
+        PCB_TARGETS.forEach(t => {
+            if(t.placed) return;
+            if(t.type !== ct.id) return;
+            const d = Math.sqrt((tipPos.x - t.x)**2 + (tipPos.z - t.z)**2);
+            if(d < bestDist){ bestDist = d; bestTarget = t; }
+        });
+
+        if(bestTarget && bestDist < 8){
+            // Place component
+            bestTarget.placed = true;
+            STATE.placedCount++;
+
+            const accuracy = Math.max(0, 100 - bestDist * 10);
+            STATE.accuracySum += accuracy;
+            STATE.accuracyCount++;
+
+            // Remove from nozzle
+            if(STATE.heldMesh) nozzleAssembly.remove(STATE.heldMesh);
+
+            // Add to placed group
+            const placedMat = new THREE.MeshStandardMaterial({
+                color: ct.color, metalness: 0.3, roughness: 0.6
+            });
+            const placed = box(ct.w, ct.h, ct.d, placedMat);
+            placed.position.set(bestTarget.x, CFG.pcb.h + ct.h/2 + 0.15, bestTarget.z);
+            placed.rotation.y = (bestTarget.rotation || 0) * Math.PI / 180;
+            placedGroup.add(placed);
+
+            // Remove ghost
+            pcbGroup.children.forEach(c => {
+                if(c.userData && c.userData.targetId === bestTarget.id && c.userData.isGhost){
+                    pcbGroup.remove(c);
+                    if(c.geometry) c.geometry.dispose();
+                }
+            });
+
+            // Show contact indicator
+            showContactPoint(bestTarget.x, CFG.pcb.h + ct.h + 0.5, bestTarget.z, 0x4ecca3);
+
+            debugLog('Placed: ' + ct.name + ' acc=' + accuracy.toFixed(1) + '%');
+        } else {
+            // Missed placement - drop component
+            if(STATE.heldMesh) nozzleAssembly.remove(STATE.heldMesh);
+            showContactPoint(tipPos.x, tipPos.y, tipPos.z, 0xf04040);
+            debugLog('MISSED placement! Distance: ' + bestDist.toFixed(1) + 'mm');
+        }
+
+        STATE.vacuum = false;
+        STATE.heldComponent = null;
+        STATE.heldMesh = null;
+        setState('IDLE');
+    } else {
+        // Not over PCB, drop component
+        if(STATE.heldMesh) nozzleAssembly.remove(STATE.heldMesh);
+        STATE.vacuum = false;
+        STATE.heldComponent = null;
+        STATE.heldMesh = null;
+        setState('IDLE');
+        debugLog('Component dropped (not over PCB)');
+    }
+}
+
+function updateInventoryUI(){
+    COMPONENT_TYPES.forEach((ct, i) => {
+        const el = document.getElementById('inv-count-' + i);
+        if(el) el.textContent = ct.count;
+    });
+}
+
+// ═══════════════════════════════════════════
+// COLLISION DETECTION
+// ═══════════════════════════════════════════
+const collisionBoxes = [];
+
+function checkCollisions(){
+    const tipPos = getNozzleTipWorldPos();
+    let collided = false;
+
+    // Check nozzle vs PCB surface
+    if(tipPos.y <= CFG.pcb.h + 0.5 &&
+       tipPos.x >= CFG.pcb.x - CFG.pcb.w/2 && tipPos.x <= CFG.pcb.x + CFG.pcb.w/2 &&
+       tipPos.z >= CFG.pcb.z - CFG.pcb.d/2 && tipPos.z <= CFG.pcb.z + CFG.pcb.d/2){
+        if(!STATE.heldComponent || STATE.nozzleZ > 5){
+            showCollision(tipPos);
+            collided = true;
+        }
+    }
+
+    // Check nozzle vs placed components
+    placedGroup.children.forEach(comp => {
+        const bb = new THREE.Box3().setFromObject(comp);
+        if(bb.containsPoint(tipPos)){
+            showCollision(tipPos);
+            comp.material.emissive = new THREE.Color(0xff0000);
+            comp.material.emissiveIntensity = 0.5;
+            collided = true;
+            setTimeout(() => {
+                comp.material.emissive = new THREE.Color(0x000000);
+                comp.material.emissiveIntensity = 0;
+            }, 300);
+        }
+    });
+
+    // Check nozzle vs table
+    if(tipPos.y <= 0.5){
+        showCollision(tipPos);
+        collided = true;
+    }
+
+    // Prevent nozzle from going through things
+    if(collided){
+        STATE.nozzleZ = Math.max(STATE.nozzleZ, STATE.nozzleZ + 1);
+        STATE.velocity.z = Math.abs(STATE.velocity.z) * 0.5;
+    }
+
+    return collided;
+}
+
+function showCollision(pos){
+    const now = Date.now();
+    if(now - STATE.lastCollision < 300) return;
+    STATE.lastCollision = now;
+    STATE.totalCollisions++;
+
+    const alert = document.getElementById('collision-alert');
+    alert.style.display = 'block';
+    setTimeout(() => alert.style.display = 'none', 600);
+
+    showContactPoint(pos.x, pos.y, pos.z, 0xff0000);
+
+    document.getElementById('collision-count').textContent = STATE.totalCollisions;
+    debugLog('COLLISION at (' + pos.x.toFixed(1) + ', ' + pos.y.toFixed(1) + ', ' + pos.z.toFixed(1) + ')');
+}
+
+function showContactPoint(x, y, z, color){
+    const devContacts = document.getElementById('dev-contacts');
+    if(!devContacts.classList.contains('active')) return;
+
+    const geom = new THREE.SphereGeometry(2, 8, 8);
+    const mat = new THREE.MeshBasicMaterial({color: color, transparent: true, opacity: 0.8});
+    const sphere = new THREE.Mesh(geom, mat);
+    sphere.position.set(x, y, z);
+    sphere.userData.createdAt = Date.now();
+    contactGroup.add(sphere);
+
+    // Ring effect
+    const ringGeom = new THREE.RingGeometry(1, 4, 16);
+    const ringMat = new THREE.MeshBasicMaterial({color: color, transparent: true, opacity: 0.6, side: THREE.DoubleSide});
+    const ring = new THREE.Mesh(ringGeom, ringMat);
+    ring.position.set(x, y + 0.1, z);
+    ring.rotation.x = -Math.PI/2;
+    ring.userData.createdAt = Date.now();
+    ring.userData.isRing = true;
+    contactGroup.add(ring);
+}
+
+// ═══════════════════════════════════════════
+// BOUNDING BOX VISUALIZATION
+// ═══════════════════════════════════════════
+function updateBoundingBoxes(){
+    clearGroup(bbGroup);
+    const devBbox = document.getElementById('dev-bbox');
+    if(!devBbox.classList.contains('active')) return;
+
+    // PCB bounding box
+    const pcbBB = new THREE.Box3(
+        new THREE.Vector3(CFG.pcb.x - CFG.pcb.w/2, 0, CFG.pcb.z - CFG.pcb.d/2),
+        new THREE.Vector3(CFG.pcb.x + CFG.pcb.w/2, CFG.pcb.h + 2, CFG.pcb.z + CFG.pcb.d/2)
+    );
+    const pcbHelper = new THREE.Box3Helper(pcbBB, 0x00ff00);
+    bbGroup.add(pcbHelper);
+
+    // Tray bounding box
+    const trayBB = new THREE.Box3(
+        new THREE.Vector3(CFG.tray.x - CFG.tray.r, 0, CFG.tray.z - CFG.tray.r),
+        new THREE.Vector3(CFG.tray.x + CFG.tray.r, CFG.tray.h + 10, CFG.tray.z + CFG.tray.r)
+    );
+    const trayHelper = new THREE.Box3Helper(trayBB, 0x0088ff);
+    bbGroup.add(trayHelper);
+
+    // Nozzle tip position indicator
+    const tipPos = getNozzleTipWorldPos();
+    const tipBB = new THREE.Box3(
+        new THREE.Vector3(tipPos.x - 2, tipPos.y - 2, tipPos.z - 2),
+        new THREE.Vector3(tipPos.x + 2, tipPos.y + 2, tipPos.z + 2)
+    );
+    const tipHelper = new THREE.Box3Helper(tipBB, 0xff4400);
+    bbGroup.add(tipHelper);
+
+    // Placed components
+    placedGroup.children.forEach(c => {
+        const bb = new THREE.Box3().setFromObject(c);
+        const h = new THREE.Box3Helper(bb, 0xffff00);
+        bbGroup.add(h);
+    });
+}
+
+// ═══════════════════════════════════════════
+// TRAIL VISUALIZATION
+// ═══════════════════════════════════════════
+const trailPoints = [];
+const MAX_TRAIL = 200;
+let trailLine = null;
+
+function updateTrail(){
+    const devTrail = document.getElementById('dev-trail');
+    if(!devTrail.classList.contains('active')){
+        if(trailLine){ trailGroup.remove(trailLine); trailLine = null; }
+        trailPoints.length = 0;
+        return;
+    }
+
+    const tipPos = getNozzleTipWorldPos();
+    trailPoints.push(tipPos.clone());
+    if(trailPoints.length > MAX_TRAIL) trailPoints.shift();
+
+    if(trailLine){ trailGroup.remove(trailLine); trailLine.geometry.dispose(); }
+
+    if(trailPoints.length > 2){
+        const geom = new THREE.BufferGeometry().setFromPoints(trailPoints);
+        const mat = new THREE.LineBasicMaterial({color: 0x4ecca3, transparent: true, opacity: 0.4});
+        trailLine = new THREE.Line(geom, mat);
+        trailGroup.add(trailLine);
+    }
+}
+
+// ═══════════════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════════════
+function setState(newState){
+    STATE.machineState = newState;
+    const states = ['IDLE','MOVING','PICKING','HOLDING','PLACING','ERROR'];
+    const stateKeys = ['idle','moving','picking','holding','placing','error'];
+    stateKeys.forEach((k,i) => {
+        const dot = document.getElementById('dot-' + k);
+        if(dot) dot.classList.toggle('active', states[i] === newState);
+    });
+
+    // Update LED indicators
+    if(ledMeshes.length >= 3){
+        ledMeshes[0].material = newState === 'ERROR' ? MAT.redLed :
+            new THREE.MeshStandardMaterial({color:0x401010, metalness:0.3, roughness:0.5});
+        ledMeshes[1].material = newState === 'IDLE' || newState === 'HOLDING' ? MAT.greenLed :
+            new THREE.MeshStandardMaterial({color:0x104010, metalness:0.3, roughness:0.5});
+    }
+}
+
+// ═══════════════════════════════════════════
+// AUTO MODE
+// ═══════════════════════════════════════════
+function updateAutoMode(dt){
+    if(!STATE.autoMode) return;
+
+    const nextTarget = PCB_TARGETS.find(t => !t.placed);
+    if(!nextTarget){
+        STATE.autoMode = false;
+        document.getElementById('mode-display').textContent = 'COMPLETE';
+        debugLog('All components placed!');
+        return;
+    }
+
+    const ct = COMPONENT_TYPES.find(c => c.id === nextTarget.type);
+    if(!ct || ct.count <= 0){
+        // Skip this target if no components available
+        nextTarget.placed = true; // Mark as skipped
+        return;
+    }
+
+    const spd = CFG.speed.xy * 1.5;
+    const zspd = CFG.speed.z * 1.5;
+
+    switch(STATE.autoState){
+        case 'GOTO_TRAY': {
+            // Find the right slot for this component type
+            const slotIdx = COMPONENT_TYPES.indexOf(ct);
+            const slotAngle = slotIdx * (Math.PI * 2 / CFG.tray.slots);
+            const slotR = CFG.tray.r * 0.65;
+            const tx = CFG.tray.x + Math.cos(slotAngle + trayAngle) * slotR;
+            const tz = CFG.tray.z + Math.sin(slotAngle + trayAngle) * slotR;
+
+            // First raise nozzle
+            if(STATE.nozzleZ < 60){
+                STATE.nozzleZ = Math.min(60, STATE.nozzleZ + zspd);
+                setState('MOVING');
+            } else {
+                const dx = tx - STATE.pos.x;
+                const dy = tz - STATE.pos.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist > 2){
+                    STATE.pos.x += (dx/dist) * spd;
+                    STATE.pos.y += (dy/dist) * spd;
+                    setState('MOVING');
+                } else {
+                    STATE.autoState = 'DESCEND_TRAY';
+                }
+            }
+            break;
+        }
+        case 'DESCEND_TRAY': {
+            const targetZ = CFG.tray.h + 8;
+            if(STATE.nozzleZ > targetZ){
+                STATE.nozzleZ = Math.max(targetZ, STATE.nozzleZ - zspd);
+                setState('PICKING');
+            } else {
+                tryPick();
+                if(STATE.heldComponent){
+                    STATE.autoState = 'ASCEND_TRAY';
+                } else {
+                    STATE.autoState = 'GOTO_TRAY'; // Retry
+                }
+            }
+            break;
+        }
+        case 'ASCEND_TRAY': {
+            if(STATE.nozzleZ < 60){
+                STATE.nozzleZ = Math.min(60, STATE.nozzleZ + zspd);
+            } else {
+                STATE.autoState = 'GOTO_PCB';
+            }
+            break;
+        }
+        case 'GOTO_PCB': {
+            const dx = nextTarget.x - STATE.pos.x;
+            const dy = nextTarget.z - STATE.pos.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist > 1){
+                STATE.pos.x += (dx/dist) * spd;
+                STATE.pos.y += (dy/dist) * spd;
+                setState('MOVING');
+            } else {
+                STATE.autoState = 'DESCEND_PCB';
+                STATE.rotation = nextTarget.rotation || 0;
+            }
+            break;
+        }
+        case 'DESCEND_PCB': {
+            const targetZ = CFG.pcb.h + (ct ? ct.h : 1) + 1;
+            if(STATE.nozzleZ > targetZ){
+                STATE.nozzleZ = Math.max(targetZ, STATE.nozzleZ - zspd);
+                setState('PLACING');
+            } else {
+                tryPlace();
+                STATE.autoState = 'ASCEND_PCB';
+            }
+            break;
+        }
+        case 'ASCEND_PCB': {
+            if(STATE.nozzleZ < 60){
+                STATE.nozzleZ = Math.min(60, STATE.nozzleZ + zspd);
+            } else {
+                STATE.autoState = 'GOTO_TRAY';
+                setState('IDLE');
+            }
+            break;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════
+// DEV PANEL CONTROLS
+// ═══════════════════════════════════════════
+function toggleDev(id){
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('active');
+}
+
+// Slider handlers
+function setupDevSlider(id, callback){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', () => {
+        const val = parseFloat(el.value);
+        document.getElementById(id + '-val').textContent = val.toFixed(el.step < 1 ? (el.step < 0.1 ? 2 : 1) : 0);
+        callback(val);
+    });
+}
+
+setupDevSlider('dev-xy-speed', v => CFG.speed.xy = v);
+setupDevSlider('dev-z-speed', v => CFG.speed.z = v);
+setupDevSlider('dev-accel', v => CFG.speed.accel = v);
+setupDevSlider('dev-damping', v => CFG.speed.damp = v);
+setupDevSlider('dev-nozzle-dia', v => { CFG.nozzle.r = v; rebuildNozzle(); });
+setupDevSlider('dev-shaft-dia', v => { CFG.shaft.r = v; rebuildNozzle(); });
+setupDevSlider('dev-housing-dia', v => { CFG.housing.r = v; buildMachine(); });
+setupDevSlider('dev-spring-coils', v => { CFG.spring.coils = v; buildSpring(); });
+setupDevSlider('dev-arm-len', v => { CFG.arm.len = v; buildMachine(); });
+setupDevSlider('dev-ambient', v => { ambientLight.intensity = v; });
+setupDevSlider('dev-dirlight', v => { dirLight.intensity = v; });
+
+function rebuildNozzle(){
+    clearGroup(nozzleAssembly);
+    const shaftR = CFG.shaft.r, shaftH = CFG.shaft.h;
+    const nozzR = CFG.nozzle.r, nozzH = CFG.nozzle.h;
+
+    const shaft = cyl(shaftR, shaftR, shaftH, 12, MAT.steel);
+    shaft.position.y = -shaftH/2;
+    nozzleAssembly.add(shaft);
+    for(let i = 0; i < 3; i++){
+        const dring = cyl(shaftR + 0.5, shaftR + 0.5, 1.5, 12, MAT.darkSteel);
+        dring.position.y = -10 - i * 15;
+        nozzleAssembly.add(dring);
+    }
+    const tipGeom = new THREE.ConeGeometry(nozzR, nozzH, 12);
+    const tip = new THREE.Mesh(tipGeom, MAT.darkSteel);
+    tip.position.y = -shaftH - nozzH/2;
+    tip.castShadow = true;
+    nozzleAssembly.add(tip);
+    const opening = cyl(nozzR * 0.5, nozzR * 0.3, 2, 8, MAT.rubber);
+    opening.position.y = -shaftH - nozzH - 1;
+    nozzleAssembly.add(opening);
+
+    // Re-add held component if any
+    if(STATE.heldMesh){
+        nozzleAssembly.add(STATE.heldMesh);
+        const ct = STATE.heldComponent.type;
+        STATE.heldMesh.position.y = -shaftH - nozzH - 1 - ct.h/2;
+    }
+}
+
+// Toggle buttons
+document.querySelectorAll('.dev-toggle').forEach(btn => {
+    btn.addEventListener('click', () => btn.classList.toggle('active'));
+});
+
+document.getElementById('dev-shadows').addEventListener('click', function(){
+    renderer.shadowMap.enabled = this.classList.contains('active');
+});
+document.getElementById('dev-grid').addEventListener('click', function(){
+    gridHelper.visible = this.classList.contains('active');
+});
+document.getElementById('dev-axes').addEventListener('click', function(){
+    axesHelper.visible = this.classList.contains('active');
+});
+document.getElementById('dev-wireframe').addEventListener('click', function(){
+    const wf = this.classList.contains('active');
+    Object.values(MAT).forEach(m => { if(m.wireframe !== undefined) m.wireframe = wf; });
+});
+
+document.getElementById('dev-rebuild').addEventListener('click', () => {
+    CFG.table.w = parseInt(document.getElementById('dev-table-w').value) || 500;
+    CFG.table.d = parseInt(document.getElementById('dev-table-d').value) || 400;
+    CFG.rail.h = parseInt(document.getElementById('dev-rail-h').value) || 180;
+    CFG.pcb.w = parseInt(document.getElementById('dev-pcb-w').value) || 120;
+    CFG.pcb.d = parseInt(document.getElementById('dev-pcb-d').value) || 80;
+    generateTargets();
+    buildMachine();
+    buildPCB();
+    debugLog('Machine rebuilt with new dimensions');
+});
+
+// Panel collapse
+document.querySelectorAll('.panel h3').forEach(h => {
+    h.addEventListener('click', () => {
+        const content = h.nextElementSibling;
+        if(content){
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+            const icon = h.querySelector('.toggle-icon');
+            if(icon) icon.textContent = content.style.display === 'none' ? '▶' : '▼';
+        }
+    });
+});
+
+// ═══════════════════════════════════════════
+// DEBUG LOG
+// ═══════════════════════════════════════════
+function debugLog(msg){
+    const log = document.getElementById('debug-log');
+    const time = ((Date.now() - STATE.startTime)/1000).toFixed(1);
+    log.innerHTML += `<div style="color:#888;">[${time}s] ${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+    console.log('[PnP]', msg);
+}
+
+// ═══════════════════════════════════════════
+// FPS COUNTER
+// ═══════════════════════════════════════════
+let frameCount = 0;
+let lastFPSTime = Date.now();
+let currentFPS = 60;
+
+// ═══════════════════════════════════════════
+// MAIN UPDATE
+// ═══════════════════════════════════════════
+function updateMovement(){
+    const accel = CFG.speed.accel;
+    const damp = CFG.speed.damp;
+    const xySpeed = CFG.speed.xy;
+    const zSpeed = CFG.speed.z;
+
+    if(!STATE.autoMode){
+        // Manual movement with acceleration/damping
+        if(keys['KeyW'] || keys['ArrowUp']) STATE.velocity.y -= accel * xySpeed;
+        if(keys['KeyS'] || keys['ArrowDown']) STATE.velocity.y += accel * xySpeed;
+        if(keys['KeyA'] || keys['ArrowLeft']) STATE.velocity.x -= accel * xySpeed;
+        if(keys['KeyD'] || keys['ArrowRight']) STATE.velocity.x += accel * xySpeed;
+        if(keys['KeyQ']) STATE.velocity.z -= accel * zSpeed;
+        if(keys['KeyE']) STATE.velocity.z += accel * zSpeed;
+
+        STATE.velocity.x *= damp;
+        STATE.velocity.y *= damp;
+        STATE.velocity.z *= damp;
+
+        STATE.pos.x += STATE.velocity.x;
+        STATE.pos.y += STATE.velocity.y;
+        STATE.nozzleZ += STATE.velocity.z;
+
+        // Clamp
+        STATE.pos.x = Math.max(CFG.xyRange.x[0], Math.min(CFG.xyRange.x[1], STATE.pos.x));
+        STATE.pos.y = Math.max(CFG.xyRange.y[0], Math.min(CFG.xyRange.y[1], STATE.pos.y));
+        STATE.nozzleZ = Math.max(CFG.zRange.min, Math.min(CFG.zRange.max, STATE.nozzleZ));
+
+        // Update state based on movement
+        const moving = Math.abs(STATE.velocity.x) > 0.1 || Math.abs(STATE.velocity.y) > 0.1 || Math.abs(STATE.velocity.z) > 0.1;
+        if(!STATE.heldComponent){
+            if(moving) setState('MOVING');
+            else if(STATE.machineState === 'MOVING') setState('IDLE');
+        }
+    }
+
+    // Update gantry position
+    const railH = CFG.rail.h;
+    const beamY = railH - CFG.rail.w - 10;
+
+    yGantry.position.z = STATE.pos.y;
+    xCarriage.position.x = STATE.pos.x;
+
+    // Nozzle Z: convert from "height above table" to local position
+    // The nozzle assembly moves within the housing
+    const housingBottomY = beamY - CFG.carriage.h/2 - CFG.carriage.h - CFG.housing.h;
+    // Actually let's compute properly:
+    // spindleAssembly is at carriageBody Y + arm offset
+    // nozzleAssembly Y should make the tip be at STATE.nozzleZ above table
+
+    // Get spindle world Y
+    const spWorldY = beamY - CFG.carriage.h/2 - CFG.carriage.h/2 + (beamY - CFG.beam.h - 10 - 6 - CFG.carriage.h/2) - CFG.carriage.h/2;
+    // This is getting complex, let's just set nozzle offset directly
+    // The tip of the nozzle should be at STATE.nozzleZ above table
+    // nozzleAssembly's local position within spindleAssembly controls this
+
+    // Let's compute: spindleAssembly world position Y
+    spindleAssembly.updateWorldMatrix(true, false);
+    const spWorldPos = new THREE.Vector3();
+    spindleAssembly.getWorldPosition(spWorldPos);
+
+    // We want the tip at Y = STATE.nozzleZ
+    // Tip is at nozzleAssembly.position.y + (-CFG.shaft.h - CFG.nozzle.h - 1) relative to spindleAssembly
+    // In world: spWorldPos.y + nozzleAssembly.position.y + (-shaftH - nozzH - 1) = STATE.nozzleZ
+    const tipOffset = -CFG.shaft.h - CFG.nozzle.h - 1;
+    nozzleAssembly.position.y = STATE.nozzleZ - spWorldPos.y - tipOffset;
+
+    // Update spring visual compression
+    if(springMesh){
+        const extend = Math.max(0.3, Math.min(1.5, 1.0 + (nozzleAssembly.position.y + CFG.housing.h) / 30));
+        springMesh.scale.y = extend;
+    }
+
+    // Held component rotation
+    if(STATE.heldMesh){
+        STATE.heldMesh.rotation.y = STATE.rotation * Math.PI / 180;
+    }
+
+    // Tray rotation
+    trayAngle += (trayTargetAngle - trayAngle) * 0.08;
+    // Apply rotation to tray disc and component slots
+    componentTray.children.forEach(child => {
+        if(child.userData.isTrayDisc || child.userData.slotIndex !== undefined || child.userData.isPointer){
+            // Rotate around Y axis
+        }
+    });
+    // Actually rotate the whole tray group's rotation
+    // But we need to keep the base static. Let's use a sub-group.
+    // For simplicity, just rotate a visual offset
+    componentTray.rotation.y = trayAngle;
+
+    // Head light follows nozzle
+    const headPos = getNozzleTipWorldPos();
+    headLight.position.copy(headPos);
+    headLight.position.y += 20;
+}
+
+function updateCamera(){
+    switch(STATE.cameraMode){
+        case 'FREE':
+            camera.position.set(
+                camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta),
+                camTarget.y + camRadius * Math.cos(camPhi),
+                camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta)
+            );
+            camera.lookAt(camTarget);
+            break;
+        case 'TOP':
+            camera.position.set(camTarget.x, camRadius, camTarget.z + 0.01);
+            camera.lookAt(camTarget);
+            break;
+        case 'FRONT':
+            camera.position.set(
+                camTarget.x + camRadius * Math.sin(camTheta),
+                camTarget.y + camRadius * 0.3,
+                camTarget.z + camRadius * Math.cos(camTheta)
+            );
+            camera.lookAt(camTarget);
+            break;
+        case 'FOLLOW': {
+            const tipPos = getNozzleTipWorldPos();
+            const followTarget = new THREE.Vector3(tipPos.x, tipPos.y + 30, tipPos.z);
+            camTarget.lerp(followTarget, 0.05);
+            camera.position.set(
+                camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta),
+                camTarget.y + camRadius * Math.cos(camPhi),
+                camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta)
+            );
+            camera.lookAt(camTarget);
+            break;
+        }
+        case 'LOCKED':
+            // Don't move camera
+            break;
+    }
+}
+
+function updateUI(){
+    const elapsed = Math.floor((Date.now() - STATE.startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+    document.getElementById('time-display').textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+    document.getElementById('placed-display').textContent = `${STATE.placedCount} / ${PCB_TARGETS.length}`;
+
+    const avgAccuracy = STATE.accuracyCount > 0 ? (STATE.accuracySum / STATE.accuracyCount) : 100;
+    document.getElementById('accuracy-display').textContent = avgAccuracy.toFixed(1) + '%';
+
+    const cph = elapsed > 0 ? Math.floor(STATE.placedCount / elapsed * 3600) : 0;
+    document.getElementById('cph-display').textContent = cph.toString();
+
+    document.getElementById('vacuum-display').textContent = STATE.vacuum ? 'ON' : 'OFF';
+    document.getElementById('vacuum-display').style.color = STATE.vacuum ? '#4ecca3' : '#888';
+    document.getElementById('nozzle-state').textContent =
+        STATE.nozzleZ > 50 ? 'RETRACTED' : STATE.nozzleZ > 20 ? 'MID' : 'EXTENDED';
+
+    // Position display
+    document.getElementById('xpos').textContent = STATE.pos.x.toFixed(1);
+    document.getElementById('ypos').textContent = STATE.pos.y.toFixed(1);
+    document.getElementById('zpos').textContent = STATE.nozzleZ.toFixed(1);
+    document.getElementById('rpos').textContent = STATE.rotation + '°';
+
+    const xPct = (STATE.pos.x - CFG.xyRange.x[0]) / (CFG.xyRange.x[1] - CFG.xyRange.x[0]) * 100;
+    const yPct = (STATE.pos.y - CFG.xyRange.y[0]) / (CFG.xyRange.y[1] - CFG.xyRange.y[0]) * 100;
+    const zPct = (STATE.nozzleZ - CFG.zRange.min) / (CFG.zRange.max - CFG.zRange.min) * 100;
+    const rPct = STATE.rotation / 360 * 100;
+    document.getElementById('xbar').style.width = xPct + '%';
+    document.getElementById('ybar').style.width = yPct + '%';
+    document.getElementById('zbar').style.width = zPct + '%';
+    document.getElementById('rbar').style.width = rPct + '%';
+
+    // FPS
+    frameCount++;
+    const now = Date.now();
+    if(now - lastFPSTime > 500){
+        currentFPS = Math.round(frameCount / ((now - lastFPSTime) / 1000));
+        frameCount = 0;
+        lastFPSTime = now;
+    }
+    document.getElementById('fps-display').textContent = currentFPS;
+    document.getElementById('obj-count').textContent = renderer.info.render.triangles;
+}
+
+// Fade out contact points
+function updateContactPoints(){
+    const now = Date.now();
+    for(let i = contactGroup.children.length - 1; i >= 0; i--){
+        const c = contactGroup.children[i];
+        const age = now - c.userData.createdAt;
+        if(age > 2000){
+            contactGroup.remove(c);
+            if(c.geometry) c.geometry.dispose();
+        } else {
+            c.material.opacity = Math.max(0, 1 - age / 2000);
+            if(c.userData.isRing){
+                const s = 1 + age / 500;
+                c.scale.set(s, s, s);
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════
+// FLOOR
+// ═══════════════════════════════════════════
+const floorGeom = new THREE.PlaneGeometry(2000, 2000);
+const floorMat = new THREE.MeshStandardMaterial({color: 0x1a1c24, roughness: 0.9});
+const floor = new THREE.Mesh(floorGeom, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -0.1;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ═══════════════════════════════════════════
+// INIT & ANIMATE
+// ═══════════════════════════════════════════
+buildMachine();
+buildPCB();
+buildTray();
+buildInventoryUI();
+setState('IDLE');
+debugLog('Essemtec EXPERT-SAFP style simulator initialized');
+debugLog('Swiss-made precision at your fingertips!');
+
+function animate(){
+    requestAnimationFrame(animate);
+
+    updateAutoMode(1/60);
+    updateMovement();
+    checkCollisions();
+    updateCamera();
+    updateBoundingBoxes();
+    updateTrail();
+    updateContactPoints();
+    updateUI();
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+// Handle resize
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+})();
+</script>
+</body>
+</html>

@@ -94,6 +94,16 @@ class Grid:
                 self.port_nodes[name] = node
                 self.blocked.discard(node)
 
+        # Reserve every pin's access point before any net is routed.  Pin
+        # access is a hard resource: a track that runs through it makes the pin
+        # unreachable, and a track that lands on it shorts two nets.
+        for inst in netlist.instances.values():
+            for pin, net in inst.pins.items():
+                if pin not in LIBRARY[inst.cell].pins:
+                    continue
+                node = self.access_nodes(netlist, inst.name, pin, fan=0)[0]
+                self.occupancy.setdefault(node, net)
+
         for inst in netlist.instances.values():
             cell = LIBRARY[inst.cell]
             x0 = self.ix(inst.x)
@@ -321,14 +331,20 @@ def _route_net(netlist: Netlist, grid: Grid, net, geometry: dict, fan: int = 2) 
         net_wires: list[tuple[str, float, float, float, float]] = []
         net_vias: list[tuple[str, float, float]] = []
         complete = True
+        used_nodes: list[tuple[int, int, int]] = [chosen[0]]
         for group, target_node in zip(node_groups[1:], chosen[1:]):
             if target_node in tree:
+                used_nodes.append(target_node)
                 continue
             targets = {t for t in group if t not in tree} | {target_node}
             path = _astar(grid, next(iter(tree)), targets, net.name)
             if path is None:
                 complete = False
                 break
+            # the path may land on any node of the fan, not on the one the
+            # free() call picked: the pin escape has to be drawn to the node the
+            # route really reached, or the extracted connectivity sees an open
+            used_nodes.append(path[-1])
             for node in path:
                 if grid.occupancy.get(node) is None:
                     grid.occupancy[node] = net.name
@@ -344,7 +360,7 @@ def _route_net(netlist: Netlist, grid: Grid, net, geometry: dict, fan: int = 2) 
             net_vias.extend(vias)
 
         if complete:
-            for key, node in zip(terminal_keys, chosen):
+            for key, node in zip(terminal_keys, used_nodes):
                 if key is not None:
                     net.pin_nodes[key] = node
         if not complete:

@@ -76,6 +76,38 @@ def _overlap_or_touch(a: Rect, b: Rect, gap: float = 0.0) -> bool:
     )
 
 
+#: which metal layers each via layer connects
+VIA_PAIRS: dict[str, tuple[str, str]] = {
+    "VIA1": ("M1", "M2"),
+    "VIA2": ("M2", "M3"),
+    "VIA3": ("M3", "M4"),
+    "VIA4": ("M4", "M5"),
+}
+
+
+def _electrically_touching(
+    layer_a: str, a: Rect, layer_b: str, b: Rect, gap: float = 1e-6
+) -> bool:
+    """True when two shapes touch *and* are on conducting layers.
+
+    Overlap in plan view is not electrical contact: an M3 wire that runs over a
+    cell shares its (x, y) footprint with the M1 pin escape underneath it
+    without being connected to it.  The first version of the extractor merged
+    on geometry alone, which bridged every net whose route passed over a cell
+    to whatever conductor was underneath - reported as roughly a hundred
+    phantom shorts.
+    """
+    if not _overlap_or_touch(a, b, gap=gap):
+        return False
+    if layer_a == layer_b:
+        return True
+    if layer_b in VIA_PAIRS.get(layer_a, ()):
+        return True
+    if layer_a in VIA_PAIRS.get(layer_b, ()):
+        return True
+    return False
+
+
 def check_drc(layout: Layout, rules=RULES) -> DRCResult:
     """Width, spacing, notch and via-enclosure checks.
 
@@ -162,6 +194,10 @@ class ConnectivityResult:
     open_nets: list[str] = field(default_factory=list)
     shorts: list[list[str]] = field(default_factory=list)
     shapes_inspected: int = 0
+    #: for each reported short, the pair of shapes that physically joins the two
+    #: nets.  A mismatch report without evidence costs the next engineer hours;
+    #: this makes the failing geometry directly actionable.
+    short_evidence: list[dict] = field(default_factory=list)
 
     @property
     def status(self) -> str:
@@ -171,8 +207,9 @@ class ConnectivityResult:
         return {
             "status": self.status,
             "connected_nets": self.connected_nets,
-            "open_nets": self.open_nets,
+            "open_nets": self.open_nets[:20],
             "shorts": self.shorts[:10],
+            "short_evidence": self.short_evidence[:10],
             "shapes_inspected": self.shapes_inspected,
         }
 
@@ -227,13 +264,17 @@ def check_connectivity(layout: Layout, netlist: Netlist) -> ConnectivityResult:
 
     result.shapes_inspected = len(all_shapes)
 
-    # same-layer touching shapes are electrically one node
+    # touching shapes on the same layer are one node; a via joins the two
+    # metals it lands on.  Both directions use the same electrical-touch test.
     for i, (idx_a, layer_a, rect_a) in enumerate(all_shapes):
         for idx_b, layer_b, rect_b in all_shapes[i + 1:]:
-            if layer_a != layer_b:
+            if not _electrically_touching(layer_a, rect_a, layer_b, rect_b):
                 continue
-            if _overlap_or_touch(rect_a, rect_b, gap=1e-6):
-                union.union(idx_a, idx_b)
+            net_a = layout.shape_net.get((layer_a, rect_a))
+            net_b = layout.shape_net.get((layer_b, rect_b))
+            if net_a and net_b and net_a != net_b:
+                continue        # a real short: reported by DRC, not merged here
+            union.union(idx_a, idx_b)
 
     # vias connect the two metals they land on
     via_pairs = {
@@ -244,18 +285,29 @@ def check_connectivity(layout: Layout, netlist: Netlist) -> ConnectivityResult:
         for idx_v, layer_v, via in all_shapes:
             if layer_v != via_layer:
                 continue
+            via_net = layout.shape_net.get((via_layer, via))
             for idx_m, layer_m, metal in all_shapes:
                 if layer_m not in (lower, upper):
                     continue
-                if _overlap_or_touch(via, metal, gap=1e-6):
-                    union.union(idx_v, idx_m)
+                if not _overlap_or_touch(via, metal, gap=1e-6):
+                    continue
+                # A via belongs to one net.  Merging it with whatever metal it
+                # happens to touch (the first version did) connects two nets
+                # wherever one net's wire passes under another net's via, which
+                # is not a short - the metals are on different layers.
+                metal_net = layout.shape_net.get((layer_m, metal))
+                if via_net and metal_net and via_net != metal_net:
+                    continue
+                union.union(idx_v, idx_m)
 
     # group pins by component
     net_components: dict[str, set[int]] = {}
     for net, inst, pin, rect in _pin_rects(layout):
         component = None
         for idx, layer, shape in all_shapes:
-            if _overlap_or_touch(rect, shape, gap=1e-6):
+            # the pin escape is drawn on M1 (and up through the via stack), so
+            # only shapes on a conducting layer in plan-view contact count
+            if _electrically_touching("M1", rect, layer, shape):
                 root = union.find(idx)
                 component = root if component is None else component
                 if component != root:
@@ -265,6 +317,16 @@ def check_connectivity(layout: Layout, netlist: Netlist) -> ConnectivityResult:
         if component is None:
             continue
         net_components.setdefault(net, set()).add(union.find(component))
+
+    # Union-find roots move as more shapes are merged, so every recorded
+    # component is re-resolved once all unions have been made.  Reporting the
+    # roots captured during the scan (the first version did) produced phantom
+    # opens and phantom shorts: the ids were stale by the time they were
+    # compared.
+    net_components = {
+        net_name: {union.find(component) for component in components}
+        for net_name, components in net_components.items()
+    }
 
     for net_name, components in sorted(net_components.items()):
         if len(components) > 1:
@@ -278,9 +340,37 @@ def check_connectivity(layout: Layout, netlist: Netlist) -> ConnectivityResult:
         for component in components:
             other = component_owner.get(component)
             if other is not None and other != net_name:
-                result.shorts.append(sorted([other, net_name]))
+                pair = sorted([other, net_name])
+                result.shorts.append(pair)
+                result.short_evidence.append(
+                    {"nets": pair,
+                     "evidence": _explain_short(all_shapes, union, component, layout, pair)}
+                )
             component_owner.setdefault(component, net_name)
     return result
+
+
+def _explain_short(shapes, union, component: int, layout: Layout, pair: list[str]) -> dict:
+    """Report the shapes of each net that ended up in one electrical component.
+
+    This is evidence, not proof of the mechanism: it shows *that* shapes of two
+    nets are on the same extracted node and *which* shapes they are, so the
+    failing geometry can be inspected directly.  Tracing the exact union path
+    between them is left to the engineer (or to a future revision of this
+    checker); claiming a root cause that has not been traced would be worse
+    than reporting the observation.
+    """
+    examples: dict[str, list[dict]] = {net: [] for net in pair}
+    counts: dict[str, int] = {net: 0 for net in pair}
+    for idx, layer, rect in shapes:
+        if union.find(idx) != component:
+            continue
+        owner = layout.shape_net.get((layer, rect))
+        if owner in examples:
+            counts[owner] += 1
+            if len(examples[owner]) < 3:
+                examples[owner].append({"layer": layer, "rect": [round(v, 3) for v in rect]})
+    return {"shapes_per_net": counts, "examples": examples}
 
 
 def _pin_rects(layout: Layout):

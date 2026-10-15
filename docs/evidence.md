@@ -89,7 +89,34 @@ the defects these levels found before any hardware existed:
 
 | Item | Status | Impact |
 | --- | --- | --- |
-| Routing completion on the larger blocks | 90-99 % depending on block | unrouted nets are listed per net in the report; the flow does not claim closure |
-| Connectivity extraction cleanup | mismatch reported on `crc16_ccitt`, under investigation | DRC is clean and timing closes; extracted connectivity needs a second pass before it can gate a release |
-| Clock/reset tree | not implemented | high-fanout nets are the routing bottleneck and the timing numbers are optimistic without a tree |
-| `pnp_core` full block through the flow | runs but is dominated by the reset/clock nets | documented, not hidden |
+| Routing completion | 88-99 % depending on block and seed; on `crc16_ccitt` 69/70 nets | unrouted nets are listed per net in the report; the flow never claims closure |
+| Connectivity extraction | **not clean**: e.g. 20 of 60 multi-terminal nets reported open and 41 short pairs on `crc16_ccitt`, while DRC is clean | blocks the connectivity gate; see the diagnostics below |
+| Clock/reset tree | not implemented | high-fanout nets (`clk`, `rst_n`) are the routing bottleneck and the timing numbers are optimistic without a tree |
+| `pnp_core` full block through the flow | runs, but every stage is dominated by the reset/clock nets | documented, not hidden |
+
+### Connectivity diagnostics performed
+
+The extraction started at 52 open / 112 short and is now at 20 open / 41 short
+after four fixed defects, each of which is now covered by a test:
+
+1. **Stale union-find roots.** Roots captured while scanning pins were compared
+   after further merges, so ids that had since moved looked like separate
+   components (phantom opens) and stale ids looked shared (phantom shorts).
+   Fixed by re-resolving every recorded component once all unions are done.
+2. **Planar overlap treated as electrical contact.** An M3 wire routing over a
+   cell shares its (x, y) footprint with the M1 pin escape underneath without
+   being connected to it; merging on geometry alone bridged them. Fixed with
+   `_electrically_touching()`, which knows which via joins which metals.
+3. **Pin access points placed by rule rather than by intent.** The escape stub
+   was drawn to a pre-computed node while the router had reached a different
+   node of the same pin fan, leaving the pin dangling; the router now records
+   the node each terminal actually used.
+4. **Pin fan collisions.** A wide pin fan let two nets' escapes land in the same
+   column and overlap; access is now one reserved node per pin, which cannot
+   collide because two pins in a row never share an absolute column.
+
+What remains is tracked as an open defect rather than papered over: the
+short-evidence field in the JSON report names, per shorted pair, the shapes of
+each net that ended up on one node, and `_explain_short` reports how many
+shapes of each net are involved, so the next iteration can trace the union path
+directly.

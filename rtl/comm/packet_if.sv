@@ -84,15 +84,32 @@ module packet_if #(
             end
 
             if (rx_valid) begin
+                // Only CMD/LEN/PAYLOAD feed the CRC.  The two CRC bytes must
+                // not be folded back into the register, otherwise the value
+                // being compared has already absorbed the value it is compared
+                // against and every frame fails verification - found by the
+                // spi_packet_link and packet_if_vectors testbenches.
                 crc_data  <= rx_byte;
-                crc_start <= 1'b1;
+                crc_start <= (state != S_CRC1) && (state != S_CRC2);
                 case (state)
                     S_SYNC1: begin
                         crc_clear <= 1'b1;
                         idx       <= 8'h00;
                         state     <= (rx_byte == 8'hAA) ? S_SYNC2 : S_SYNC1;
                     end
-                    S_SYNC2: state <= (rx_byte == 8'h55) ? S_CMD : S_SYNC1;
+                    S_SYNC2: begin
+                        if (rx_byte == 8'h55) begin
+                            // The CRC covers CMD, LEN and PAYLOAD only, so the
+                            // running CRC is cleared on the *second* sync byte.
+                            // Letting 0x55 leak into the CRC (the first
+                            // implementation did) makes every well-formed frame
+                            // fail verification on the host - found by the
+                            // spi_packet_link testbench.
+                            crc_clear <= 1'b1;
+                            crc_start <= 1'b0;
+                            state     <= S_CMD;
+                        end else state <= S_SYNC1;
+                    end
                     S_CMD: begin
                         cmd_reg <= rx_byte;
                         state   <= S_LEN;

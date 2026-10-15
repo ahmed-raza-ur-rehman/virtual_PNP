@@ -1,0 +1,59 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# --- Node / web tooling ---
+node_modules/
+.npm/
+package-lock.json
+
+# --- EDA / flow artefacts (regenerate with `make`) ---
+runs/
+*.gds.out
+synthesis/**/build/
+verification/reports/*.vcd
+*.fst
+*.vcd
+*.vvp
+*.out
+*.jou
+*.log
+!docs/**/*.log
+
+# --- MCU build trees ---
+firmware/**/build/
+firmware/**/Debug/
+firmware/**/Release/
+firmware/**/*.elf
+firmware/**/*.bin
+firmware/**/*.hex
+firmware/**/*.map
+firmware/**/*.o
+firmware/**/*.d
+firmware/**/*.a
+
+# --- C++ / Rust / Go ---
+cpp/build/
+target/
+go/bin/
+*.obj
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

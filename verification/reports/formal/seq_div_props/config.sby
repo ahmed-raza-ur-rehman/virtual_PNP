@@ -1,0 +1,14 @@
+[options]
+mode bmc
+depth 40
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv seq_div_props.sv seq_div.sv
+prep -top seq_div_props
+
+[files]
+verification/formal/props/seq_div_props.sv
+rtl/common/seq_div.sv

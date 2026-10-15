@@ -1,0 +1,9 @@
+{
+  "quad_decoder_props": {
+    "status": "pass",
+    "results": [
+      "SBY  9:39:29 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] DONE (PASS, rc=0)"
+    ],
+    "covers": []
+  }
+}

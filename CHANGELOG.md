@@ -51,3 +51,31 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 [Unreleased]: https://github.com/ahmed-raza-ur-rehman/virtual_PNP/compare/v2.0.0...HEAD
 [2.0.0]: https://github.com/ahmed-raza-ur-rehman/virtual_PNP/releases/tag/v2.0.0
+
+## [2.1.0] - 2026-10-15
+
+### Added
+- **RTL subsystem** (`rtl/`): SystemVerilog/V2001-synthesizable control core with
+  a compiled-in interface contract (`rtl/common/pnp_defs.svh`): jerk-limited
+  `profile_gen`, `quad_decoder` with debounce and index latch, `stepgen` DDA,
+  `pid_axis` with anti-windup, `seq_div`, `crc16_ccitt`, `uart_tx`/`uart_rx`,
+  `spi_slave`, `packet_if` (framed command parser), `csr_bank`, window watchdog,
+  latching `limit_monitor`, streaming `centroid_accel` and the `pnp_core` top.
+- **Formal verification** (`verification/formal/`): SymbiYosys tasks proving
+  divider arithmetic and protocol, watchdog window semantics, limit-monitor
+  latching and encoder monoticity, with non-vacuity covers.
+- **HDL flow driver** (`tools/hdl_flow.py`) plus `make hdl-lint|hdl-synth|formal`
+  and repository tool shims (`tools/bin`) so the open-source EDA backend runs
+  from pip installs alone.
+
+### Fixed
+- `seq_div` implemented repeated subtraction instead of restoring division and
+  produced a saturated quotient for any dividend >= W*divisor.  Found by formal
+  property `seq_div_props` P2 (`quotient*divisor + remainder == dividend`).
+  The zero-divisor path now takes the same latency as a normal division.
+- `watchdog_wwdg` did not restart the window when a fault was acknowledged,
+  leaving the counter beyond `WIN_HIGH` with the reset request cleared.
+- `watchdog_wwdg` raised the trip one cycle after the counter passed the upper
+  window bound, making the effective window one cycle longer than specified.
+- `limit_monitor` registered `motion_inhibit`, adding a clock of latency to the
+  emergency-stop path; it is now combinational behind the debounce filter.

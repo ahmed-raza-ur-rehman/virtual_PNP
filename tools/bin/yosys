@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Shim: SymbiYosys and the Makefile call `yosys`; the repository ships the
+# WASM build (yowasp-yosys) so no system packages are required.  A system
+# installation is preferred when it exists, which keeps native runs faster.
+if command -v yowasp-yosys >/dev/null 2>&1; then exec yowasp-yosys "$@"; fi
+exec "$(dirname "$0")/../../.venv/bin/yowasp-yosys" "$@"

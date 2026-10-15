@@ -1,7 +1,10 @@
 """Advanced optimization: simulated annealing, genetic algorithm, multi-objective."""
+
 from __future__ import annotations
+
+from collections.abc import Callable
+
 import numpy as np
-from typing import List, Callable
 
 
 def simulated_annealing(cost_fn: Callable, x0, T0=1.0, alpha=0.995, iters=5000, seed=0):
@@ -21,7 +24,8 @@ def simulated_annealing(cost_fn: Callable, x0, T0=1.0, alpha=0.995, iters=5000, 
         if dE < 0 or rng.random() < np.exp(-dE / max(T, 1e-9)):
             cur_cost = new_cost
             if new_cost < best_cost:
-                best = x.copy(); best_cost = new_cost
+                best = x.copy()
+                best_cost = new_cost
         else:
             x[i], x[j] = x[j], x[i]  # revert
         T *= alpha
@@ -41,7 +45,7 @@ def genetic_algorithm(cost_fn, n, pop_size=40, generations=200, mutation=0.1, se
             new_pop.append(winner.copy())
         # crossover (order crossover)
         for i in range(0, pop_size - 1, 2):
-            p1, p2 = new_pop[i].copy(), new_pop[i+1].copy()
+            p1, p2 = new_pop[i].copy(), new_pop[i + 1].copy()
             if rng.random() < 0.8:
                 a, b = sorted(rng.integers(0, n, 2))
                 child = np.full(n, -1, dtype=int)
@@ -67,10 +71,12 @@ def nsga2(cost_fns, n, pop_size=50, generations=100, seed=0):
     """Multi-objective (NSGA-II) returning Pareto front indices."""
     rng = np.random.default_rng(seed)
     pop = [rng.permutation(n) for _ in range(pop_size)]
+
     def fronts(pop):
         F = np.array([[cf(p) for cf in cost_fns] for p in pop])
         # non-dominated sorting (simplified: single front)
         return F
+
     F = fronts(pop)
     # return population + fitness
     return pop, F

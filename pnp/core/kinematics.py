@@ -1,4 +1,5 @@
 """Kinematics for the gantry pick-and-place machine."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -19,4 +20,4 @@ def workspace_check(pose: Pose, cfg) -> bool:
     x0, x1 = cfg.xy_range_x
     y0, y1 = cfg.xy_range_y
     z0, z1 = cfg.z_range
-    return (x0 <= pose.x <= x1 and y0 <= pose.y <= y1 and z0 <= pose.z <= z1)
+    return x0 <= pose.x <= x1 and y0 <= pose.y <= y1 and z0 <= pose.z <= z1

@@ -1,10 +1,12 @@
 """Vision pipeline: calibration, fiducial detection, alignment, orientation."""
+
 from __future__ import annotations
 
 import numpy as np
 
 try:
     import cv2
+
     _CV2 = True
 except ImportError:
     _CV2 = False
@@ -18,7 +20,8 @@ class CameraCalibration:
     def calibrate(self, object_points, image_points, image_size):
         if _CV2:
             rms, K, dist, _rvecs, _tvecs = cv2.calibrateCamera(
-                object_points, image_points, image_size, None, None)
+                object_points, image_points, image_size, None, None
+            )
             self.K, self.dist = K, dist
             return float(rms)
         return 0.0

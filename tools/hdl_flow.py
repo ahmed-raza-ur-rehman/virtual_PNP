@@ -44,71 +44,98 @@ class Block:
 
 BLOCKS: dict[str, Block] = {
     "seq_div": Block(
-        "seq_div", "seq_div", ["rtl/common/seq_div.sv"],
+        "seq_div",
+        "seq_div",
+        ["rtl/common/seq_div.sv"],
         formal=["seq_div_props"],
         note="restoring divider used by the profile planner",
     ),
     "quad_decoder": Block(
-        "quad_decoder", "quad_decoder", ["rtl/motion/quad_decoder.sv"],
+        "quad_decoder",
+        "quad_decoder",
+        ["rtl/motion/quad_decoder.sv"],
         formal=["quad_decoder_props"],
         note="quadrature front end with glitch filter and index capture",
     ),
     "stepgen": Block(
-        "stepgen", "stepgen", ["rtl/motion/stepgen.sv"],
+        "stepgen",
+        "stepgen",
+        ["rtl/motion/stepgen.sv"],
         note="velocity to step DDA converter",
     ),
     "pid_axis": Block(
-        "pid_axis", "pid_axis", ["rtl/motion/pid_axis.sv"],
+        "pid_axis",
+        "pid_axis",
+        ["rtl/motion/pid_axis.sv"],
         note="fixed-point PID with anti-windup",
     ),
     "profile_gen": Block(
-        "profile_gen", "profile_gen",
+        "profile_gen",
+        "profile_gen",
         ["rtl/common/seq_div.sv", "rtl/motion/profile_gen.sv"],
         formal=["profile_gen_props"],
         note="jerk-limited setpoint generator",
     ),
     "crc16_ccitt": Block(
-        "crc16_ccitt", "crc16_ccitt", ["rtl/comm/crc16_ccitt.sv"],
+        "crc16_ccitt",
+        "crc16_ccitt",
+        ["rtl/comm/crc16_ccitt.sv"],
         note="CCITT framing CRC",
     ),
     "uart_tx": Block(
-        "uart_tx", "uart_tx", ["rtl/comm/uart_tx.sv"],
+        "uart_tx",
+        "uart_tx",
+        ["rtl/comm/uart_tx.sv"],
         note="8N1 transmitter",
     ),
     "uart_rx": Block(
-        "uart_rx", "uart_rx", ["rtl/comm/uart_rx.sv"],
+        "uart_rx",
+        "uart_rx",
+        ["rtl/comm/uart_rx.sv"],
         note="8N1 receiver with mid-bit sampling",
     ),
     "spi_slave": Block(
-        "spi_slave", "spi_slave", ["rtl/comm/spi_slave.sv"],
+        "spi_slave",
+        "spi_slave",
+        ["rtl/comm/spi_slave.sv"],
         note="mode 0/3 SPI slave with byte strobe",
     ),
     "packet_if": Block(
-        "packet_if", "packet_if",
+        "packet_if",
+        "packet_if",
         ["rtl/comm/crc16_ccitt.sv", "rtl/comm/packet_if.sv"],
         formal=["packet_if_props"],
         note="length + CRC framed command parser",
     ),
     "csr_bank": Block(
-        "csr_bank", "csr_bank", ["rtl/periph/csr_bank.sv"],
+        "csr_bank",
+        "csr_bank",
+        ["rtl/periph/csr_bank.sv"],
         note="control/status register bank with byte enables",
     ),
     "watchdog_wwdg": Block(
-        "watchdog_wwdg", "watchdog_wwdg", ["rtl/safety/watchdog_wwdg.sv"],
+        "watchdog_wwdg",
+        "watchdog_wwdg",
+        ["rtl/safety/watchdog_wwdg.sv"],
         formal=["watchdog_props"],
         note="window watchdog: kick too early or too late trips",
     ),
     "limit_monitor": Block(
-        "limit_monitor", "limit_monitor", ["rtl/safety/limit_monitor.sv"],
+        "limit_monitor",
+        "limit_monitor",
+        ["rtl/safety/limit_monitor.sv"],
         formal=["limit_monitor_props"],
         note="latching limit/e-stop supervisor",
     ),
     "centroid_accel": Block(
-        "centroid_accel", "centroid_accel", ["rtl/vision/centroid_accel.sv"],
+        "centroid_accel",
+        "centroid_accel",
+        ["rtl/vision/centroid_accel.sv"],
         note="streaming centroid + second-moment orientation accumulator",
     ),
     "pnp_core": Block(
-        "pnp_core", "pnp_core",
+        "pnp_core",
+        "pnp_core",
         [
             "rtl/common/seq_div.sv",
             "rtl/motion/quad_decoder.sv",
@@ -170,7 +197,9 @@ def run(cmd: list[str], log: Path | None = None, check: bool = True) -> str:
     """Run a command, echo it, optionally tee to a log file."""
     printable = " ".join(cmd)
     print(f"  $ {printable}")
-    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT, env=tool_env())
+    proc = subprocess.run(
+        cmd, capture_output=True, text=True, cwd=ROOT, env=tool_env(), check=False
+    )
     out = proc.stdout + proc.stderr
     if log is not None:
         log.parent.mkdir(parents=True, exist_ok=True)
@@ -254,7 +283,7 @@ def synth(yosys: str, only: list[str] | None = None) -> dict:
             f"stat"
         )
         log = REPORTS / "synth" / f"{name}.log"
-        out = yosys_script(script, yosys, log=log)
+        yosys_script(script, yosys, log=log)
         # The WASM build truncates the console log when ABC maps the design;
         # the JSON netlist is the authoritative artefact, so the histogram is
         # taken from there rather than scraped from stdout.
@@ -280,8 +309,10 @@ def synth(yosys: str, only: list[str] | None = None) -> dict:
             "netlist": str(netlist.relative_to(ROOT)),
             "json": str(json_out.relative_to(ROOT)),
         }
-        print(f"  {name:16s} {n_cells:5d} cells  ~{gates:6d} GE  "
-              f"~{summary[name]['area_um2_estimate_130nm']:8.0f} um^2")
+        print(
+            f"  {name:16s} {n_cells:5d} cells  ~{gates:6d} GE  "
+            f"~{summary[name]['area_um2_estimate_130nm']:8.0f} um^2"
+        )
     (REPORTS / "synth").mkdir(parents=True, exist_ok=True)
     (REPORTS / "synth" / "summary.json").write_text(json.dumps(summary, indent=2))
     return summary
@@ -304,7 +335,11 @@ def formal(sby: str, yosys: str, only: list[str] | None = None) -> dict:
         log = out_dir / f"{name}.log"
         proc = subprocess.run(
             [sby, "-f", "-d", str(out_dir / name), str(task.relative_to(ROOT))],
-            capture_output=True, text=True, cwd=ROOT, env=tool_env(),
+            capture_output=True,
+            text=True,
+            cwd=ROOT,
+            env=tool_env(),
+            check=False,
         )
         out = proc.stdout + proc.stderr
         log.write_text(f"$ {sby} {task.name}\n\n{out}", encoding="utf-8")

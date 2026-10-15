@@ -1,7 +1,8 @@
 """Machine and camera calibration routines."""
+
 from __future__ import annotations
+
 import numpy as np
-from .pipeline import CameraCalibration
 
 
 def calibrate_machine(grid_points, measured_points):

@@ -17,12 +17,12 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from asic.miniflow import gdsii                                    # noqa: E402
-from asic.miniflow.netlist_map import Instance, Net, Netlist, map_netlist   # noqa: E402
-from asic.miniflow.placer import PlacementError, place             # noqa: E402
-from asic.miniflow.router import Grid, route                       # noqa: E402
-from asic.miniflow.signoff import Layout, check_connectivity, check_drc    # noqa: E402
-from asic.miniflow.tech import LIBRARY, RULES, snap_to_grid        # noqa: E402
+from asic.miniflow import gdsii
+from asic.miniflow.netlist_map import Instance, MapError, Net, Netlist, map_netlist
+from asic.miniflow.placer import place
+from asic.miniflow.router import Grid, route
+from asic.miniflow.signoff import Layout, check_connectivity, check_drc
+from asic.miniflow.tech import LIBRARY, RULES, snap_to_grid
 
 BUILD = ROOT / "synthesis" / "build"
 
@@ -54,7 +54,9 @@ def _synthetic_netlist() -> Netlist:
 # --------------------------------------------------------------------------- #
 def test_library_is_grid_aligned():
     for name, cell in LIBRARY.items():
-        assert abs(cell.width / RULES.routing_pitch - round(cell.width / RULES.routing_pitch)) < 1e-9, name
+        assert (
+            abs(cell.width / RULES.routing_pitch - round(cell.width / RULES.routing_pitch)) < 1e-9
+        ), name
         for pin, (x, y) in cell.pins.items():
             assert abs(x / RULES.routing_pitch - round(x / RULES.routing_pitch)) < 1e-9, (name, pin)
 
@@ -73,16 +75,19 @@ def test_snap_to_grid_rounds_up():
 
 def test_rules_allow_the_routing_pitch():
     """pitch >= width + space is what makes a routed track legal by design."""
-    for width, space in ((RULES.m1_width, RULES.m1_space), (RULES.m2_width, RULES.m2_space),
-                         (RULES.m3_width, RULES.m3_space), (RULES.m5_width, RULES.m5_space)):
+    for width, space in (
+        (RULES.m1_width, RULES.m1_space),
+        (RULES.m2_width, RULES.m2_space),
+        (RULES.m3_width, RULES.m3_space),
+        (RULES.m5_width, RULES.m5_space),
+    ):
         assert RULES.routing_pitch + 1e-9 >= width + space
 
 
 # --------------------------------------------------------------------------- #
 # mapping
 # --------------------------------------------------------------------------- #
-@pytest.mark.skipif(not (BUILD / "crc16_ccitt.json").exists(),
-                    reason="run `make hdl-synth` first")
+@pytest.mark.skipif(not (BUILD / "crc16_ccitt.json").exists(), reason="run `make hdl-synth` first")
 def test_map_real_netlist():
     nl = map_netlist(BUILD / "crc16_ccitt.json", "crc16_ccitt")
     assert nl.instances
@@ -95,12 +100,18 @@ def test_map_real_netlist():
 def test_map_rejects_unknown_cells(tmp_path):
     import json
 
-    design = {"modules": {"m": {"ports": {}, "cells": {
-        "c1": {"type": "$_MYSTERY_", "connections": {"A": [2], "Y": [3]}}},
-        "netnames": {}}}}
+    design = {
+        "modules": {
+            "m": {
+                "ports": {},
+                "cells": {"c1": {"type": "$_MYSTERY_", "connections": {"A": [2], "Y": [3]}}},
+                "netnames": {},
+            }
+        }
+    }
     path = tmp_path / "m.json"
     path.write_text(json.dumps(design))
-    with pytest.raises(Exception):
+    with pytest.raises(MapError):
         map_netlist(path, "m")
 
 
@@ -113,8 +124,10 @@ def test_placement_is_legal_and_improves_wirelength():
     assert result.rows >= 1
     assert result.hpwl_after <= result.hpwl_before + 1e-6
     # no two cells may overlap
+    import itertools
+
     cells = sorted(nl.instances.values(), key=lambda i: i.x)
-    for left, right in zip(cells, cells[1:]):
+    for left, right in itertools.pairwise(cells):
         assert left.x + LIBRARY[left.cell].width <= right.x + 1e-6
 
 
@@ -134,7 +147,7 @@ def test_router_connects_a_series_chain():
     grid = Grid(nl)
     result, geometry = route(nl, grid=grid)
     assert result.routed >= 2
-    for net_name, data in geometry.items():
+    for data in geometry.values():
         for layer, x0, y0, x1, y1 in data["wires"]:
             assert layer in ("M1", "M2", "M3", "M4", "M5")
             # wires are drawn at the minimum width of their layer
@@ -159,9 +172,11 @@ def test_router_never_shares_a_track_between_nets():
 def test_gds_round_trip(tmp_path):
     library = gdsii.Library(name="UNIT")
     library.cells["INV_X1"] = [gdsii.rect(5, 0, 0, 1.2, RULES.cell_height)]
-    library.top = [gdsii.sref("INV_X1", 0, 0),
-                   gdsii.path(7, 0, 5, 10, 5, 0.2),
-                   gdsii.text(63, 0, 6, "net1")]
+    library.top = [
+        gdsii.sref("INV_X1", 0, 0),
+        gdsii.path(7, 0, 5, 10, 5, 0.2),
+        gdsii.text(63, 0, 6, "net1"),
+    ]
     path = gdsii.write_gds(tmp_path / "unit.gds", library)
     summary = gdsii.read_gds_summary(path)
     assert summary["structures"]["INV_X1"] == 1
@@ -188,7 +203,7 @@ def test_gds_reader_rejects_truncation(tmp_path):
 def test_drc_flags_a_spacing_violation():
     layout = Layout()
     layout.add_metal("M1", (0.0, 0.0, 1.0, 0.2), net="n1")
-    layout.add_metal("M1", (1.1, 0.0, 2.0, 0.2), net="n2")     # 0.1 gap, rule 0.2
+    layout.add_metal("M1", (1.1, 0.0, 2.0, 0.2), net="n2")  # 0.1 gap, rule 0.2
     result = check_drc(layout)
     assert result.status == "violations"
     assert any(v["kind"] == "spacing" for v in result.violations)

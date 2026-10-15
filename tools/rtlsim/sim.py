@@ -21,9 +21,8 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Callable
 
-from .netlist import Design, NetlistError
+from .netlist import Design
 
 # --------------------------------------------------------------------------- #
 # cell semantics: name -> (inputs, output, evaluator)
@@ -47,8 +46,8 @@ UNARY_GATES = {
     "$reduce_and": lambda a, w: 1 if all((a >> i) & 1 for i in range(w)) else 0,
     "$reduce_or": lambda a, w: 1 if a else 0,
     "$reduce_bool": lambda a, w: 1 if a else 0,
-    "$reduce_xor": lambda a, w: bin(a).count("1") & 1,
-    "$reduce_xnor": lambda a, w: (~bin(a).count("1")) & 1,
+    "$reduce_xor": lambda a, w: a.bit_count() & 1,
+    "$reduce_xnor": lambda a, w: (~a.bit_count()) & 1,
     "$logic_not": lambda a, w: 0 if a else 1,
 }
 ARITH = {
@@ -116,7 +115,7 @@ def parse_ff_type(cell_type: str, connections: dict | None = None) -> dict | Non
             return {
                 "clock": cpol,
                 "reset_active_low": second == "N",
-                "reset_value": 0,           # undefined in RTL: modelled as 0
+                "reset_value": 0,  # undefined in RTL: modelled as 0
                 "enable_active_low": False,
                 "has_enable": False,
                 "has_reset": True,
@@ -148,12 +147,33 @@ def parse_ff_type(cell_type: str, connections: dict | None = None) -> dict | Non
     return None
 
 
-SEQUENTIAL = {t for t in [
-    "$_DFF_P_", "$_DFF_N_", "$_DFF_PN0_", "$_DFF_PN1_", "$_DFF_NN0_", "$_DFF_NN1_",
-    "$_SDFF_PN0_", "$_SDFF_PN1_", "$_SDFF_NN0_", "$_SDFF_NN1_",
-    "$_DFFE_PN0P_", "$_DFFE_PN1P_", "$_DFFE_PP0P_", "$_DFFE_PP1P_",
-    "$dff", "$dffe", "$adff", "$adffe", "$sdff", "$sdffe", "$aldff", "$aldffe",
-]}
+SEQUENTIAL = {
+    t
+    for t in [
+        "$_DFF_P_",
+        "$_DFF_N_",
+        "$_DFF_PN0_",
+        "$_DFF_PN1_",
+        "$_DFF_NN0_",
+        "$_DFF_NN1_",
+        "$_SDFF_PN0_",
+        "$_SDFF_PN1_",
+        "$_SDFF_NN0_",
+        "$_SDFF_NN1_",
+        "$_DFFE_PN0P_",
+        "$_DFFE_PN1P_",
+        "$_DFFE_PP0P_",
+        "$_DFFE_PP1P_",
+        "$dff",
+        "$dffe",
+        "$adff",
+        "$adffe",
+        "$sdff",
+        "$sdffe",
+        "$aldff",
+        "$aldffe",
+    ]
+}
 _DFFE_PREFIX = "$_DFFE_"
 _DFFSR_PREFIX = "$_DFFSR_"
 
@@ -186,7 +206,7 @@ class Simulation:
 
     # ------------------------------------------------------------------ setup
     def __post_init__(self) -> None:
-        self._wires: dict[int, int] = {}       # net id -> width
+        self._wires: dict[int, int] = {}  # net id -> width
         self._collect_widths()
         self._check_supported()
         self._build_order()
@@ -208,7 +228,10 @@ class Simulation:
         for cell in self.design.cells.values():
             t = cell.type
             if (
-                t in BIN_GATES or t in UNARY_GATES or t in ARITH or t in CMP
+                t in BIN_GATES
+                or t in UNARY_GATES
+                or t in ARITH
+                or t in CMP
                 or is_sequential(t)
                 or t in {"$mux", "$_MUX_", "$pmux", "$concat", "$slice", "$tribuf", "$_TBUF_"}
             ):
@@ -244,7 +267,6 @@ class Simulation:
 
         def is_seq(cell) -> bool:
             return is_sequential(cell.type)
-
 
         def visit(node: str) -> None:
             if node in perm:
@@ -306,7 +328,7 @@ class Simulation:
             return ("Y",)
         if t == "$slice":
             return ("Y",)
-        if t in SEQUENTIAL or t.startswith(_DFFE_PREFIX) or t.startswith(_DFFSR_PREFIX):
+        if t in SEQUENTIAL or t.startswith((_DFFE_PREFIX, _DFFSR_PREFIX)):
             return ("Q",)
         if t in {"$tribuf", "$_TBUF_"}:
             return ("Y",)
@@ -366,7 +388,9 @@ class Simulation:
                 self._write_output(cell, BIN_GATES[t](a, b, 1))
             elif t in UNARY_GATES:
                 a = self._read(cell, "A")
-                width = max(1, len([b for b in cell.connections.get("A", []) if isinstance(b, int)]))
+                width = max(
+                    1, len([b for b in cell.connections.get("A", []) if isinstance(b, int)])
+                )
                 self._write_output(cell, UNARY_GATES[t](a, width))
             elif t in ARITH:
                 a, b = self._read(cell, "A"), self._read(cell, "B")
@@ -380,7 +404,9 @@ class Simulation:
             elif t == "$pmux":
                 a, b, s = self._read(cell, "A"), self._read(cell, "B"), self._read(cell, "S")
                 result = a
-                for i in range(max(1, len([x for x in cell.connections.get("S", []) if isinstance(x, int)]))):
+                for i in range(
+                    max(1, len([x for x in cell.connections.get("S", []) if isinstance(x, int)]))
+                ):
                     if (s >> i) & 1:
                         width = self._port_width(cell, "A")
                         result = (b >> (i * width)) & ((1 << width) - 1)
@@ -446,12 +472,15 @@ class Simulation:
         for name in self._seq_cells:
             cell = self.design.cells[name]
             spec = parse_ff_type(cell.type, cell.connections)
-            if spec is None:                       # pragma: no cover - guarded at load
+            if spec is None:  # pragma: no cover - guarded at load
                 raise SimError(f"unhandled flip-flop {cell.type}")
             ports = spec["ports"]
             reset_raw = self._read(cell, ports["reset"]) if spec.get("has_reset", True) else 0
-            reset_active = ((reset_raw == 0) if spec["reset_active_low"] else (reset_raw == 1)) \
-                if spec.get("has_reset", True) else False
+            reset_active = (
+                ((reset_raw == 0) if spec["reset_active_low"] else (reset_raw == 1))
+                if spec.get("has_reset", True)
+                else False
+            )
             enable_raw = self._read(cell, ports["enable"]) if spec["has_enable"] else 1
             enable_active = (enable_raw == 0) if spec["enable_active_low"] else (enable_raw == 1)
             data = self._read(cell, ports["data"])

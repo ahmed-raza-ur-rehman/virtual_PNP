@@ -33,8 +33,8 @@ class Design:
 
     name: str
     cells: dict[str, Cell]
-    ports: dict[str, dict]          # name -> {"direction": str, "bits": [int]}
-    netnames: dict[str, dict]       # name -> {"bits": [int], "hide_name": int}
+    ports: dict[str, dict]  # name -> {"direction": str, "bits": [int]}
+    netnames: dict[str, dict]  # name -> {"bits": [int], "hide_name": int}
     top: str
 
     @property
@@ -62,7 +62,7 @@ def load_design(json_path: str | Path, top: str | None = None) -> Design:
     if not modules:
         raise NetlistError(f"{path} contains no modules")
     if top is None:
-        top = data.get("top") or (list(modules)[0] if len(modules) == 1 else None)
+        top = data.get("top") or (next(iter(modules)) if len(modules) == 1 else None)
     if top is None:
         raise NetlistError(f"{path} has several modules; pass --top explicitly")
     if top not in modules:

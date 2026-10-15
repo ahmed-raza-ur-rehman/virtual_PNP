@@ -1,9 +1,11 @@
 """FastAPI REST service exposing optimization and planning."""
+
 from __future__ import annotations
 
 try:
     from fastapi import FastAPI
     from pydantic import BaseModel
+
     _FASTAPI = True
 except ImportError:
     _FASTAPI = False

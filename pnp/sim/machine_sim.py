@@ -1,4 +1,5 @@
 """Physics simulation of the pick-and-place machine."""
+
 import numpy as np
 
 
@@ -17,14 +18,14 @@ class MachineSim:
             d = tp - self.pos
             dist = np.linalg.norm(d)
             if dist > 1e-6:
-                self.vel[:2] += (d/dist) * accel * speed
+                self.vel[:2] += (d / dist) * accel * speed
             # damping
             self.vel[:2] *= damp
             self.pos += self.vel[:2] * dt
             # clamp speed
             sp = np.linalg.norm(self.vel[:2])
-            if sp > speed*1.5:
-                self.vel[:2] = self.vel[:2]/sp * speed*1.5
+            if sp > speed * 1.5:
+                self.vel[:2] = self.vel[:2] / sp * speed * 1.5
         if target_z is not None:
             dz = target_z - self.nozzle_z
             self.vel[2] += np.sign(dz) * accel * 1.5

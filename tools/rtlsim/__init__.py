@@ -9,14 +9,14 @@ synthesised, not just about the RTL text.
 """
 
 from .netlist import Design, NetlistError, load_design
-from .sim import Simulation, SimError
+from .sim import SimError, Simulation
 from .vcd import VCDWriter
 
 __all__ = [
     "Design",
     "NetlistError",
-    "Simulation",
     "SimError",
+    "Simulation",
     "VCDWriter",
     "load_design",
 ]

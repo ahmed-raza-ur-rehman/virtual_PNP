@@ -1,4 +1,5 @@
 """Lightweight CNN for component orientation classification (numpy-based)."""
+
 import numpy as np
 
 
@@ -18,21 +19,21 @@ class SimpleCNN:
     def _conv(self, x):
         # x: (1,H,W)
         H, W = x.shape[1], x.shape[2]
-        out = np.zeros((8, H-2, W-2))
+        out = np.zeros((8, H - 2, W - 2))
         for f in range(8):
-            for i in range(H-2):
-                for j in range(W-2):
-                    out[f, i, j] = np.sum(x[:, i:i+3, j:j+3] * self.W1[f]) + self.b1[f]
+            for i in range(H - 2):
+                for j in range(W - 2):
+                    out[f, i, j] = np.sum(x[:, i : i + 3, j : j + 3] * self.W1[f]) + self.b1[f]
         return np.maximum(out, 0)  # relu
 
     def _pool(self, x):
         # 2x2 max pool
         c, h, w = x.shape
-        out = np.zeros((c, h//2, w//2))
+        out = np.zeros((c, h // 2, w // 2))
         for ci in range(c):
-            for i in range(0, h-1, 2):
-                for j in range(0, w-1, 2):
-                    out[ci, i//2, j//2] = x[ci, i:i+2, j:j+2].max()
+            for i in range(0, h - 1, 2):
+                for j in range(0, w - 1, 2):
+                    out[ci, i // 2, j // 2] = x[ci, i : i + 2, j : j + 2].max()
         return out
 
     def forward(self, x: np.ndarray) -> np.ndarray:

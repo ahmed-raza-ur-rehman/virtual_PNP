@@ -17,8 +17,11 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-HAS_YOSYS = bool(shutil.which("yosys") or shutil.which("yowasp-yosys")
-                 or (ROOT / ".venv" / "bin" / "yowasp-yosys").exists())
+HAS_YOSYS = bool(
+    shutil.which("yosys")
+    or shutil.which("yowasp-yosys")
+    or (ROOT / ".venv" / "bin" / "yowasp-yosys").exists()
+)
 
 pytestmark = pytest.mark.skipif(not HAS_YOSYS, reason="yosys is not installed")
 
@@ -58,10 +61,20 @@ def test_simulator_rejects_unknown_cells(tmp_path):
     from rtlsim.netlist import load_design
     from rtlsim.sim import SimError, Simulation
 
-    design = {"modules": {"m": {"ports": {"a": {"direction": "input", "bits": [2]}},
-                                "cells": {"c": {"type": "$_NAND3_", "connections": {
-                                    "A": [2], "B": [2], "C": [2], "Y": [3]}}},
-                                "netnames": {}}}}
+    design = {
+        "modules": {
+            "m": {
+                "ports": {"a": {"direction": "input", "bits": [2]}},
+                "cells": {
+                    "c": {
+                        "type": "$_NAND3_",
+                        "connections": {"A": [2], "B": [2], "C": [2], "Y": [3]},
+                    }
+                },
+                "netnames": {},
+            }
+        }
+    }
     path = tmp_path / "m.json"
     path.write_text(json.dumps(design))
     loaded = load_design(path, "m")

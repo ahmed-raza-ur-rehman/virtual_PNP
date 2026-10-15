@@ -7,8 +7,8 @@ Only the subset needed for scalar and vector nets is emitted.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 
 class VCDWriter:
@@ -49,7 +49,7 @@ class VCDWriter:
         return _dt.datetime.now().strftime("%a %b %d %H:%M:%S %Y")
 
     # -- recording ---------------------------------------------------------
-    def open(self) -> "VCDWriter":
+    def open(self) -> VCDWriter:
         self._fh = self.path.open("w", encoding="utf-8")
         self._time = 0
         self._header()
@@ -87,8 +87,9 @@ class VCDWriter:
             self._fh.close()
             self._fh = None
 
-    def __enter__(self) -> "VCDWriter":
-        return self.open()
+    def __enter__(self) -> VCDWriter:
+        self.open()
+        return self
 
     def __exit__(self, *exc: object) -> None:
         self.close()

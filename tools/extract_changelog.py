@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Extract one released section from CHANGELOG.md (Keep a Changelog format)."""
+
 from __future__ import annotations
 
 import re

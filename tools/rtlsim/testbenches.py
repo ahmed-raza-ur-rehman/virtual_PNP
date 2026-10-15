@@ -31,9 +31,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from rtlsim.netlist import load_design          # noqa: E402
-from rtlsim.sim import Simulation               # noqa: E402
-from rtlsim.vcd import VCDWriter                # noqa: E402
+from rtlsim.netlist import load_design
+from rtlsim.sim import Simulation
+from rtlsim.vcd import VCDWriter
 
 BUILD = ROOT / "synthesis" / "build" / "sim"
 
@@ -88,13 +88,20 @@ def synthesize(top: str, files: list[str], params: dict[str, int] | None = None)
         f"write_json {out.relative_to(ROOT)}",
         "stat",
     ]
-    subprocess.run([find_yosys(), "-q", "-p", "; ".join(script)], check=True, cwd=ROOT, capture_output=True)
+    subprocess.run(
+        [find_yosys(), "-q", "-p", "; ".join(script)], check=True, cwd=ROOT, capture_output=True
+    )
     return out
 
 
-def simulate(top: str, files: list[str], params: dict[str, int] | None = None,
-             clock_period: int = 10, trace: tuple[str, ...] = (),
-             waves_dir: Path | None = None) -> tuple[Simulation, VCDWriter | None]:
+def simulate(
+    top: str,
+    files: list[str],
+    params: dict[str, int] | None = None,
+    clock_period: int = 10,
+    trace: tuple[str, ...] = (),
+    waves_dir: Path | None = None,
+) -> tuple[Simulation, VCDWriter | None]:
     netlist = synthesize(top, files, params)
     design = load_design(netlist, top=top)
     writer = None
@@ -130,8 +137,9 @@ def crc16_ccitt(data: bytes, init: int = 0xFFFF) -> int:
 # --------------------------------------------------------------------------- #
 def tb_crc_vectors(waves: Path | None) -> Result:
     res = Result("crc_vectors")
-    sim, writer = simulate("crc16_ccitt", ["rtl/comm/crc16_ccitt.sv"],
-                           trace=("crc",), waves_dir=waves)
+    sim, writer = simulate(
+        "crc16_ccitt", ["rtl/comm/crc16_ccitt.sv"], trace=("crc",), waves_dir=waves
+    )
     reset(sim)
     payload = b"123456789"
     for byte in payload:
@@ -152,8 +160,9 @@ def tb_seq_div_random(waves: Path | None) -> Result:
     import random
 
     res = Result("seq_div_random")
-    sim, writer = simulate("seq_div", ["rtl/common/seq_div.sv"], params={"W": 8},
-                           trace=("done",), waves_dir=waves)
+    sim, writer = simulate(
+        "seq_div", ["rtl/common/seq_div.sv"], params={"W": 8}, trace=("done",), waves_dir=waves
+    )
     reset(sim)
 
     def divide(a: int, b: int) -> tuple[int, int]:
@@ -173,8 +182,8 @@ def tb_seq_div_random(waves: Path | None) -> Result:
     for _ in range(40):
         a, b = rng.randrange(256), rng.randrange(1, 256)
         q, r = divide(a, b)
-        ok_q += (q == a // b)
-        ok_r += (r == a % b)
+        ok_q += q == a // b
+        ok_r += r == a % b
     res.check(ok_q == 40, f"quotient matches for {ok_q}/40 random operands")
     res.check(ok_r == 40, f"remainder matches for {ok_r}/40 random operands")
 
@@ -187,12 +196,16 @@ def tb_seq_div_random(waves: Path | None) -> Result:
 
 def tb_watchdog_window(waves: Path | None) -> Result:
     res = Result("watchdog_window")
-    sim, writer = simulate("watchdog_wwdg", ["rtl/safety/watchdog_wwdg.sv"],
-                           params={"WIN_LOW": 4, "WIN_HIGH": 16},
-                           trace=("reset_req", "early_kick"), waves_dir=waves)
+    sim, writer = simulate(
+        "watchdog_wwdg",
+        ["rtl/safety/watchdog_wwdg.sv"],
+        params={"WIN_LOW": 4, "WIN_HIGH": 16},
+        trace=("reset_req", "early_kick"),
+        waves_dir=waves,
+    )
     reset(sim)
 
-    sim.set("kick", 1)                     # kick immediately: too early
+    sim.set("kick", 1)  # kick immediately: too early
     sim.clock_edge()
     sim.set("kick", 0)
     res.check(sim.get("early_kick") == 1, "kick inside the lower window raises early_kick")
@@ -202,12 +215,12 @@ def tb_watchdog_window(waves: Path | None) -> Result:
     sim.set("clear_fault", 0)
     sim.clock_edge()
 
-    sim.set("kick", 0)                     # then stop kicking entirely
+    sim.set("kick", 0)  # then stop kicking entirely
     for _ in range(20):
         sim.clock_edge()
     res.check(sim.get("reset_req") == 1, "a missed kick raises reset_req")
 
-    for _ in range(5):                     # the fault must survive a good kick
+    for _ in range(5):  # the fault must survive a good kick
         sim.set("kick", 1)
         sim.clock_edge()
         sim.set("kick", 0)
@@ -225,9 +238,13 @@ def tb_watchdog_window(waves: Path | None) -> Result:
 
 def tb_quad_decoder_motion(waves: Path | None) -> Result:
     res = Result("quad_decoder_motion")
-    sim, writer = simulate("quad_decoder", ["rtl/motion/quad_decoder.sv"],
-                           params={"CNT_W": 16, "FILTER_LEN": 1},
-                           trace=("moving",), waves_dir=waves)
+    sim, writer = simulate(
+        "quad_decoder",
+        ["rtl/motion/quad_decoder.sv"],
+        params={"CNT_W": 16, "FILTER_LEN": 1},
+        trace=("moving",),
+        waves_dir=waves,
+    )
     reset(sim)
     sim.set("count_en", 1)
 
@@ -236,7 +253,7 @@ def tb_quad_decoder_motion(waves: Path | None) -> Result:
     # itself so that the testbench documents the encoder arithmetic instead of
     # hard-coding a magic number.
     cycle = [(0, 0), (0, 1), (1, 1), (1, 0)]
-    SETTLE = 6                      # input synchroniser + glitch filter latency
+    SETTLE = 6  # input synchroniser + glitch filter latency
 
     def drive(states: list[tuple[int, int]]) -> int:
         """Drive a state sequence, returning the number of transitions."""
@@ -246,18 +263,22 @@ def tb_quad_decoder_motion(waves: Path | None) -> Result:
             sim.run(SETTLE)
         return sum(1 for i in range(1, len(states)) if states[i] != states[i - 1])
 
-    forward_states = cycle * 5                       # starts and ends at 00
+    forward_states = cycle * 5  # starts and ends at 00
     expected_fwd = drive(forward_states)
     count_after_forward = sim.get("count")
-    res.check(count_after_forward == expected_fwd,
-              f"{expected_fwd} forward quadrature edges counted ({count_after_forward})")
+    res.check(
+        count_after_forward == expected_fwd,
+        f"{expected_fwd} forward quadrature edges counted ({count_after_forward})",
+    )
     res.check(sim.get("dir") == 1, "direction reported as increasing")
 
     reverse_states = list(reversed(cycle)) * 3
     expected_rev = drive(reverse_states)
     count_after_reverse = sim.get("count")
-    res.check(count_after_reverse == expected_fwd - expected_rev,
-              f"reverse counts back down ({count_after_reverse})")
+    res.check(
+        count_after_reverse == expected_fwd - expected_rev,
+        f"reverse counts back down ({count_after_reverse})",
+    )
     res.check(sim.get("dir") == 0, "direction reported as decreasing")
 
     sim.set("idx_raw", 0)
@@ -265,7 +286,9 @@ def tb_quad_decoder_motion(waves: Path | None) -> Result:
     sim.set("idx_raw", 1)
     sim.run(SETTLE)
     res.check(sim.get("index_seen") == 1, "index pulse captured")
-    res.check(sim.get("index_pos") == count_after_reverse, "index position latched at the index edge")
+    res.check(
+        sim.get("index_pos") == count_after_reverse, "index position latched at the index edge"
+    )
 
     sim.set("count_en", 0)
     before = sim.get("count")
@@ -282,14 +305,20 @@ def tb_quad_decoder_motion(waves: Path | None) -> Result:
 def tb_uart_tx_framing(waves: Path | None) -> Result:
     res = Result("uart_tx_framing")
     # CLK_HZ/BAUD chosen so that BAUD_DIV = 8 keeps the trace readable
-    sim, writer = simulate("uart_tx", ["rtl/comm/uart_tx.sv"],
-                           params={"CLK_HZ": 80, "BAUD": 10, "BAUD_DIV": 8},
-                           trace=("tx",), waves_dir=waves)
+    sim, writer = simulate(
+        "uart_tx",
+        ["rtl/comm/uart_tx.sv"],
+        params={"CLK_HZ": 80, "BAUD": 10, "BAUD_DIV": 8},
+        trace=("tx",),
+        waves_dir=waves,
+    )
     reset(sim)
     sim.set("data", 0xA5)
     sim.set("valid", 1)
     sim.clock_edge()
-    res.check(sim.get("ready") == 0, "the transmitter marks itself not ready once a byte is accepted")
+    res.check(
+        sim.get("ready") == 0, "the transmitter marks itself not ready once a byte is accepted"
+    )
     sim.set("valid", 0)
 
     # The line goes low one clock after the byte is accepted, then each bit is
@@ -315,10 +344,15 @@ def tb_spi_packet_link(waves: Path | None) -> Result:
     res = Result("spi_packet_link")
     sim, writer = simulate(
         "spi_packet_harness",
-        ["rtl/comm/spi_slave.sv", "rtl/comm/crc16_ccitt.sv", "rtl/comm/packet_if.sv",
-         "verification/tb/harness/spi_packet_harness.sv"],
+        [
+            "rtl/comm/spi_slave.sv",
+            "rtl/comm/crc16_ccitt.sv",
+            "rtl/comm/packet_if.sv",
+            "verification/tb/harness/spi_packet_harness.sv",
+        ],
         params={"MAX_PAYLOAD": 8, "LEN_W": 4, "TIMEOUT": 100000},
-        trace=("frames_ok", "frames_err"), waves_dir=waves,
+        trace=("frames_ok", "frames_err"),
+        waves_dir=waves,
     )
     reset(sim)
     sim.set("cs_n", 1)
@@ -331,22 +365,31 @@ def tb_spi_packet_link(waves: Path | None) -> Result:
         sim.run(2)
         for byte in bytes_:
             for bit in range(8):
-                sim.set("mosi", (byte >> (7 - bit)) & 1)   # SPI is MSB first
+                sim.set("mosi", (byte >> (7 - bit)) & 1)  # SPI is MSB first
                 sim.set("sck", 1)
                 sim.clock_edge()
                 sim.set("sck", 0)
                 sim.clock_edge()
         sim.set("cs_n", 1)
-        sim.run(10)          # let the framer settle (error counters update late)
-        trail.append((sim.get("frames_ok"), sim.get("frames_err"),
-                      sim.get("err_bad_crc"), sim.get("err_bad_len")))
+        sim.run(10)  # let the framer settle (error counters update late)
+        trail.append(
+            (
+                sim.get("frames_ok"),
+                sim.get("frames_err"),
+                sim.get("err_bad_crc"),
+                sim.get("err_bad_len"),
+            )
+        )
 
     payload = bytes([0x11, 0x22, 0x33, 0x44])
     frame = bytes([0xAA, 0x55, 0x01, len(payload)]) + payload
     crc = crc16_ccitt(frame[2:])
     send(list(frame) + [crc >> 8, crc & 0xFF])
     sim.run(2)
-    res.check(sim.get("frames_ok") == 1, f"a valid frame is accepted (frames_ok == {sim.get('frames_ok')})")
+    res.check(
+        sim.get("frames_ok") == 1,
+        f"a valid frame is accepted (frames_ok == {sim.get('frames_ok')})",
+    )
     res.check(sim.get("err_bad_crc") == 0, "a valid frame does not raise a CRC error")
 
     bad = bytes([0xAA, 0x55, 0x02, 4]) + payload + bytes([0x00, 0x00])
@@ -357,7 +400,7 @@ def tb_spi_packet_link(waves: Path | None) -> Result:
 
     bad_len = bytes([0xAA, 0x55, 0x03, 0x00])
     send(list(bad_len))
-    sim.run(4)                     # let the parser settle after the final byte
+    sim.run(4)  # let the parser settle after the final byte
     res.check(sim.get("err_bad_len") == 1, "a zero-length payload is rejected")
     res.check(sim.get("frames_err") >= 2, f"the error counter advances (trail={trail})")
     if writer:
@@ -382,7 +425,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--waves", default=None, help="directory for VCD output")
     args = parser.parse_args(argv)
 
-    selected = args.only or (list(TESTBENCHES) if args.all else list(TESTBENCHES))
+    selected = args.only or list(TESTBENCHES)
     waves = Path(args.waves) if args.waves else None
     if waves:
         (ROOT / waves).mkdir(parents=True, exist_ok=True)
@@ -395,7 +438,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"== {name}")
         try:
             res = TESTBENCHES[name](waves)
-        except Exception as exc:                      # noqa: BLE001 - reported, not swallowed
+        except Exception as exc:  # noqa: BLE001 - reported, not swallowed
             res = Result(name, status="error")
             res.failures.append(f"{type(exc).__name__}: {exc}")
         for line in res.checks:
@@ -413,8 +456,10 @@ def main(argv: list[str] | None = None) -> int:
         "checks": sum(len(r.checks) for r in results),
     }
     (report_dir / "summary.json").write_text(json.dumps(summary, indent=2))
-    print(f"\n{summary['passed']} passed, {summary['failed']} failed, "
-          f"{summary['checks']} assertions checked")
+    print(
+        f"\n{summary['passed']} passed, {summary['failed']} failed, "
+        f"{summary['checks']} assertions checked"
+    )
     return 0 if summary["failed"] == 0 else 1
 
 

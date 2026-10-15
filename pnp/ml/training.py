@@ -1,4 +1,5 @@
 """Training utilities for orientation/defect models."""
+
 from __future__ import annotations
 
 import numpy as np

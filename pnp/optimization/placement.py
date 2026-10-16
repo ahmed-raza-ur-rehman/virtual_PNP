@@ -103,18 +103,26 @@ def optimize_placement(targets: list[dict], start=(0.0, 0.0)) -> list[dict]:
             c = pts[i]
         return d
 
-    # 2-opt
+    # 2-opt (incremental delta)
     seq = list(ordered_local)
+    nseq = len(seq)
+    def dd(a, b):
+        return float(np.linalg.norm(pts[a] - pts[b]))
     improved = True
     it = 0
-    while improved and it < 200:
+    while improved and it < 5:
         improved = False
         it += 1
-        for i in range(1, len(seq) - 1):
-            for j in range(i + 1, len(seq)):
-                cand = seq[:i] + seq[i : j + 1][::-1] + seq[j + 1 :]
-                if path_len(cand) < path_len(seq) - 1e-9:
-                    seq = cand
+        for i in range(1, nseq - 1):
+            for j in range(i + 1, nseq):
+                if j + 1 >= nseq:
+                    continue
+                a, b = seq[i-1], seq[i]
+                c, d2 = seq[j], seq[j+1]
+                old = dd(a, b) + dd(c, d2)
+                new = dd(a, c) + dd(b, d2)
+                if new < old - 1e-12:
+                    seq[i:j+1] = seq[i:j+1][::-1]
                     improved = True
     # append any missing
     for i in range(len(unplaced)):

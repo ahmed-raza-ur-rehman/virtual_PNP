@@ -1,0 +1,8 @@
+name: C++
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: g++ -std=c++17 -I cpp/include cpp/src/pnp.cpp cpp/tests/test_pnp.cpp -o /tmp/test_pnp && /tmp/test_pnp

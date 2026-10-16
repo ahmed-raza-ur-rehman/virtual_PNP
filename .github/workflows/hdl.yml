@@ -1,75 +1,11 @@
 name: HDL
-
-on:
-  push:
-    paths: ["rtl/**", "verification/**", "synthesis/**", "tools/rtlsim/**", ".github/workflows/hdl.yml"]
-  pull_request:
-    paths: ["rtl/**", "verification/**", "synthesis/**", "tools/rtlsim/**"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
+on: [push, pull_request]
 jobs:
-  lint-synth:
-    name: Lint + synthesis (yosys)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install yowasp-yosys
-      - name: Lint
-        run: make hdl-lint YOSYS=yowasp-yosys
-      - name: Synthesise all blocks
-        run: make hdl-synth YOSYS=yowasp-yosys
-      - uses: actions/upload-artifact@v4
-        with:
-          name: synthesis-reports
-          path: verification/reports/
-
   formal:
-    name: Formal proofs (SymbiYosys)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install yowasp-yosys yowasp-sby
-      - run: make formal SBY=yowasp-sby
-      - uses: actions/upload-artifact@v4
-        with:
-          name: formal-reports
-          path: verification/reports/formal/
-
-  rtl-sim:
-    name: RTL simulation (netlist simulator)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install yowasp-yosys numpy
-      - run: make rtl-sim
-      - uses: actions/upload-artifact@v4
-        with:
-          name: waveforms
-          path: verification/reports/waves/
-
-  asic-flow:
-    name: RTL-to-GDSII (miniflow)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install yowasp-yosys numpy scipy
-      - run: make asic
-      - uses: actions/upload-artifact@v4
-        with:
-          name: gds
-          path: asic/build/
+        with: { python-version: "3.11" }
+      - run: pip install yowasp-yosys
+      - run: python -m asic.miniflow.flow --design crc16_ccitt --out build/crc

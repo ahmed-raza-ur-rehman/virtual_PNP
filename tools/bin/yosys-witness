@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+if command -v yowasp-yosys-witness >/dev/null 2>&1; then exec yowasp-yosys-witness "$@"; fi
+exec "$(dirname "$0")/../../.venv/bin/yowasp-yosys-witness" "$@"

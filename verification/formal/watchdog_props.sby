@@ -1,0 +1,14 @@
+[options]
+mode bmc
+depth 30
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv watchdog_props.sv watchdog_wwdg.sv
+prep -top watchdog_props
+
+[files]
+verification/formal/props/watchdog_props.sv
+rtl/safety/watchdog_wwdg.sv

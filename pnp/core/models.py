@@ -1,4 +1,5 @@
 """Core domain models for the virtual SMD pick-and-place machine."""
+
 from __future__ import annotations
 
 from enum import Enum

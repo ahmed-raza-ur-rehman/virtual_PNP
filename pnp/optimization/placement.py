@@ -1,4 +1,5 @@
 """Placement sequence optimization: TSP (nearest-neighbor + 2-opt + LKH-style)."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -58,9 +59,11 @@ def optimize_placement(targets: list[dict], start=(0.0, 0.0)) -> list[dict]:
     seen = set()
     for t in unplaced:
         if t["type"] not in seen:
-            seen.add(t["type"]); types.append(t["type"])
-    centroids = {ty: pts[[i for i, t in enumerate(unplaced) if t["type"] == ty]].mean(axis=0)
-                 for ty in types}
+            seen.add(t["type"])
+            types.append(t["type"])
+    centroids = {
+        ty: pts[[i for i, t in enumerate(unplaced) if t["type"] == ty]].mean(axis=0) for ty in types
+    }
     type_order = sorted(types, key=lambda ty: np.linalg.norm(centroids[ty] - start_pt))
     ordered_local = []
     cur = start_pt
@@ -89,6 +92,7 @@ def optimize_placement(targets: list[dict], start=(0.0, 0.0)) -> list[dict]:
     list(range(len(ordered_local)))
     # refine using 2-opt on actual points
     pts[ordered_local]
+
     # nearest neighbor baseline already; apply 2-opt on index list
     # (operate on ordered_local directly)
     def path_len(seq):
@@ -98,6 +102,7 @@ def optimize_placement(targets: list[dict], start=(0.0, 0.0)) -> list[dict]:
             d += np.linalg.norm(pts[i] - c)
             c = pts[i]
         return d
+
     # 2-opt
     seq = list(ordered_local)
     improved = True
@@ -107,7 +112,7 @@ def optimize_placement(targets: list[dict], start=(0.0, 0.0)) -> list[dict]:
         it += 1
         for i in range(1, len(seq) - 1):
             for j in range(i + 1, len(seq)):
-                cand = seq[:i] + seq[i:j + 1][::-1] + seq[j + 1:]
+                cand = seq[:i] + seq[i : j + 1][::-1] + seq[j + 1 :]
                 if path_len(cand) < path_len(seq) - 1e-9:
                     seq = cand
                     improved = True

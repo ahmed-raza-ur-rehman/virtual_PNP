@@ -1,0 +1,100 @@
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] Removing directory '/home/user/virtual_PNP/verification/reports/formal/seq_div_props'.
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] Copy '/home/user/virtual_PNP/verification/formal/props/seq_div_props.sv' to '/home/user/virtual_PNP/verification/reports/formal/seq_div_props/src/seq_div_props.sv'.
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] Copy '/home/user/virtual_PNP/rtl/common/seq_div.sv' to '/home/user/virtual_PNP/verification/reports/formal/seq_div_props/src/seq_div.sv'.
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: smtbmc z3
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] base: starting process "cd /home/user/virtual_PNP/verification/reports/formal/seq_div_props/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] base: finished (returncode=0)
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] prep: starting process "cd /home/user/virtual_PNP/verification/reports/formal/seq_div_props/model; yosys -ql design_prep.log design_prep.ys"
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] prep: finished (returncode=0)
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] smt2: starting process "cd /home/user/virtual_PNP/verification/reports/formal/seq_div_props/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] smt2: finished (returncode=0)
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: starting process "cd /home/user/virtual_PNP/verification/reports/formal/seq_div_props; yosys-smtbmc -s z3 --presat --noprogress -t 40  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Solver: z3
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 1..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 1..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 2..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 2..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 3..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 3..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 4..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 4..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 5..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 5..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 6..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 6..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 7..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 7..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 8..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 8..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 9..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 9..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 10..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 10..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 11..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 11..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 12..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 12..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assumptions in step 13..
+SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:00  Checking assertions in step 13..
+SBY 10:20:24 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:01  Checking assumptions in step 14..
+SBY 10:20:24 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:02  Checking assertions in step 14..
+SBY 10:20:26 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:03  Checking assumptions in step 15..
+SBY 10:20:26 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:03  Checking assertions in step 15..
+SBY 10:20:28 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:05  Checking assumptions in step 16..
+SBY 10:20:28 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:05  Checking assertions in step 16..
+SBY 10:20:30 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:07  Checking assumptions in step 17..
+SBY 10:20:30 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:07  Checking assertions in step 17..
+SBY 10:20:32 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:09  Checking assumptions in step 18..
+SBY 10:20:32 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:09  Checking assertions in step 18..
+SBY 10:20:34 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:11  Checking assumptions in step 19..
+SBY 10:20:34 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:11  Checking assertions in step 19..
+SBY 10:20:36 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:14  Checking assumptions in step 20..
+SBY 10:20:36 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:14  Checking assertions in step 20..
+SBY 10:20:38 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:15  Checking assumptions in step 21..
+SBY 10:20:38 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:15  Checking assertions in step 21..
+SBY 10:20:40 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:17  Checking assumptions in step 22..
+SBY 10:20:40 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:17  Checking assertions in step 22..
+SBY 10:20:42 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:19  Checking assumptions in step 23..
+SBY 10:20:42 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:19  Checking assertions in step 23..
+SBY 10:20:44 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:21  Checking assumptions in step 24..
+SBY 10:20:44 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:21  Checking assertions in step 24..
+SBY 10:20:46 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:23  Checking assumptions in step 25..
+SBY 10:20:46 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:23  Checking assertions in step 25..
+SBY 10:20:48 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:25  Checking assumptions in step 26..
+SBY 10:20:48 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:25  Checking assertions in step 26..
+SBY 10:20:50 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:27  Checking assumptions in step 27..
+SBY 10:20:50 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:27  Checking assertions in step 27..
+SBY 10:20:52 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:29  Checking assumptions in step 28..
+SBY 10:20:52 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:29  Checking assertions in step 28..
+SBY 10:20:54 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:32  Checking assumptions in step 29..
+SBY 10:20:54 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:32  Checking assertions in step 29..
+SBY 10:20:56 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:33  Checking assumptions in step 30..
+SBY 10:20:56 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:33  Checking assertions in step 30..
+SBY 10:20:58 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:35  Checking assumptions in step 31..
+SBY 10:20:58 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:35  Checking assertions in step 31..
+SBY 10:21:00 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:38  Checking assumptions in step 32..
+SBY 10:21:01 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:38  Checking assertions in step 32..
+SBY 10:21:03 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:40  Checking assumptions in step 33..
+SBY 10:21:03 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:40  Checking assertions in step 33..
+SBY 10:21:05 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:42  Checking assumptions in step 34..
+SBY 10:21:05 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:42  Checking assertions in step 34..
+SBY 10:21:07 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:44  Checking assumptions in step 35..
+SBY 10:21:07 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:44  Checking assertions in step 35..
+SBY 10:21:09 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:46  Checking assumptions in step 36..
+SBY 10:21:09 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:46  Checking assertions in step 36..
+SBY 10:21:11 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:48  Checking assumptions in step 37..
+SBY 10:21:11 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:48  Checking assertions in step 37..
+SBY 10:21:14 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:51  Checking assumptions in step 38..
+SBY 10:21:14 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:51  Checking assertions in step 38..
+SBY 10:21:16 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:53  Checking assumptions in step 39..
+SBY 10:21:16 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:53  Checking assertions in step 39..
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: ##   0:00:55  Status: passed
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: finished (returncode=0)
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] engine_0: Status returned by engine: pass
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:56 (56)
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:56 (56)
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] summary: engine_0 (smtbmc z3) returned pass
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] summary: engine_0 did not produce any traces
+SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] DONE (PASS, rc=0)

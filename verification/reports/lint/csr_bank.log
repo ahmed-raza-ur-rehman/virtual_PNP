@@ -1,0 +1,690 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/periph/csr_bank.sv
+hierarchy -top csr_bank
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/periph/csr_bank.sv
+hierarchy -top csr_bank
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/periph/csr_bank.sv
+Parsing SystemVerilog input from `rtl/periph/csr_bank.sv' to AST representation.
+Generating RTLIL representation for module `\csr_bank'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \csr_bank
+
+2.2. Analyzing design hierarchy..
+Top module:  \csr_bank
+Removed 0 unused modules.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 4 switch rules as full_case in process $proc$rtl/periph/csr_bank.sv:87$9 in module csr_bank.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 5 redundant assignments.
+Promoted 29 assignments to connections.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~6 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+     1/115: $0\err_sticky[31:0] [31:1]
+     2/115: $0\err_sticky[31:0] [0]
+     3/115: $3\merge16$func$rtl/periph/csr_bank.sv:114$5.$result[15:0]$111 [15:8]
+     4/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.$result[31:0]$107 [23:16]
+     5/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.$result[31:0]$103 [31:24]
+     6/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.$result[31:0]$103 [7:0]
+     7/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.$result[31:0]$99 [31:24]
+     8/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.$result[31:0]$99 [23:16]
+     9/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.$result[31:0]$95 [31:24]
+    10/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.$result[31:0]$95 [23:16]
+    11/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.$result[31:0]$95 [15:8]
+    12/115: $3\merge16$func$rtl/periph/csr_bank.sv:115$6.$result[15:0]$115 [15:8]
+    13/115: $3\merge16$func$rtl/periph/csr_bank.sv:115$6.$result[15:0]$115 [7:0]
+    14/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.$result[31:0]$107 [31:24]
+    15/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.$result[31:0]$99 [7:0]
+    16/115: $3\merge16$func$rtl/periph/csr_bank.sv:116$7.$result[15:0]$119 [7:0]
+    17/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.$result[31:0]$103 [15:8]
+    18/115: $3\merge16$func$rtl/periph/csr_bank.sv:116$7.new[31:0]$121
+    19/115: $3\merge16$func$rtl/periph/csr_bank.sv:116$7.old[15:0]$120
+    20/115: $3\merge16$func$rtl/periph/csr_bank.sv:114$5.$result[15:0]$111 [7:0]
+    21/115: $3\merge16$func$rtl/periph/csr_bank.sv:115$6.strb[3:0]$118
+    22/115: $3\merge16$func$rtl/periph/csr_bank.sv:115$6.new[31:0]$117
+    23/115: $3\merge16$func$rtl/periph/csr_bank.sv:115$6.old[15:0]$116
+    24/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.$result[31:0]$107 [15:8]
+    25/115: $3\merge16$func$rtl/periph/csr_bank.sv:114$5.strb[3:0]$114
+    26/115: $3\merge16$func$rtl/periph/csr_bank.sv:114$5.new[31:0]$113
+    27/115: $3\merge16$func$rtl/periph/csr_bank.sv:114$5.old[15:0]$112
+    28/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.$result[31:0]$103 [23:16]
+    29/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.strb[3:0]$110
+    30/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.new[31:0]$109
+    31/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.old[31:0]$108
+    32/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.$result[31:0]$99 [15:8]
+    33/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.strb[3:0]$106
+    34/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.new[31:0]$105
+    35/115: $3\merge$func$rtl/periph/csr_bank.sv:112$3.old[31:0]$104
+    36/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.$result[31:0]$95 [7:0]
+    37/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.strb[3:0]$102
+    38/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.new[31:0]$101
+    39/115: $3\merge$func$rtl/periph/csr_bank.sv:111$2.old[31:0]$100
+    40/115: $3\merge$func$rtl/periph/csr_bank.sv:113$4.$result[31:0]$107 [7:0]
+    41/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.strb[3:0]$98
+    42/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.new[31:0]$97
+    43/115: $3\merge$func$rtl/periph/csr_bank.sv:110$1.old[31:0]$96
+    44/115: $3\merge16$func$rtl/periph/csr_bank.sv:116$7.strb[3:0]$122
+    45/115: $2\merge16$func$rtl/periph/csr_bank.sv:116$7.strb[3:0]$94
+    46/115: $2\merge16$func$rtl/periph/csr_bank.sv:116$7.new[31:0]$93
+    47/115: $2\merge16$func$rtl/periph/csr_bank.sv:116$7.old[15:0]$92
+    48/115: $2\merge16$func$rtl/periph/csr_bank.sv:116$7.$result[15:0]$91
+    49/115: $2\merge16$func$rtl/periph/csr_bank.sv:115$6.strb[3:0]$90
+    50/115: $2\merge16$func$rtl/periph/csr_bank.sv:115$6.new[31:0]$89
+    51/115: $2\merge16$func$rtl/periph/csr_bank.sv:115$6.old[15:0]$88
+    52/115: $2\merge16$func$rtl/periph/csr_bank.sv:115$6.$result[15:0]$87
+    53/115: $2\merge16$func$rtl/periph/csr_bank.sv:114$5.strb[3:0]$86
+    54/115: $2\merge16$func$rtl/periph/csr_bank.sv:114$5.new[31:0]$85
+    55/115: $2\merge16$func$rtl/periph/csr_bank.sv:114$5.old[15:0]$84
+    56/115: $2\merge16$func$rtl/periph/csr_bank.sv:114$5.$result[15:0]$83
+    57/115: $2\merge$func$rtl/periph/csr_bank.sv:113$4.strb[3:0]$82
+    58/115: $2\merge$func$rtl/periph/csr_bank.sv:113$4.new[31:0]$81
+    59/115: $2\merge$func$rtl/periph/csr_bank.sv:113$4.old[31:0]$80
+    60/115: $2\merge$func$rtl/periph/csr_bank.sv:113$4.$result[31:0]$79
+    61/115: $2\merge$func$rtl/periph/csr_bank.sv:112$3.strb[3:0]$78
+    62/115: $2\merge$func$rtl/periph/csr_bank.sv:112$3.new[31:0]$77
+    63/115: $2\merge$func$rtl/periph/csr_bank.sv:112$3.old[31:0]$76
+    64/115: $2\merge$func$rtl/periph/csr_bank.sv:112$3.$result[31:0]$75
+    65/115: $2\merge$func$rtl/periph/csr_bank.sv:111$2.strb[3:0]$74
+    66/115: $2\merge$func$rtl/periph/csr_bank.sv:111$2.new[31:0]$73
+    67/115: $2\merge$func$rtl/periph/csr_bank.sv:111$2.old[31:0]$72
+    68/115: $2\merge$func$rtl/periph/csr_bank.sv:111$2.$result[31:0]$71
+    69/115: $2\merge$func$rtl/periph/csr_bank.sv:110$1.strb[3:0]$70
+    70/115: $2\merge$func$rtl/periph/csr_bank.sv:110$1.new[31:0]$69
+    71/115: $2\merge$func$rtl/periph/csr_bank.sv:110$1.old[31:0]$68
+    72/115: $2\merge$func$rtl/periph/csr_bank.sv:110$1.$result[31:0]$67
+    73/115: $1\merge16$func$rtl/periph/csr_bank.sv:116$7.strb[3:0]$66
+    74/115: $1\merge16$func$rtl/periph/csr_bank.sv:116$7.new[31:0]$65
+    75/115: $1\merge16$func$rtl/periph/csr_bank.sv:116$7.old[15:0]$64
+    76/115: $1\merge16$func$rtl/periph/csr_bank.sv:116$7.$result[15:0]$63
+    77/115: $1\merge16$func$rtl/periph/csr_bank.sv:115$6.strb[3:0]$62
+    78/115: $1\merge16$func$rtl/periph/csr_bank.sv:115$6.new[31:0]$61
+    79/115: $1\merge16$func$rtl/periph/csr_bank.sv:115$6.old[15:0]$60
+    80/115: $1\merge16$func$rtl/periph/csr_bank.sv:115$6.$result[15:0]$59
+    81/115: $1\merge16$func$rtl/periph/csr_bank.sv:114$5.strb[3:0]$58
+    82/115: $1\merge16$func$rtl/periph/csr_bank.sv:114$5.new[31:0]$57
+    83/115: $1\merge16$func$rtl/periph/csr_bank.sv:114$5.old[15:0]$56
+    84/115: $1\merge16$func$rtl/periph/csr_bank.sv:114$5.$result[15:0]$55
+    85/115: $1\merge$func$rtl/periph/csr_bank.sv:113$4.strb[3:0]$54
+    86/115: $1\merge$func$rtl/periph/csr_bank.sv:113$4.new[31:0]$53
+    87/115: $1\merge$func$rtl/periph/csr_bank.sv:113$4.old[31:0]$52
+    88/115: $1\merge$func$rtl/periph/csr_bank.sv:113$4.$result[31:0]$51
+    89/115: $1\merge$func$rtl/periph/csr_bank.sv:112$3.strb[3:0]$50
+    90/115: $1\merge$func$rtl/periph/csr_bank.sv:112$3.new[31:0]$49
+    91/115: $1\merge$func$rtl/periph/csr_bank.sv:112$3.old[31:0]$48
+    92/115: $1\merge$func$rtl/periph/csr_bank.sv:112$3.$result[31:0]$47
+    93/115: $1\merge$func$rtl/periph/csr_bank.sv:111$2.strb[3:0]$46
+    94/115: $1\merge$func$rtl/periph/csr_bank.sv:111$2.new[31:0]$45
+    95/115: $1\merge$func$rtl/periph/csr_bank.sv:111$2.old[31:0]$44
+    96/115: $1\merge$func$rtl/periph/csr_bank.sv:111$2.$result[31:0]$43
+    97/115: $1\merge$func$rtl/periph/csr_bank.sv:110$1.strb[3:0]$42
+    98/115: $1\merge$func$rtl/periph/csr_bank.sv:110$1.new[31:0]$41
+    99/115: $1\merge$func$rtl/periph/csr_bank.sv:110$1.old[31:0]$40
+   100/115: $1\merge$func$rtl/periph/csr_bank.sv:110$1.$result[31:0]$39
+   101/115: $0\rd_valid[0:0]
+   102/115: $0\ctrl_stop[0:0]
+   103/115: $0\ctrl_clear_faults[0:0]
+   104/115: $0\ctrl_start[0:0]
+   105/115: $0\wd_kick[0:0]
+   106/115: $3\merge16$func$rtl/periph/csr_bank.sv:116$7.$result[15:0]$119 [15:8]
+   107/115: $0\pid_kd[15:0]
+   108/115: $0\pid_ki[15:0]
+   109/115: $0\pid_kp[15:0]
+   110/115: $0\j_max[31:0]
+   111/115: $0\a_max[31:0]
+   112/115: $0\v_max[31:0]
+   113/115: $0\axis_target[31:0]
+   114/115: $0\ctrl_enable[0:0]
+   115/115: $0\rd_data[31:0]
+Creating decoders for process `\csr_bank.$proc$rtl/periph/csr_bank.sv:59$8'.
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\csr_bank.\status_word' from process `\csr_bank.$proc$rtl/periph/csr_bank.sv:59$8'.
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\csr_bank.\rd_data' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$900' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\rd_valid' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$905' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\ctrl_enable' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$910' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\ctrl_start' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$915' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\ctrl_stop' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$920' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\ctrl_clear_faults' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$925' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\axis_target' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$930' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\v_max' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$935' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\a_max' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$940' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\j_max' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$945' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\pid_kp' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$950' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\pid_ki' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$955' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\pid_kd' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$960' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\wd_kick' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$965' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\err_sticky' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$970' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:110$1.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$975' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:110$1.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$980' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:110$1.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$985' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:110$1.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$990' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:111$2.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$995' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:111$2.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1000' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:111$2.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1005' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:111$2.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1010' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:112$3.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1015' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:112$3.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1020' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:112$3.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1025' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:112$3.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1030' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:113$4.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1035' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:113$4.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1040' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:113$4.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1045' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge$func$rtl/periph/csr_bank.sv:113$4.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1050' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:114$5.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1055' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:114$5.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1060' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:114$5.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1065' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:114$5.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1070' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:115$6.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1075' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:115$6.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1080' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:115$6.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1085' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:115$6.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1090' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:116$7.$result' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1095' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:116$7.old' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1100' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:116$7.new' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1105' with positive edge clock and positive level reset.
+Creating register for signal `\csr_bank.\merge16$func$rtl/periph/csr_bank.sv:116$7.strb' using process `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+  created $adff cell `$procdff$1110' with positive edge clock and positive level reset.
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 6 empty switches in `\csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+Removing empty process `csr_bank.$proc$rtl/periph/csr_bank.sv:87$9'.
+Removing empty process `csr_bank.$proc$rtl/periph/csr_bank.sv:59$8'.
+Cleaned up 6 empty switches.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module csr_bank.
+<suppressed ~91 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module csr_bank.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\csr_bank'.
+Computing hashes of 328 cells of `\csr_bank'.
+Finding duplicate cells in `\csr_bank'.
+Computing hashes of 214 cells of `\csr_bank'.
+Finding duplicate cells in `\csr_bank'.
+<suppressed ~342 debug messages>
+Removed a total of 114 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \csr_bank..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$786.
+    dead port 2/2 on $mux $procmux$786.
+    dead port 1/2 on $mux $procmux$784.
+    dead port 2/2 on $mux $procmux$784.
+    dead port 1/2 on $mux $procmux$724.
+    dead port 2/2 on $mux $procmux$724.
+    dead port 1/2 on $mux $procmux$721.
+    dead port 2/2 on $mux $procmux$721.
+    dead port 1/2 on $mux $procmux$718.
+    dead port 2/2 on $mux $procmux$718.
+    dead port 1/2 on $mux $procmux$715.
+    dead port 2/2 on $mux $procmux$715.
+    dead port 1/2 on $mux $procmux$712.
+    dead port 2/2 on $mux $procmux$712.
+    dead port 1/2 on $mux $procmux$709.
+    dead port 2/2 on $mux $procmux$709.
+    dead port 1/2 on $mux $procmux$706.
+    dead port 2/2 on $mux $procmux$706.
+    dead port 1/2 on $mux $procmux$703.
+    dead port 2/2 on $mux $procmux$703.
+    dead port 1/2 on $mux $procmux$700.
+    dead port 2/2 on $mux $procmux$700.
+    dead port 1/2 on $mux $procmux$697.
+    dead port 2/2 on $mux $procmux$697.
+    dead port 1/2 on $mux $procmux$694.
+    dead port 2/2 on $mux $procmux$694.
+    dead port 1/2 on $mux $procmux$691.
+    dead port 2/2 on $mux $procmux$691.
+    dead port 1/2 on $mux $procmux$688.
+    dead port 2/2 on $mux $procmux$688.
+    dead port 1/2 on $mux $procmux$685.
+    dead port 2/2 on $mux $procmux$685.
+    dead port 1/2 on $mux $procmux$682.
+    dead port 2/2 on $mux $procmux$682.
+    dead port 1/2 on $mux $procmux$679.
+    dead port 2/2 on $mux $procmux$679.
+    dead port 1/2 on $mux $procmux$676.
+    dead port 2/2 on $mux $procmux$676.
+    dead port 1/2 on $mux $procmux$673.
+    dead port 2/2 on $mux $procmux$673.
+    dead port 1/2 on $mux $procmux$670.
+    dead port 2/2 on $mux $procmux$670.
+    dead port 1/2 on $mux $procmux$667.
+    dead port 2/2 on $mux $procmux$667.
+    dead port 1/2 on $mux $procmux$664.
+    dead port 2/2 on $mux $procmux$664.
+    dead port 1/2 on $mux $procmux$661.
+    dead port 2/2 on $mux $procmux$661.
+    dead port 1/2 on $mux $procmux$658.
+    dead port 2/2 on $mux $procmux$658.
+    dead port 1/2 on $mux $procmux$655.
+    dead port 2/2 on $mux $procmux$655.
+    dead port 1/2 on $mux $procmux$652.
+    dead port 2/2 on $mux $procmux$652.
+    dead port 1/2 on $mux $procmux$649.
+    dead port 2/2 on $mux $procmux$649.
+    dead port 1/2 on $mux $procmux$646.
+    dead port 2/2 on $mux $procmux$646.
+    dead port 1/2 on $mux $procmux$643.
+    dead port 2/2 on $mux $procmux$643.
+    dead port 1/2 on $mux $procmux$640.
+    dead port 2/2 on $mux $procmux$640.
+    dead port 1/2 on $mux $procmux$638.
+    dead port 2/2 on $mux $procmux$638.
+    dead port 1/2 on $mux $procmux$632.
+    dead port 2/2 on $mux $procmux$632.
+    dead port 1/2 on $mux $procmux$630.
+    dead port 2/2 on $mux $procmux$630.
+    dead port 1/2 on $mux $procmux$618.
+    dead port 2/2 on $mux $procmux$618.
+    dead port 1/2 on $mux $procmux$616.
+    dead port 2/2 on $mux $procmux$616.
+    dead port 1/2 on $mux $procmux$604.
+    dead port 2/2 on $mux $procmux$604.
+    dead port 1/2 on $mux $procmux$602.
+    dead port 2/2 on $mux $procmux$602.
+    dead port 1/2 on $mux $procmux$590.
+    dead port 2/2 on $mux $procmux$590.
+    dead port 1/2 on $mux $procmux$588.
+    dead port 2/2 on $mux $procmux$588.
+    dead port 1/2 on $mux $procmux$579.
+    dead port 2/2 on $mux $procmux$579.
+    dead port 1/2 on $mux $procmux$577.
+    dead port 2/2 on $mux $procmux$577.
+    dead port 1/2 on $mux $procmux$566.
+    dead port 2/2 on $mux $procmux$566.
+    dead port 1/2 on $mux $procmux$564.
+    dead port 2/2 on $mux $procmux$564.
+    dead port 1/2 on $mux $procmux$553.
+    dead port 2/2 on $mux $procmux$553.
+    dead port 1/2 on $mux $procmux$551.
+    dead port 2/2 on $mux $procmux$551.
+    dead port 1/2 on $mux $procmux$540.
+    dead port 2/2 on $mux $procmux$540.
+    dead port 1/2 on $mux $procmux$538.
+    dead port 2/2 on $mux $procmux$538.
+    dead port 1/2 on $mux $procmux$526.
+    dead port 2/2 on $mux $procmux$526.
+    dead port 1/2 on $mux $procmux$524.
+    dead port 2/2 on $mux $procmux$524.
+    dead port 1/2 on $mux $procmux$514.
+    dead port 2/2 on $mux $procmux$514.
+    dead port 1/2 on $mux $procmux$512.
+    dead port 2/2 on $mux $procmux$512.
+    dead port 1/2 on $mux $procmux$502.
+    dead port 2/2 on $mux $procmux$502.
+    dead port 1/2 on $mux $procmux$500.
+    dead port 2/2 on $mux $procmux$500.
+    dead port 1/2 on $mux $procmux$490.
+    dead port 2/2 on $mux $procmux$490.
+    dead port 1/2 on $mux $procmux$488.
+    dead port 2/2 on $mux $procmux$488.
+    dead port 1/2 on $mux $procmux$477.
+    dead port 2/2 on $mux $procmux$477.
+    dead port 1/2 on $mux $procmux$475.
+    dead port 2/2 on $mux $procmux$475.
+    dead port 1/2 on $mux $procmux$466.
+    dead port 2/2 on $mux $procmux$466.
+    dead port 1/2 on $mux $procmux$464.
+    dead port 2/2 on $mux $procmux$464.
+    dead port 1/2 on $mux $procmux$455.
+    dead port 2/2 on $mux $procmux$455.
+    dead port 1/2 on $mux $procmux$453.
+    dead port 2/2 on $mux $procmux$453.
+    dead port 1/2 on $mux $procmux$444.
+    dead port 2/2 on $mux $procmux$444.
+    dead port 1/2 on $mux $procmux$442.
+    dead port 2/2 on $mux $procmux$442.
+    dead port 1/2 on $mux $procmux$432.
+    dead port 2/2 on $mux $procmux$432.
+    dead port 1/2 on $mux $procmux$430.
+    dead port 2/2 on $mux $procmux$430.
+    dead port 1/2 on $mux $procmux$422.
+    dead port 2/2 on $mux $procmux$422.
+    dead port 1/2 on $mux $procmux$420.
+    dead port 2/2 on $mux $procmux$420.
+    dead port 1/2 on $mux $procmux$412.
+    dead port 2/2 on $mux $procmux$412.
+    dead port 1/2 on $mux $procmux$410.
+    dead port 2/2 on $mux $procmux$410.
+    dead port 1/2 on $mux $procmux$402.
+    dead port 2/2 on $mux $procmux$402.
+    dead port 1/2 on $mux $procmux$400.
+    dead port 2/2 on $mux $procmux$400.
+    dead port 1/2 on $mux $procmux$391.
+    dead port 2/2 on $mux $procmux$391.
+    dead port 1/2 on $mux $procmux$389.
+    dead port 2/2 on $mux $procmux$389.
+    dead port 1/2 on $mux $procmux$382.
+    dead port 2/2 on $mux $procmux$382.
+    dead port 1/2 on $mux $procmux$380.
+    dead port 2/2 on $mux $procmux$380.
+    dead port 1/2 on $mux $procmux$373.
+    dead port 2/2 on $mux $procmux$373.
+    dead port 1/2 on $mux $procmux$371.
+    dead port 2/2 on $mux $procmux$371.
+    dead port 1/2 on $mux $procmux$364.
+    dead port 2/2 on $mux $procmux$364.
+    dead port 1/2 on $mux $procmux$362.
+    dead port 2/2 on $mux $procmux$362.
+    dead port 1/2 on $mux $procmux$354.
+    dead port 2/2 on $mux $procmux$354.
+    dead port 1/2 on $mux $procmux$352.
+    dead port 2/2 on $mux $procmux$352.
+    dead port 1/2 on $mux $procmux$346.
+    dead port 2/2 on $mux $procmux$346.
+    dead port 1/2 on $mux $procmux$344.
+    dead port 2/2 on $mux $procmux$344.
+    dead port 1/2 on $mux $procmux$338.
+    dead port 2/2 on $mux $procmux$338.
+    dead port 1/2 on $mux $procmux$336.
+    dead port 2/2 on $mux $procmux$336.
+    dead port 1/2 on $mux $procmux$326.
+    dead port 2/2 on $mux $procmux$326.
+    dead port 1/2 on $mux $procmux$324.
+    dead port 2/2 on $mux $procmux$324.
+    dead port 1/2 on $mux $procmux$318.
+    dead port 2/2 on $mux $procmux$318.
+    dead port 1/2 on $mux $procmux$316.
+    dead port 2/2 on $mux $procmux$316.
+    dead port 1/2 on $mux $procmux$305.
+    dead port 2/2 on $mux $procmux$305.
+    dead port 1/2 on $mux $procmux$303.
+    dead port 2/2 on $mux $procmux$303.
+    dead port 1/2 on $mux $procmux$294.
+    dead port 2/2 on $mux $procmux$294.
+    dead port 1/2 on $mux $procmux$292.
+    dead port 2/2 on $mux $procmux$292.
+    dead port 1/2 on $mux $procmux$285.
+    dead port 2/2 on $mux $procmux$285.
+    dead port 1/2 on $mux $procmux$283.
+    dead port 2/2 on $mux $procmux$283.
+    dead port 1/2 on $mux $procmux$276.
+    dead port 2/2 on $mux $procmux$276.
+    dead port 1/2 on $mux $procmux$274.
+    dead port 2/2 on $mux $procmux$274.
+    dead port 1/2 on $mux $procmux$262.
+    dead port 2/2 on $mux $procmux$262.
+    dead port 1/2 on $mux $procmux$260.
+    dead port 2/2 on $mux $procmux$260.
+    dead port 1/2 on $mux $procmux$248.
+    dead port 2/2 on $mux $procmux$248.
+    dead port 1/2 on $mux $procmux$246.
+    dead port 2/2 on $mux $procmux$246.
+    dead port 1/2 on $mux $procmux$234.
+    dead port 2/2 on $mux $procmux$234.
+    dead port 1/2 on $mux $procmux$232.
+    dead port 2/2 on $mux $procmux$232.
+    dead port 1/2 on $mux $procmux$221.
+    dead port 2/2 on $mux $procmux$221.
+    dead port 1/2 on $mux $procmux$219.
+    dead port 2/2 on $mux $procmux$219.
+    dead port 1/2 on $mux $procmux$208.
+    dead port 2/2 on $mux $procmux$208.
+    dead port 1/2 on $mux $procmux$206.
+    dead port 2/2 on $mux $procmux$206.
+    dead port 1/2 on $mux $procmux$196.
+    dead port 2/2 on $mux $procmux$196.
+    dead port 1/2 on $mux $procmux$194.
+    dead port 2/2 on $mux $procmux$194.
+    dead port 1/2 on $mux $procmux$184.
+    dead port 2/2 on $mux $procmux$184.
+    dead port 1/2 on $mux $procmux$182.
+    dead port 2/2 on $mux $procmux$182.
+    dead port 1/2 on $mux $procmux$173.
+    dead port 2/2 on $mux $procmux$173.
+    dead port 1/2 on $mux $procmux$171.
+    dead port 2/2 on $mux $procmux$171.
+Removed 228 multiplexer ports.
+<suppressed ~116 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \csr_bank.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\csr_bank'.
+Computing hashes of 100 cells of `\csr_bank'.
+Finding duplicate cells in `\csr_bank'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$940 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \a_max [7:0]).
+Adding EN signal on $procdff$940 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \a_max [15:8]).
+Adding EN signal on $procdff$940 ($adff) from module csr_bank (D = \wr_data [23:16], Q = \a_max [23:16]).
+Adding EN signal on $procdff$940 ($adff) from module csr_bank (D = \wr_data [31:24], Q = \a_max [31:24]).
+Adding EN signal on $procdff$970 ($adff) from module csr_bank (D = $procmux$153_Y, Q = \err_sticky [31:1]).
+Adding EN signal on $procdff$970 ($adff) from module csr_bank (D = $procmux$163_Y, Q = \err_sticky [0]).
+Adding EN signal on $procdff$950 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \pid_kp [7:0]).
+Adding EN signal on $procdff$950 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \pid_kp [15:8]).
+Adding EN signal on $procdff$960 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \pid_kd [7:0]).
+Adding EN signal on $procdff$960 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \pid_kd [15:8]).
+Adding EN signal on $procdff$930 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \axis_target [7:0]).
+Adding EN signal on $procdff$930 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \axis_target [15:8]).
+Adding EN signal on $procdff$930 ($adff) from module csr_bank (D = \wr_data [23:16], Q = \axis_target [23:16]).
+Adding EN signal on $procdff$930 ($adff) from module csr_bank (D = \wr_data [31:24], Q = \axis_target [31:24]).
+Adding EN signal on $procdff$900 ($adff) from module csr_bank (D = $procmux$881_Y, Q = \rd_data).
+Adding EN signal on $procdff$945 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \j_max [7:0]).
+Adding EN signal on $procdff$945 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \j_max [15:8]).
+Adding EN signal on $procdff$945 ($adff) from module csr_bank (D = \wr_data [23:16], Q = \j_max [23:16]).
+Adding EN signal on $procdff$945 ($adff) from module csr_bank (D = \wr_data [31:24], Q = \j_max [31:24]).
+Adding EN signal on $procdff$935 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \v_max [7:0]).
+Adding EN signal on $procdff$935 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \v_max [15:8]).
+Adding EN signal on $procdff$935 ($adff) from module csr_bank (D = \wr_data [23:16], Q = \v_max [23:16]).
+Adding EN signal on $procdff$935 ($adff) from module csr_bank (D = \wr_data [31:24], Q = \v_max [31:24]).
+Adding EN signal on $procdff$955 ($adff) from module csr_bank (D = \wr_data [7:0], Q = \pid_ki [7:0]).
+Adding EN signal on $procdff$955 ($adff) from module csr_bank (D = \wr_data [15:8], Q = \pid_ki [15:8]).
+Adding EN signal on $procdff$910 ($adff) from module csr_bank (D = \wr_data [0], Q = \ctrl_enable).
+Setting constant 0-bit at position 0 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 1 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 2 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 3 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 4 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 5 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 6 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 7 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 8 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 9 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 10 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 11 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 12 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 13 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 14 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 15 on $procdff$1080 ($adff) from module csr_bank.
+Setting constant 0-bit at position 0 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 1 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 2 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 3 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 4 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 5 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 6 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 7 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 8 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 9 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 10 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 11 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 12 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 13 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 14 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 15 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 16 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 17 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 18 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 19 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 20 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 21 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 22 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 23 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 24 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 25 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 26 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 27 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 28 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 29 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 30 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 31 on $procdff$1035 ($adff) from module csr_bank.
+Setting constant 0-bit at position 0 on $procdff$1030 ($adff) from module csr_bank.
+Setting constant 0-bit at position 1 on $procdff$1030 ($adff) from module csr_bank.
+Setting constant 0-bit at position 2 on $procdff$1030 ($adff) from module csr_bank.
+Setting constant 0-bit at position 3 on $procdff$1030 ($adff) from module csr_bank.
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \csr_bank..
+Removed 41 unused cells and 513 unused wires.
+<suppressed ~42 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module csr_bank.
+<suppressed ~4 debug messages>
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \csr_bank..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~25 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \csr_bank.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\csr_bank'.
+Computing hashes of 101 cells of `\csr_bank'.
+Finding duplicate cells in `\csr_bank'.
+Removed a total of 0 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \csr_bank..
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module csr_bank.
+
+4.16. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing CHECK pass (checking for obvious problems).
+Checking module csr_bank...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== csr_bank ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      119 wires
+     1051 wire bits
+       50 public wires
+      798 public wire bits
+       28 ports
+      338 port bits
+      101 cells
+        5   $adff
+       26   $adffe
+        1   $and
+       20   $eq
+        2   $logic_not
+       16   $mux
+        1   $not
+        1   $pmux
+       25   $reduce_and
+        4   $reduce_bool
+
+End of script. Logfile hash: 63f72bb709, time: 0.09s, user: 0.09s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 45% 1x proc_mux (0 sec), 17% 2x read_verilog (0 sec), ...

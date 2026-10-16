@@ -1,4 +1,5 @@
 """Command-line interface for Virtual PnP."""
+
 from __future__ import annotations
 
 import json
@@ -16,8 +17,10 @@ console = Console()
 
 
 @app.command()
-def optimize(input: str = typer.Option(..., "--input", "-i", help="JSON file with targets"),
-            output: str = typer.Option("optimized.json", "--output", "-o")):
+def optimize(
+    input: str = typer.Option(..., "--input", "-i", help="JSON file with targets"),
+    output: str = typer.Option("optimized.json", "--output", "-o"),
+):
     with open(input) as f:
         data = json.load(f)
     targets = data["targets"]
@@ -28,12 +31,18 @@ def optimize(input: str = typer.Option(..., "--input", "-i", help="JSON file wit
 
 
 @app.command()
-def plan(waypoints: str = typer.Option(..., "--waypoints", "-w", help="CSV x,z pairs"),
-         v: float = 200.0, a: float = 100.0, j: float = 500.0):
+def plan(
+    waypoints: str = typer.Option(..., "--waypoints", "-w", help="CSV x,z pairs"),
+    v: float = 200.0,
+    a: float = 100.0,
+    j: float = 500.0,
+):
     pts = np.array([[float(x) for x in row.split(",")] for row in waypoints.split(";")])
     segs = plan_path(pts, v_max=v, a_max=a, j_max=j)
     t = Table(title="Trajectory")
-    t.add_column("Segment"); t.add_column("Samples"); t.add_column("Duration(s)")
+    t.add_column("Segment")
+    t.add_column("Samples")
+    t.add_column("Duration(s)")
     for i, s in enumerate(segs):
         t.add_row(str(i), str(len(s["t"])), f"{s['t'][-1]:.3f}")
     console.print(t)

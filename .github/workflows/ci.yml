@@ -1,18 +1,86 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  python:
+  software:
+    name: Software (py${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - run: pip install -e ".[dev]"
-      - run: ruff check pnp tests
-      - run: pytest -q
-  hdl:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Lint (ruff)
+        run: ruff check pnp tools tests
+      - name: Format check
+        run: ruff format --check pnp tools tests
+      - name: Types (mypy)
+        run: mypy pnp
+        continue-on-error: true
+      - name: Unit + integration tests
+        run: pytest -q --cov=pnp --cov-report=term --cov-report=xml
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-py${{ matrix.python }}
+          path: coverage.xml
+
+  native:
+    name: Native (${{ matrix.lang }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lang: cpp
+            cmd: make cpp-test
+          - lang: asm
+            cmd: make asm-test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & test
+        run: ${{ matrix.cmd }}
+
+  firmware-host-tests:
+    name: Firmware host tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "HDL lint placeholder"
+      - run: sudo apt-get update && sudo apt-get install -y build-essential
+      - run: make fw-test
+
+  web:
+    name: Web simulator smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Serve and check
+        run: |
+          python -m http.server 8099 --directory . &
+          sleep 2
+          curl -sf http://localhost:8099/index.html > /dev/null
+          curl -sf http://localhost:8099/three.min.js > /dev/null

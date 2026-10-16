@@ -1,0 +1,30 @@
+{
+  "limit_monitor_props": {
+    "status": "pass",
+    "results": [
+      "SBY 10:20:20 [/home/user/virtual_PNP/verification/reports/formal/limit_monitor_props] DONE (PASS, rc=0)"
+    ],
+    "covers": []
+  },
+  "quad_decoder_props": {
+    "status": "pass",
+    "results": [
+      "SBY 10:20:22 [/home/user/virtual_PNP/verification/reports/formal/quad_decoder_props] DONE (PASS, rc=0)"
+    ],
+    "covers": []
+  },
+  "seq_div_props": {
+    "status": "pass",
+    "results": [
+      "SBY 10:21:18 [/home/user/virtual_PNP/verification/reports/formal/seq_div_props] DONE (PASS, rc=0)"
+    ],
+    "covers": []
+  },
+  "watchdog_props": {
+    "status": "pass",
+    "results": [
+      "SBY 10:21:20 [/home/user/virtual_PNP/verification/reports/formal/watchdog_props] DONE (PASS, rc=0)"
+    ],
+    "covers": []
+  }
+}

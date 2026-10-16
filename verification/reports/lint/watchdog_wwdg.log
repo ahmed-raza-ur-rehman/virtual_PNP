@@ -1,0 +1,229 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/safety/watchdog_wwdg.sv
+hierarchy -top watchdog_wwdg
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/safety/watchdog_wwdg.sv
+hierarchy -top watchdog_wwdg
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/safety/watchdog_wwdg.sv
+Parsing SystemVerilog input from `rtl/safety/watchdog_wwdg.sv' to AST representation.
+Generating RTLIL representation for module `\watchdog_wwdg'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \watchdog_wwdg
+
+2.2. Analyzing design hierarchy..
+Top module:  \watchdog_wwdg
+Removed 0 unused modules.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 4 switch rules as full_case in process $proc$rtl/safety/watchdog_wwdg.sv:26$1 in module watchdog_wwdg.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~5 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+     1/4: $0\counter[31:0]
+     2/4: $0\late_kick[0:0]
+     3/4: $0\early_kick[0:0]
+     4/4: $0\reset_req[0:0]
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\watchdog_wwdg.\reset_req' using process `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+  created $adff cell `$procdff$51' with positive edge clock and positive level reset.
+Creating register for signal `\watchdog_wwdg.\early_kick' using process `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+  created $adff cell `$procdff$56' with positive edge clock and positive level reset.
+Creating register for signal `\watchdog_wwdg.\late_kick' using process `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+  created $adff cell `$procdff$61' with positive edge clock and positive level reset.
+Creating register for signal `\watchdog_wwdg.\counter' using process `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+  created $adff cell `$procdff$66' with positive edge clock and positive level reset.
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 5 empty switches in `\watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+Removing empty process `watchdog_wwdg.$proc$rtl/safety/watchdog_wwdg.sv:26$1'.
+Cleaned up 5 empty switches.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module watchdog_wwdg.
+<suppressed ~11 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module watchdog_wwdg.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\watchdog_wwdg'.
+Computing hashes of 28 cells of `\watchdog_wwdg'.
+Finding duplicate cells in `\watchdog_wwdg'.
+Computing hashes of 25 cells of `\watchdog_wwdg'.
+Finding duplicate cells in `\watchdog_wwdg'.
+<suppressed ~9 debug messages>
+Removed a total of 3 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \watchdog_wwdg..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port B of cell $procmux$39: \reset_req -> 1'1
+      Replacing known input bits on port A of cell $procmux$37: \reset_req -> 1'0
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~19 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \watchdog_wwdg.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\watchdog_wwdg'.
+Computing hashes of 25 cells of `\watchdog_wwdg'.
+Finding duplicate cells in `\watchdog_wwdg'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$56 ($adff) from module watchdog_wwdg (D = $procmux$35_Y, Q = \early_kick).
+Adding EN signal on $procdff$61 ($adff) from module watchdog_wwdg (D = $procmux$26_Y, Q = \late_kick).
+Adding EN signal on $procdff$51 ($adff) from module watchdog_wwdg (D = $procmux$45_Y, Q = \reset_req).
+Adding EN signal on $procdff$66 ($adff) from module watchdog_wwdg (D = $procmux$16_Y, Q = \counter).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \watchdog_wwdg..
+Removed 3 unused cells and 29 unused wires.
+<suppressed ~4 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module watchdog_wwdg.
+<suppressed ~3 debug messages>
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \watchdog_wwdg..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~19 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \watchdog_wwdg.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\watchdog_wwdg'.
+Computing hashes of 33 cells of `\watchdog_wwdg'.
+Finding duplicate cells in `\watchdog_wwdg'.
+Computing hashes of 32 cells of `\watchdog_wwdg'.
+Finding duplicate cells in `\watchdog_wwdg'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \watchdog_wwdg..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module watchdog_wwdg.
+
+4.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \watchdog_wwdg..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~19 debug messages>
+
+4.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \watchdog_wwdg.
+Performed a total of 0 changes.
+
+4.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\watchdog_wwdg'.
+Computing hashes of 32 cells of `\watchdog_wwdg'.
+Finding duplicate cells in `\watchdog_wwdg'.
+Removed a total of 0 cells.
+
+4.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \watchdog_wwdg..
+
+4.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module watchdog_wwdg.
+
+4.23. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing CHECK pass (checking for obvious problems).
+Checking module watchdog_wwdg...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== watchdog_wwdg ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       36 wires
+      222 wire bits
+        8 public wires
+       39 public wire bits
+        8 ports
+       39 port bits
+       32 cells
+        1   $add
+        4   $adffe
+        1   $ge
+        1   $lt
+       15   $mux
+        4   $ne
+        3   $reduce_and
+        3   $reduce_bool
+
+End of script. Logfile hash: 187d9a3f92, time: 0.01s, user: 0.01s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 21% 2x read_verilog (0 sec), 16% 5x opt_expr (0 sec), ...

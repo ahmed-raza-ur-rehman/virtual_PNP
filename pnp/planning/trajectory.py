@@ -1,4 +1,5 @@
 """Trajectory planning: S-curve, trapezoidal, jerk-limited, collision-aware."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -26,21 +27,27 @@ def s_curve_1d(distance: float, v_max: float, a_max: float, j_max: float, dt: fl
     t_total = 2 * t_acc + t_const
     n = max(2, int(np.ceil(t_total / dt)))
     ts = np.linspace(0, t_total, n)
-    pos = np.zeros(n); vel = np.zeros(n); acc = np.zeros(n)
+    pos = np.zeros(n)
+    vel = np.zeros(n)
+    acc = np.zeros(n)
     for i, t in enumerate(ts):
         if t < t_j:
             acc[i] = j_max * t
             vel[i] = 0.5 * j_max * t * t
-            pos[i] = j_max * t ** 3 / 6.0
+            pos[i] = j_max * t**3 / 6.0
         elif t < t_acc - t_j:
             acc[i] = a_peak
             vel[i] = 0.5 * j_max * t_j * t_j + a_peak * (t - t_j)  # approx
-            pos[i] = j_max * t_j ** 3 / 6.0 + a_peak * (t - t_j) * (t - t_j) / 2.0 + 0.5 * j_max * t_j * t_j * (t - t_j)
+            pos[i] = (
+                j_max * t_j**3 / 6.0
+                + a_peak * (t - t_j) * (t - t_j) / 2.0
+                + 0.5 * j_max * t_j * t_j * (t - t_j)
+            )
         elif t < t_acc:
             tau = t_acc - t
             acc[i] = j_max * tau
             vel[i] = v_max - 0.5 * j_max * tau * tau
-            pos[i] = d_acc - j_max * tau ** 3 / 6.0
+            pos[i] = d_acc - j_max * tau**3 / 6.0
         elif t < t_acc + t_const:
             acc[i] = 0.0
             vel[i] = v_max
@@ -80,8 +87,9 @@ def plan_path(waypoints: np.ndarray, v_max=200.0, a_max=100.0, j_max=500.0, dt=0
 def collision_free(points: np.ndarray, obstacles: list[tuple[float, float, float]]) -> bool:
     pts = np.asarray(points, dtype=float)
     for i in range(len(pts) - 1):
-        for (ox, oy, r) in obstacles:
-            a = pts[i]; b = pts[i + 1]
+        for ox, oy, r in obstacles:
+            a = pts[i]
+            b = pts[i + 1]
             ab = b - a
             denom = float(np.dot(ab, ab)) + 1e-12
             t = float(np.dot(np.array([ox, oy]) - a, ab) / denom)

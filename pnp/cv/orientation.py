@@ -1,8 +1,10 @@
 """Computer vision: component orientation detection."""
+
 import numpy as np
 
 try:
     import cv2
+
     _CV2 = True
 except ImportError:
     _CV2 = False

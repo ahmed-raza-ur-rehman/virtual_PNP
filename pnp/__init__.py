@@ -7,4 +7,5 @@ Subpackages:
 - gui: PyQt5 desktop application
 - sim: physics simulation
 """
+
 __version__ = "1.0.0"

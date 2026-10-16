@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+if command -v yowasp-yosys-smtbmc >/dev/null 2>&1; then exec yowasp-yosys-smtbmc "$@"; fi
+exec "$(dirname "$0")/../../.venv/bin/yowasp-yosys-smtbmc" "$@"

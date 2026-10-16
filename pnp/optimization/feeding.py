@@ -1,4 +1,5 @@
 """Feeder and turntable (circular tray) order optimization."""
+
 from __future__ import annotations
 
 import numpy as np

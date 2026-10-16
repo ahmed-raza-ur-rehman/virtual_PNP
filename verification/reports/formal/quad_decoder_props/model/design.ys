@@ -1,0 +1,8 @@
+# running in /home/user/virtual_PNP/verification/reports/formal/quad_decoder_props/src/
+read -formal -sv quad_decoder_props.sv quad_decoder.sv
+prep -top quad_decoder_props
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

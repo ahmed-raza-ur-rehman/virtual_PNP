@@ -1,0 +1,509 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/comm/crc16_ccitt.sv rtl/comm/packet_if.sv
+hierarchy -top packet_if
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/comm/crc16_ccitt.sv rtl/comm/packet_if.sv
+hierarchy -top packet_if
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/comm/crc16_ccitt.sv
+Parsing SystemVerilog input from `rtl/comm/crc16_ccitt.sv' to AST representation.
+Generating RTLIL representation for module `\crc16_ccitt'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/comm/packet_if.sv
+Parsing SystemVerilog input from `rtl/comm/packet_if.sv' to AST representation.
+Generating RTLIL representation for module `\packet_if'.
+Warning: Replacing memory \payload_buf with list of registers. See rtl/comm/packet_if.sv:128
+Successfully finished Verilog frontend.
+
+3. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1. Analyzing design hierarchy..
+Top module:  \packet_if
+Used module:     \crc16_ccitt
+
+3.2. Analyzing design hierarchy..
+Top module:  \packet_if
+Used module:     \crc16_ccitt
+Removed 0 unused modules.
+
+4. Executing PROC pass (convert processes to netlists).
+
+4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 9 switch rules as full_case in process $proc$rtl/comm/packet_if.sv:63$40 in module packet_if.
+Marked 2 switch rules as full_case in process $proc$rtl/comm/crc16_ccitt.sv:29$36 in module crc16_ccitt.
+Removed a total of 0 dead cases.
+
+4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 4 redundant assignments.
+Promoted 5 assignments to connections.
+
+4.4. Executing PROC_INIT pass (extract init attributes).
+
+4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+Found async reset \rst_n in `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:29$36'.
+
+4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~12 debug messages>
+
+4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+     1/45: $4\i[31:0]
+     2/45: $0\payload[63:0] [63:56]
+     3/45: $0\payload[63:0] [55:48]
+     4/45: $0\payload[63:0] [47:40]
+     5/45: $0\payload[63:0] [39:32]
+     6/45: $0\payload[63:0] [31:24]
+     7/45: $0\payload[63:0] [23:16]
+     8/45: $0\payload[63:0] [15:8]
+     9/45: $0\payload[63:0] [7:0]
+    10/45: $0\crc_calc[15:0] [7:0]
+    11/45: $3$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_ADDR[2:0]$57
+    12/45: $3\i[31:0]
+    13/45: $2$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_DATA[7:0]$53
+    14/45: $2$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_ADDR[2:0]$52
+    15/45: $2\i[31:0]
+    16/45: $1$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_DATA[7:0]$45
+    17/45: $1$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_ADDR[2:0]$44
+    18/45: $1\i[31:0]
+    19/45: $0\cmd_valid[0:0]
+    20/45: $0\crc_clear[0:0]
+    21/45: $0\crc_start[0:0]
+    22/45: $0\payload_buf[7][7:0]
+    23/45: $0\payload_buf[6][7:0]
+    24/45: $0\payload_buf[5][7:0]
+    25/45: $0\payload_buf[4][7:0]
+    26/45: $0\payload_buf[3][7:0]
+    27/45: $0\payload_buf[2][7:0]
+    28/45: $0\payload_buf[1][7:0]
+    29/45: $0\payload_buf[0][7:0]
+    30/45: $3$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_DATA[7:0]$58
+    31/45: $0\cmd_reg[7:0]
+    32/45: $0\timeout_cnt[15:0]
+    33/45: $0\crc_data[7:0]
+    34/45: $0\tick_en[0:0]
+    35/45: $0\idx[7:0]
+    36/45: $0\len_reg[7:0]
+    37/45: $0\state[2:0]
+    38/45: $0\frames_err[7:0]
+    39/45: $0\frames_ok[7:0]
+    40/45: $0\err_timeout[0:0]
+    41/45: $0\err_bad_len[0:0]
+    42/45: $0\err_bad_crc[0:0]
+    43/45: $0\crc_calc[15:0] [15:8]
+    44/45: $0\payload_len[3:0]
+    45/45: $0\cmd[7:0]
+Creating decoders for process `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:29$36'.
+     1/2: $0\done[0:0]
+     2/2: $0\crc[15:0]
+Creating decoders for process `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:23$2'.
+
+4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\crc16_ccitt.\c' from process `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:23$2'.
+No latch inferred for signal `\crc16_ccitt.\i' from process `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:23$2'.
+
+4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\packet_if.\i' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$522' with positive edge clock.
+Creating register for signal `\packet_if.\cmd_valid' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$527' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\cmd' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$532' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\payload_len' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$537' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\payload' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$542' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\err_bad_crc' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$547' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\err_bad_len' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$552' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\err_timeout' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$557' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\frames_ok' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$562' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\frames_err' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$567' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\state' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$572' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\len_reg' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$577' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\idx' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$582' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\tick_en' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$587' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\crc_start' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$592' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\crc_clear' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$597' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\crc_data' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$604' with positive edge clock.
+Creating register for signal `\packet_if.\timeout_cnt' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$609' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\cmd_reg' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$614' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.\crc_calc' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$621' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[0]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$628' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[1]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$635' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[2]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$642' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[3]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$649' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[4]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$656' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[5]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$663' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[6]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$670' with positive edge clock.
+Creating register for signal `\packet_if.\payload_buf[7]' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $dff cell `$procdff$677' with positive edge clock.
+Creating register for signal `\packet_if.$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_ADDR' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$682' with positive edge clock and positive level reset.
+Creating register for signal `\packet_if.$mem2reg_wr$\payload_buf$rtl/comm/packet_if.sv:128$39_DATA' using process `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+  created $adff cell `$procdff$687' with positive edge clock and positive level reset.
+Creating register for signal `\crc16_ccitt.\crc' using process `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:29$36'.
+  created $adff cell `$procdff$692' with positive edge clock and positive level reset.
+Creating register for signal `\crc16_ccitt.\done' using process `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:29$36'.
+  created $adff cell `$procdff$697' with positive edge clock and positive level reset.
+
+4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 10 empty switches in `\packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+Removing empty process `packet_if.$proc$rtl/comm/packet_if.sv:63$40'.
+Found and cleaned up 2 empty switches in `\crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:29$36'.
+Removing empty process `crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:29$36'.
+Removing empty process `crc16_ccitt.$proc$rtl/comm/crc16_ccitt.sv:23$2'.
+Cleaned up 12 empty switches.
+
+4.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module packet_if.
+<suppressed ~67 debug messages>
+Optimizing module crc16_ccitt.
+<suppressed ~28 debug messages>
+
+5. Executing OPT pass (performing simple optimizations).
+
+5.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module packet_if.
+Optimizing module crc16_ccitt.
+
+5.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\packet_if'.
+Computing hashes of 279 cells of `\packet_if'.
+Finding duplicate cells in `\packet_if'.
+Computing hashes of 210 cells of `\packet_if'.
+Finding duplicate cells in `\packet_if'.
+<suppressed ~207 debug messages>
+Finding identical cells in module `\crc16_ccitt'.
+Computing hashes of 26 cells of `\crc16_ccitt'.
+Finding duplicate cells in `\crc16_ccitt'.
+Computing hashes of 25 cells of `\crc16_ccitt'.
+Finding duplicate cells in `\crc16_ccitt'.
+<suppressed ~3 debug messages>
+Removed a total of 70 cells.
+
+5.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \packet_if..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$350.
+    dead port 2/2 on $mux $procmux$350.
+    dead port 1/2 on $mux $procmux$348.
+    dead port 2/2 on $mux $procmux$348.
+    dead port 1/2 on $mux $procmux$193.
+    dead port 2/2 on $mux $procmux$193.
+    dead port 1/2 on $mux $procmux$190.
+    dead port 2/2 on $mux $procmux$190.
+    dead port 2/2 on $mux $procmux$187.
+    dead port 1/2 on $mux $procmux$181.
+    dead port 2/2 on $mux $procmux$181.
+    dead port 1/2 on $mux $procmux$179.
+    dead port 2/2 on $mux $procmux$179.
+    dead port 2/2 on $mux $procmux$95.
+    dead port 2/2 on $mux $procmux$93.
+Running muxtree optimizer on module \crc16_ccitt..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 15 multiplexer ports.
+<suppressed ~206 debug messages>
+
+5.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \packet_if.
+  Optimizing cells in module \crc16_ccitt.
+Performed a total of 0 changes.
+
+5.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\packet_if'.
+Computing hashes of 201 cells of `\packet_if'.
+Finding duplicate cells in `\packet_if'.
+Finding identical cells in module `\crc16_ccitt'.
+Computing hashes of 25 cells of `\crc16_ccitt'.
+Finding duplicate cells in `\crc16_ccitt'.
+Removed a total of 0 cells.
+
+5.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$522 ($dff) from module packet_if (D = $3\i[31:0], Q = \i).
+Adding EN signal on $procdff$532 ($adff) from module packet_if (D = \cmd_reg, Q = \cmd).
+Adding EN signal on $procdff$621 ($dff) from module packet_if (D = \rx_byte, Q = \crc_calc [7:0]).
+Adding EN signal on $procdff$621 ($dff) from module packet_if (D = \rx_byte, Q = \crc_calc [15:8]).
+Adding EN signal on $procdff$642 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[2]).
+Adding EN signal on $procdff$537 ($adff) from module packet_if (D = \len_reg [3:0], Q = \payload_len).
+Adding EN signal on $procdff$663 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[5]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$85_Y, Q = \payload [63:56]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$83_Y, Q = \payload [55:48]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$81_Y, Q = \payload [47:40]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$79_Y, Q = \payload [39:32]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$77_Y, Q = \payload [31:24]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$75_Y, Q = \payload [23:16]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$73_Y, Q = \payload [15:8]).
+Adding EN signal on $procdff$542 ($adff) from module packet_if (D = $ternary$rtl/comm/packet_if.sv:144$71_Y, Q = \payload [7:0]).
+Adding EN signal on $procdff$677 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[7]).
+Adding EN signal on $procdff$547 ($adff) from module packet_if (D = 1'1, Q = \err_bad_crc).
+Adding EN signal on $procdff$552 ($adff) from module packet_if (D = 1'1, Q = \err_bad_len).
+Adding EN signal on $procdff$649 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[3]).
+Adding EN signal on $procdff$557 ($adff) from module packet_if (D = 1'1, Q = \err_timeout).
+Adding EN signal on $procdff$604 ($dff) from module packet_if (D = \rx_byte, Q = \crc_data).
+Adding EN signal on $procdff$562 ($adff) from module packet_if (D = $add$rtl/comm/packet_if.sv:146$86_Y, Q = \frames_ok).
+Adding EN signal on $procdff$609 ($adff) from module packet_if (D = $procmux$368_Y, Q = \timeout_cnt).
+Handling D = Q on $procdff$587 ($adff) from module packet_if (removing D path).
+Adding EN signal on $procdff$628 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[0]).
+Adding EN signal on $procdff$656 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[4]).
+Adding EN signal on $procdff$577 ($adff) from module packet_if (D = \rx_byte, Q = \len_reg).
+Adding EN signal on $procdff$614 ($adff) from module packet_if (D = \rx_byte, Q = \cmd_reg).
+Adding EN signal on $procdff$635 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[1]).
+Adding EN signal on $procdff$582 ($adff) from module packet_if (D = $procmux$377_Y, Q = \idx).
+Adding EN signal on $procdff$670 ($dff) from module packet_if (D = \rx_byte, Q = \payload_buf[6]).
+Setting constant 0-bit at position 0 on $procdff$587 ($dlatch) from module packet_if.
+Setting constant 0-bit at position 0 on $procdff$682 ($adff) from module packet_if.
+Setting constant 0-bit at position 1 on $procdff$682 ($adff) from module packet_if.
+Setting constant 0-bit at position 2 on $procdff$682 ($adff) from module packet_if.
+Setting constant 0-bit at position 0 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 1 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 2 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 3 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 4 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 5 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 6 on $procdff$687 ($adff) from module packet_if.
+Setting constant 0-bit at position 7 on $procdff$687 ($adff) from module packet_if.
+Adding EN signal on $procdff$692 ($adff) from module crc16_ccitt (D = $procmux$514_Y, Q = \crc).
+
+5.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \packet_if..
+Finding unused cells or wires in module \crc16_ccitt..
+Removed 99 unused cells and 351 unused wires.
+<suppressed ~103 debug messages>
+
+5.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module packet_if.
+<suppressed ~2 debug messages>
+Optimizing module crc16_ccitt.
+<suppressed ~1 debug messages>
+
+5.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \packet_if..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \crc16_ccitt..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~93 debug messages>
+
+5.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \packet_if.
+  Optimizing cells in module \crc16_ccitt.
+Performed a total of 0 changes.
+
+5.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\packet_if'.
+Computing hashes of 143 cells of `\packet_if'.
+Finding duplicate cells in `\packet_if'.
+Computing hashes of 133 cells of `\packet_if'.
+Finding duplicate cells in `\packet_if'.
+<suppressed ~30 debug messages>
+Finding identical cells in module `\crc16_ccitt'.
+Computing hashes of 24 cells of `\crc16_ccitt'.
+Finding duplicate cells in `\crc16_ccitt'.
+Removed a total of 10 cells.
+
+5.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \packet_if..
+Finding unused cells or wires in module \crc16_ccitt..
+Removed 0 unused cells and 10 unused wires.
+<suppressed ~1 debug messages>
+
+5.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module packet_if.
+Optimizing module crc16_ccitt.
+
+5.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \packet_if..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \crc16_ccitt..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~93 debug messages>
+
+5.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \packet_if.
+  Optimizing cells in module \crc16_ccitt.
+Performed a total of 0 changes.
+
+5.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\packet_if'.
+Computing hashes of 133 cells of `\packet_if'.
+Finding duplicate cells in `\packet_if'.
+Finding identical cells in module `\crc16_ccitt'.
+Computing hashes of 24 cells of `\crc16_ccitt'.
+Finding duplicate cells in `\crc16_ccitt'.
+Removed a total of 0 cells.
+
+5.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \packet_if..
+Finding unused cells or wires in module \crc16_ccitt..
+
+5.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module packet_if.
+Optimizing module crc16_ccitt.
+
+5.23. Finished fast OPT passes. (There is nothing left to do.)
+
+6. Executing CHECK pass (checking for obvious problems).
+Checking module packet_if...
+Checking module crc16_ccitt...
+Found and reported 0 problems.
+
+7. Printing statistics.
+
+=== packet_if ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      132 wires
+      568 wire bits
+       33 public wires
+      258 public wire bits
+       13 ports
+      107 port bits
+      132 cells
+        4   $add
+        5   $adff
+       18   $adffe
+       10   $dffe
+       17   $eq
+        1   $ge
+        1   $gt
+        2   $logic_and
+        3   $logic_not
+        1   $logic_or
+        8   $lt
+       33   $mux
+        2   $ne
+        3   $not
+        4   $pmux
+       17   $reduce_and
+        3   $reduce_bool
+        1 submodules
+        1   crc16_ccitt
+
+=== crc16_ccitt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       38 wires
+      392 wire bits
+        9 public wires
+       77 public wire bits
+        7 ports
+       29 port bits
+       24 cells
+        1   $adff
+        1   $adffe
+       12   $mux
+        8   $not
+        1   $reduce_bool
+        1   $xor
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+      156 packet_if
+       24 crc16_ccitt
+
+        +----------Count including submodules.
+        | 
+      170 wires
+      960 wire bits
+       42 public wires
+      335 public wire bits
+       20 ports
+      136 port bits
+        - memories
+        - memory bits
+        - processes
+      156 cells
+        4   $add
+        6   $adff
+       19   $adffe
+       10   $dffe
+       17   $eq
+        1   $ge
+        1   $gt
+        2   $logic_and
+        3   $logic_not
+        1   $logic_or
+        8   $lt
+       45   $mux
+        2   $ne
+       11   $not
+        4   $pmux
+       17   $reduce_and
+        4   $reduce_bool
+        1   $xor
+        1 submodules
+        1   crc16_ccitt
+
+Warnings: 1 unique messages, 1 total
+End of script. Logfile hash: 388e6066db, time: 0.05s, user: 0.05s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 25% 3x read_verilog (0 sec), 17% 5x opt_expr (0 sec), ...

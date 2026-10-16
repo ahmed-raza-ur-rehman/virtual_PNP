@@ -1,0 +1,6 @@
+read -formal -sv verification/formal/props/watchdog_props.sv rtl/safety/watchdog_wwdg.sv
+prep -top watchdog_props -flatten
+clk2fflogic
+chformal -remove -cover
+chformal -lower
+sat -seq 8 -prove-asserts -show counter,reset_req,kick,clr,cyc,rst_n,late_kick,early_kick

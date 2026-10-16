@@ -1,4 +1,5 @@
 """PyQt5 desktop application for the virtual SMD pick & place machine."""
+
 import sys
 
 import numpy as np
@@ -16,6 +17,7 @@ try:
         QVBoxLayout,
         QWidget,
     )
+
     _QT = True
 except ImportError:
     _QT = False
@@ -25,9 +27,10 @@ from pnp.algorithms.placement_optimizer import optimize_feeders, optimize_placem
 from pnp.sim.machine_sim import MachineSim
 
 if not _QT:
+
     class MainWindow:
         def __init__(self, *a, **k):
-            raise RuntimeError('PyQt5/libGL not available in this environment')
+            raise RuntimeError("PyQt5/libGL not available in this environment")
 
 
 class MainWindow(QMainWindow):
@@ -43,13 +46,20 @@ class MainWindow(QMainWindow):
         self.timer.start(33)
 
     def _demo_targets(self):
-        types = ['0402', '0603', '0805', 'SOIC8', 'TQFP32', 'LED0603']
+        types = ["0402", "0603", "0805", "SOIC8", "TQFP32", "LED0603"]
         ts = []
         rng = np.random.default_rng(1)
         for i in range(30):
-            ts.append({'id': i, 'type': types[i % len(types)],
-                       'x': float(rng.uniform(-60, 60)), 'z': float(rng.uniform(-40, 40)),
-                       'rotation': 0, 'placed': False})
+            ts.append(
+                {
+                    "id": i,
+                    "type": types[i % len(types)],
+                    "x": float(rng.uniform(-60, 60)),
+                    "z": float(rng.uniform(-40, 40)),
+                    "rotation": 0,
+                    "placed": False,
+                }
+            )
         return ts
 
     def _build_ui(self):
@@ -63,9 +73,12 @@ class MainWindow(QMainWindow):
         self.log.setReadOnly(True)
         v.addWidget(self.log)
         btns = QHBoxLayout()
-        b1 = QPushButton("Optimize Placement"); b1.clicked.connect(self._opt_place)
-        b2 = QPushButton("Optimize Feeders"); b2.clicked.connect(self._opt_feeders)
-        b3 = QPushButton("Plan S-Curve Path"); b3.clicked.connect(self._plan)
+        b1 = QPushButton("Optimize Placement")
+        b1.clicked.connect(self._opt_place)
+        b2 = QPushButton("Optimize Feeders")
+        b2.clicked.connect(self._opt_feeders)
+        b3 = QPushButton("Plan S-Curve Path")
+        b3.clicked.connect(self._plan)
         for b in (b1, b2, b3):
             btns.addWidget(b)
         v.addLayout(btns)
@@ -75,7 +88,8 @@ class MainWindow(QMainWindow):
         cvtab = QWidget()
         cvl = QVBoxLayout(cvtab)
         cvl.addWidget(QLabel("Computer Vision: orientation & alignment (demo)"))
-        self.cvout = QTextEdit(); self.cvout.setReadOnly(True)
+        self.cvout = QTextEdit()
+        self.cvout.setReadOnly(True)
         cvl.addWidget(self.cvout)
         tabs.addTab(cvtab, "Vision")
 
@@ -97,21 +111,28 @@ class MainWindow(QMainWindow):
         self.status.setText("Placement optimized")
 
     def _opt_feeders(self):
-        feeders = [{'type': '0402', 'count': 100}, {'type': '0603', 'count': 80},
-                   {'type': '0805', 'count': 60}]
+        feeders = [
+            {"type": "0402", "count": 100},
+            {"type": "0603", "count": 80},
+            {"type": "0805", "count": 60},
+        ]
         new = optimize_feeders(self.targets, feeders)
         self._log(f"Feeders optimized: {new}")
         self.status.setText("Feeders optimized")
 
     def _plan(self):
-        wps = np.array([(t['x'], t['z']) for t in self.targets[:8]])
+        wps = np.array([(t["x"], t["z"]) for t in self.targets[:8]])
         segs = plan_path(wps, v_max=200, a_max=100, j_max=500, dt=0.01)
-        self._log(f"S-curve planned: {len(segs)} segments, {sum(len(s['t']) for s in segs)} samples")
+        self._log(
+            f"S-curve planned: {len(segs)} segments, {sum(len(s['t']) for s in segs)} samples"
+        )
         self.status.setText("Path planned")
 
     def _tick(self):
         self.sim.step(0.033, target_pos=(50, 30), target_z=20)
-        self.simlabel.setText(f"Sim: pos=({self.sim.pos[0]:.1f},{self.sim.pos[1]:.1f}) z={self.sim.nozzle_z:.1f}")
+        self.simlabel.setText(
+            f"Sim: pos=({self.sim.pos[0]:.1f},{self.sim.pos[1]:.1f}) z={self.sim.nozzle_z:.1f}"
+        )
 
 
 def main():

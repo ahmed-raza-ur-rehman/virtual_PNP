@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+if command -v yowasp-sby >/dev/null 2>&1; then exec yowasp-sby "$@"; fi
+exec "$(dirname "$0")/../../.venv/bin/yowasp-sby" "$@"

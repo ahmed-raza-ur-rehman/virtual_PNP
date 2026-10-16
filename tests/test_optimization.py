@@ -6,24 +6,36 @@ from pnp.planning.trajectory import collision_free, plan_path
 
 
 def test_optimize_placement_reduces_path():
-    ts = [{"id": i, "type": "0402" if i % 2 == 0 else "0603",
-           "x": float(i * 10), "z": float((i % 3) * 5), "placed": False} for i in range(20)]
+    ts = [
+        {
+            "id": i,
+            "type": "0402" if i % 2 == 0 else "0603",
+            "x": float(i * 10),
+            "z": float((i % 3) * 5),
+            "placed": False,
+        }
+        for i in range(20)
+    ]
     opt = optimize_placement(ts, start=(0.0, 0.0))
     assert len(opt) == len(ts)
     assert all(t["id"] in [x["id"] for x in ts] for t in opt)
 
 
 def test_optimize_feeders():
-    ts = [{"type": "A", "x": -50.0, "z": 0.0, "placed": False},
-          {"type": "B", "x": 50.0, "z": 0.0, "placed": False}]
+    ts = [
+        {"type": "A", "x": -50.0, "z": 0.0, "placed": False},
+        {"type": "B", "x": 50.0, "z": 0.0, "placed": False},
+    ]
     feeders = [{"type": "A", "count": 10}, {"type": "B", "count": 5}]
     new = optimize_feeders(ts, feeders)
     assert len(new) == len(feeders)
 
 
 def test_optimize_turntable():
-    ts = [{"type": "A", "x": -10.0, "z": 0.0, "placed": False},
-          {"type": "B", "x": 10.0, "z": 0.0, "placed": False}]
+    ts = [
+        {"type": "A", "x": -10.0, "z": 0.0, "placed": False},
+        {"type": "B", "x": 10.0, "z": 0.0, "placed": False},
+    ]
     res = optimize_turntable(ts, slots=12)
     assert len(res) == 12
     assert res[0]["type"] is not None

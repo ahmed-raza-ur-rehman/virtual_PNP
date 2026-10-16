@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>PnP Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>body{background:#0a0e14;color:#e2e8f0;font-family:system-ui;margin:0;padding:20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.card{background:#12171f;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;}
+h1{color:#00d4aa;}</style></head>
+<body>
+<h1>Virtual PnP - Live Dashboard</h1>
+<div class="grid">
+  <div class="card"><canvas id="cph"></canvas></div>
+  <div class="card"><canvas id="acc"></canvas></div>
+  <div class="card"><canvas id="traj"></canvas></div>
+  <div class="card"><canvas id="util"></canvas></div>
+</div>
+<script>
+const mk=(id,label)=>new Chart(document.getElementById(id),{type:'line',data:{labels:[],datasets:[{label,data:[],borderColor:'#00d4aa',tension:.3}]},options:{responsive:true,plugins:{legend:{labels:{color:'#e2e8f0'}}},scales:{x:{ticks:{color:'#64748b'}},y:{ticks:{color:'#64748b'}}}}});
+const cph=mk('cph','CPH'), acc=mk('acc','Accuracy'), traj=mk('traj','Trajectory'), util=mk('util','Utilization');
+setInterval(()=>{const t=new Date().toLocaleTimeString();[cph,acc,traj,util].forEach(c=>{c.data.labels.push(t);c.data.datasets[0].data.push(Math.random()*100);if(c.data.labels.length>20){c.data.labels.shift();c.data.datasets[0].data.shift();}c.update();});},1000);
+</script></body></html>

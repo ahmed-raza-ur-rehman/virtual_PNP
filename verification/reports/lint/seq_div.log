@@ -1,0 +1,256 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/common/seq_div.sv
+hierarchy -top seq_div
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/common/seq_div.sv
+hierarchy -top seq_div
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/common/seq_div.sv
+Parsing SystemVerilog input from `rtl/common/seq_div.sv' to AST representation.
+Generating RTLIL representation for module `\seq_div'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \seq_div
+
+2.2. Analyzing design hierarchy..
+Top module:  \seq_div
+Removed 0 unused modules.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/common/seq_div.sv:50$4 in module seq_div.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 1 redundant assignment.
+Promoted 0 assignments to connections.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~3 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+     1/10: $0\done[0:0]
+     2/10: $0\cnt[5:0]
+     3/10: $0\zero_div[0:0]
+     4/10: $0\div[31:0]
+     5/10: $0\dend[31:0]
+     6/10: $0\quo[31:0]
+     7/10: $0\rem[31:0]
+     8/10: $0\busy[0:0]
+     9/10: $0\remainder[31:0]
+    10/10: $0\quotient[31:0]
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\seq_div.\quotient' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$73' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\remainder' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$78' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\busy' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$83' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\done' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$88' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\rem' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$93' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\quo' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$98' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\dend' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$103' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\div' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$108' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\zero_div' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$113' with positive edge clock and positive level reset.
+Creating register for signal `\seq_div.\cnt' using process `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+  created $adff cell `$procdff$118' with positive edge clock and positive level reset.
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 3 empty switches in `\seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+Removing empty process `seq_div.$proc$rtl/common/seq_div.sv:50$4'.
+Cleaned up 3 empty switches.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seq_div.
+<suppressed ~22 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seq_div.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seq_div'.
+Computing hashes of 55 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+Computing hashes of 45 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+<suppressed ~30 debug messages>
+Removed a total of 10 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seq_div..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $procmux$50: \busy -> 1'0
+      Replacing known input bits on port A of cell $procmux$48: \busy -> 1'1
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~39 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seq_div.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seq_div'.
+Computing hashes of 45 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$108 ($adff) from module seq_div (D = $ternary$rtl/common/seq_div.sv:67$9_Y, Q = \div).
+Adding EN signal on $procdff$103 ($adff) from module seq_div (D = $procmux$36_Y, Q = \dend).
+Adding EN signal on $procdff$73 ($adff) from module seq_div (D = $ternary$rtl/common/seq_div.sv:82$13_Y, Q = \quotient).
+Adding EN signal on $procdff$98 ($adff) from module seq_div (D = $procmux$41_Y, Q = \quo).
+Adding EN signal on $procdff$78 ($adff) from module seq_div (D = $ternary$rtl/common/seq_div.sv:83$14_Y, Q = \remainder).
+Adding EN signal on $procdff$93 ($adff) from module seq_div (D = $procmux$46_Y, Q = \rem).
+Adding EN signal on $procdff$113 ($adff) from module seq_div (D = $eq$rtl/common/seq_div.sv:68$10_Y, Q = \zero_div).
+Adding EN signal on $procdff$118 ($adff) from module seq_div (D = $procmux$25_Y, Q = \cnt).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seq_div..
+Removed 10 unused cells and 64 unused wires.
+<suppressed ~11 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seq_div.
+<suppressed ~4 debug messages>
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seq_div..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~30 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seq_div.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seq_div'.
+Computing hashes of 43 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+Computing hashes of 39 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+Computing hashes of 38 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+<suppressed ~15 debug messages>
+Removed a total of 5 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seq_div..
+Removed 0 unused cells and 5 unused wires.
+<suppressed ~1 debug messages>
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seq_div.
+
+4.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seq_div..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~30 debug messages>
+
+4.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seq_div.
+Performed a total of 0 changes.
+
+4.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seq_div'.
+Computing hashes of 38 cells of `\seq_div'.
+Finding duplicate cells in `\seq_div'.
+Removed a total of 0 cells.
+
+4.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seq_div..
+
+4.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seq_div.
+
+4.23. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing CHECK pass (checking for obvious problems).
+Checking module seq_div...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== seq_div ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       44 wires
+      685 wire bits
+       18 public wires
+      334 public wire bits
+        9 ports
+      133 port bits
+       38 cells
+        2   $adff
+        8   $adffe
+        1   $eq
+        1   $ge
+        1   $logic_and
+        2   $logic_not
+       18   $mux
+        1   $not
+        1   $reduce_and
+        1   $reduce_bool
+        2   $sub
+
+End of script. Logfile hash: 4aaf8d820b, time: 0.02s, user: 0.02s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 20% 2x read_verilog (0 sec), 14% 5x opt_expr (0 sec), ...

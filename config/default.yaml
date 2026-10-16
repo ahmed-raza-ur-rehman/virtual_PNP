@@ -1,0 +1,8 @@
+profile: standard
+work_area: [500.0, 400.0]
+xy_speed: 200.0
+z_speed: 150.0
+accel: 80.0
+damp: 0.92
+jerk: 500.0
+log_level: INFO

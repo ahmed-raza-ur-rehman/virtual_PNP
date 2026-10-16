@@ -1,0 +1,190 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/motion/stepgen.sv
+hierarchy -top stepgen
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/motion/stepgen.sv
+hierarchy -top stepgen
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/motion/stepgen.sv
+Parsing SystemVerilog input from `rtl/motion/stepgen.sv' to AST representation.
+Generating RTLIL representation for module `\stepgen'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \stepgen
+
+2.2. Analyzing design hierarchy..
+Top module:  \stepgen
+Removed 0 unused modules.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$rtl/motion/stepgen.sv:33$4 in module stepgen.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 1 redundant assignment.
+Promoted 0 assignments to connections.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+     1/4: $0\step[0:0]
+     2/4: $0\acc[23:0]
+     3/4: $0\position_um[31:0]
+     4/4: $0\dir[0:0]
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\stepgen.\step' using process `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+  created $adff cell `$procdff$22' with positive edge clock and positive level reset.
+Creating register for signal `\stepgen.\dir' using process `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+  created $adff cell `$procdff$27' with positive edge clock and positive level reset.
+Creating register for signal `\stepgen.\position_um' using process `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+  created $adff cell `$procdff$32' with positive edge clock and positive level reset.
+Creating register for signal `\stepgen.\acc' using process `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+  created $adff cell `$procdff$37' with positive edge clock and positive level reset.
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+Removing empty process `stepgen.$proc$rtl/motion/stepgen.sv:33$4'.
+Cleaned up 1 empty switch.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module stepgen.
+<suppressed ~8 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module stepgen.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\stepgen'.
+Computing hashes of 20 cells of `\stepgen'.
+Finding duplicate cells in `\stepgen'.
+Computing hashes of 17 cells of `\stepgen'.
+Finding duplicate cells in `\stepgen'.
+<suppressed ~9 debug messages>
+Removed a total of 3 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \stepgen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~13 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \stepgen.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\stepgen'.
+Computing hashes of 17 cells of `\stepgen'.
+Finding duplicate cells in `\stepgen'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$27 ($adff) from module stepgen (D = $mul$rtl/motion/stepgen.sv:29$1_Y [56], Q = \dir).
+Adding EN signal on $procdff$32 ($adff) from module stepgen (D = $add$rtl/motion/stepgen.sv:48$9_Y, Q = \position_um).
+Adding EN signal on $procdff$37 ($adff) from module stepgen (D = $add$rtl/motion/stepgen.sv:31$3_Y [23:0], Q = \acc).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \stepgen..
+Removed 5 unused cells and 23 unused wires.
+<suppressed ~6 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module stepgen.
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \stepgen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~7 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \stepgen.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\stepgen'.
+Computing hashes of 12 cells of `\stepgen'.
+Finding duplicate cells in `\stepgen'.
+Removed a total of 0 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \stepgen..
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module stepgen.
+
+4.16. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing CHECK pass (checking for obvious problems).
+Checking module stepgen...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== stepgen ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       17 wires
+      299 wire bits
+       12 public wires
+      201 public wire bits
+        8 ports
+       70 port bits
+       12 cells
+        2   $add
+        1   $adff
+        3   $adffe
+        1   $logic_and
+        1   $mul
+        4   $mux
+
+End of script. Logfile hash: 4b033c5b8c, time: 0.01s, user: 0.01s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 24% 1x check (0 sec), 23% 2x read_verilog (0 sec), ...

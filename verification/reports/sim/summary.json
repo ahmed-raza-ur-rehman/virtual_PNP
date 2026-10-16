@@ -1,0 +1,43 @@
+{
+  "testbenches": [
+    {
+      "name": "crc_vectors",
+      "status": "pass",
+      "checks": 1,
+      "failures": []
+    },
+    {
+      "name": "seq_div_random",
+      "status": "pass",
+      "checks": 3,
+      "failures": []
+    },
+    {
+      "name": "watchdog_window",
+      "status": "pass",
+      "checks": 4,
+      "failures": []
+    },
+    {
+      "name": "quad_decoder_motion",
+      "status": "pass",
+      "checks": 7,
+      "failures": []
+    },
+    {
+      "name": "uart_tx_framing",
+      "status": "pass",
+      "checks": 5,
+      "failures": []
+    },
+    {
+      "name": "spi_packet_link",
+      "status": "pass",
+      "checks": 6,
+      "failures": []
+    }
+  ],
+  "passed": 6,
+  "failed": 0,
+  "checks": 26
+}

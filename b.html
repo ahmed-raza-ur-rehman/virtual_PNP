@@ -1130,6 +1130,32 @@ html, body {
             </div>
         </div>
 
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">🏭</span> Machine Profile</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <select id="machine-profile" style="width:100%;padding:6px;background:var(--bg-elevated);color:var(--text);border:1px solid var(--border);border-radius:6px;" onchange="applyMachineProfile(this.value)">
+                    <option value="standard">Standard (balanced)</option>
+                    <option value="highspeed">High-Speed (fast, lower accuracy)</option>
+                    <option value="highaccuracy">High-Accuracy (slow, precise)</option>
+                    <option value="multihead">Multi-Head x4 (parallel)</option>
+                </select>
+                <div style="margin-top:8px;font-size:11px;color:var(--text-muted);" id="profile-desc">Balanced speed & accuracy</div>
+                <div style="margin-top:8px;display:flex;gap:6px;">
+                    <button class="mode-btn" onclick="runPlacementOptimization()" style="flex:1;">Optimize Placement</button>
+                </div>
+                <div style="margin-top:6px;display:flex;gap:6px;">
+                    <button class="mode-btn" onclick="runFeederOptimization()" style="flex:1;">Optimize Feeders</button>
+                </div>
+                <div style="margin-top:6px;display:flex;gap:6px;">
+                    <button class="mode-btn" onclick="runTrayOptimization()" style="flex:1;">Optimize Tray</button>
+                </div>
+                <div style="margin-top:8px;font-size:10px;color:var(--text-muted);" id="opt-status">Ready</div>
+            </div>
+        </div>
+
         <div class="panel-section" style="flex: 1;">
             <div class="panel-header" onclick="togglePanel(this)">
                 <span><span class="icon">🤖</span> Operation Mode</span>
@@ -2778,8 +2804,241 @@ const STATE = {
     autoState: 'GOTO_FEEDER',
     aiSuggestion: null,
     feederType: 'tape',
-    feederIndex: 0
+    feederIndex: 0,
+    profileAccuracy: 1,
+    profileHeads: 1,
+    optimizedOrder: null
 };
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MACHINE PROFILES & OPTIMIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+const MACHINE_PROFILES = {
+    standard: { name: 'Standard', xy: 2.0, z: 1.5, accel: 0.08, damp: 0.92, accuracy: 1.0, heads: 1, desc: 'Balanced speed & accuracy' },
+    highspeed: { name: 'High-Speed', xy: 4.5, z: 3.0, accel: 0.22, damp: 0.86, accuracy: 0.8, heads: 1, desc: 'Fast throughput, slightly lower precision' },
+    highaccuracy: { name: 'High-Accuracy', xy: 1.1, z: 0.7, accel: 0.04, damp: 0.97, accuracy: 1.35, heads: 1, desc: 'Slow & precise for fine-pitch' },
+    multihead: { name: 'Multi-Head x4', xy: 3.2, z: 2.0, accel: 0.14, damp: 0.9, accuracy: 0.9, heads: 4, desc: '4 nozzles, parallel placement' }
+};
+
+let currentProfile = 'standard';
+let PLACEMENT_ORDER = null; // optimized order of target indices
+
+function applyMachineProfile(name) {
+    const prof = MACHINE_PROFILES[name];
+    if (!prof) return;
+    currentProfile = name;
+    CFG.speed.xy = prof.xy;
+    CFG.speed.z = prof.z;
+    CFG.speed.accel = prof.accel;
+    CFG.speed.damp = prof.damp;
+    // store accuracy multiplier on STATE for tryPlace tolerance
+    STATE.profileAccuracy = prof.accuracy;
+    STATE.profileHeads = prof.heads;
+    const desc = document.getElementById('profile-desc');
+    if (desc) desc.textContent = prof.desc;
+    logConsole(`Machine profile: ${prof.name} (heads=${prof.heads})`, 'info');
+}
+
+// Placement sequence optimization: nearest-neighbor + 2-opt + type grouping
+function runPlacementOptimization() {
+    const status = document.getElementById('opt-status');
+    if (status) status.textContent = 'Optimizing placement...';
+    const unplaced = PCB_TARGETS.filter(t => !t.placed);
+    if (unplaced.length === 0) { if (status) status.textContent = 'Nothing to optimize'; return; }
+
+    // Build distance matrix between targets (plus virtual start at current pos)
+    const pts = unplaced.map(t => ({ x: t.x, z: t.z }));
+    const start = { x: STATE.pos.x, z: STATE.pos.y };
+
+    // Nearest neighbor
+    let order = [];
+    let remaining = pts.map((p,i)=>i);
+    let cur = start;
+    while (remaining.length) {
+        let best = -1, bestD = Infinity;
+        for (const idx of remaining) {
+            const d = Math.hypot(pts[idx].x - cur.x, pts[idx].z - cur.z);
+            if (d < bestD) { bestD = d; best = idx; }
+        }
+        order.push(best);
+        cur = pts[best];
+        remaining = remaining.filter(i => i !== best);
+    }
+
+    // 2-opt improvement
+    function totalDist(seq) {
+        let d = Math.hypot(pts[seq[0]].x - start.x, pts[seq[0]].z - start.z);
+        for (let i = 0; i < seq.length - 1; i++) d += Math.hypot(pts[seq[i+1]].x - pts[seq[i]].x, pts[seq[i+1]].z - pts[seq[i]].z);
+        return d;
+    }
+    let improved = true;
+    let iters = 0;
+    while (improved && iters < 200) {
+        improved = false; iters++;
+        for (let i = 0; i < order.length - 1; i++) {
+            for (let j = i + 1; j < order.length; j++) {
+                const newSeq = order.slice(0, i).concat(order.slice(i, j+1).reverse()).concat(order.slice(j+1));
+                if (totalDist(newSeq) < totalDist(order) - 1e-9) {
+                    order = newSeq; improved = true;
+                }
+            }
+        }
+    }
+
+    // Group by component type to reduce feeder switches: stable sort by type blocks
+    // (keep within-type nearest neighbor already; reorder types by centroid travel)
+    const typeCentroid = {};
+    unplaced.forEach((t,i) => {
+        if (!typeCentroid[t.type]) typeCentroid[t.type] = { x:0, z:0, n:0 };
+        typeCentroid[t.type].x += t.x; typeCentroid[t.type].z += t.z; typeCentroid[t.type].n++;
+    });
+    for (const k in typeCentroid) { typeCentroid[k].x/=typeCentroid[k].n; typeCentroid[k].z/=typeCentroid[k].n; }
+    const typeOrder = Object.keys(typeCentroid).sort((a,b) => Math.hypot(typeCentroid[a].x-start.x, typeCentroid[a].z-start.z) - Math.hypot(typeCentroid[b].x-start.x, typeCentroid[b].z-start.z));
+    // Reorder: group targets by type in typeOrder, each group internally by nearest neighbor
+    const grouped = [];
+    typeOrder.forEach(type => {
+        const idxs = unplaced.map((t,i)=>i).filter(i => unplaced[i].type === type);
+        // sort within group by nearest neighbor
+        let rem = idxs.slice();
+        let c = grouped.length ? pts[order[grouped.length-1]] : start;
+        const gseq = [];
+        while (rem.length) {
+            let b=-1, bd=Infinity;
+            for (const r of rem) {
+                const d = Math.hypot(pts[r].x-c.x, pts[r].z-c.z);
+                if (d<bd){bd=d;b=r;}
+            }
+            gseq.push(b); c=pts[b]; rem=rem.filter(r=>r!==b);
+        }
+        grouped.push(...gseq);
+    });
+    order = grouped;
+
+    // Map back to PCB_TARGETS indices
+    const idToTarget = unplaced;
+    const newOrderIds = order.map(i => idToTarget[i].id);
+    // Store as a Set/array on STATE for auto mode to follow
+    STATE.optimizedOrder = newOrderIds;
+    // Also reorder PCB_TARGETS array to match optimized order (placed ones stay)
+    const placed = PCB_TARGETS.filter(t => t.placed);
+    const unplacedSorted = newOrderIds.map(id => PCB_TARGETS.find(t => t.id === id));
+    PCB_TARGETS = placed.concat(unplacedSorted);
+
+    const dist = totalDist(order);
+    if (status) status.textContent = `Optimized ${unplaced.length} placements (path ${dist.toFixed(0)}mm)`;
+    logConsole(`Placement optimization: ${unplaced.length} targets, path ${dist.toFixed(1)}mm`, 'success');
+}
+
+// Feeder order optimization: assign component types to tape slots by target centroid X
+function runFeederOptimization() {
+    const status = document.getElementById('opt-status');
+    if (status) status.textContent = 'Optimizing feeders...';
+    // Compute centroid X per component type from unplaced targets
+    const centroid = {};
+    PCB_TARGETS.forEach(t => {
+        if (t.placed) return;
+        if (!centroid[t.type]) centroid[t.type] = { x:0, n:0 };
+        centroid[t.type].x += t.x; centroid[t.type].n++;
+    });
+    for (const k in centroid) centroid[k].x /= centroid[k].n;
+
+    // Collect unique types needed
+    const neededTypes = Object.keys(centroid);
+    // Sort types by centroid X (left-to-right)
+    neededTypes.sort((a,b) => (centroid[a]?.x||0) - (centroid[b]?.x||0));
+
+    // Sort tape feeders by their X position
+    const slots = FEEDERS.tape.map((f,i) => ({ f, i, x: -230 + i*35 })).sort((a,b)=>a.x-b.x);
+
+    // Count demand per type
+    const demand = {};
+    PCB_TARGETS.forEach(t => { if (!t.placed) demand[t.type] = (demand[t.type]||0)+1; });
+
+    // Assign: for each slot left-to-right, pick the most demanded remaining type in centroid order
+    const assigned = new Set();
+    const typeQueue = neededTypes.slice();
+    FEEDERS.tape.forEach((f, i) => {
+        // keep existing counts; only change type if a needed type unassigned
+        if (f.count <= 0 && f.type) return;
+    });
+
+    // Simple: reorder FEEDERS.tape array types to match centroid order, preserving counts by type
+    // Build list of (type,count) from current feeders
+    const typeCounts = {};
+    FEEDERS.tape.forEach(f => {
+        if (f.type) typeCounts[f.type] = (typeCounts[f.type]||0) + f.count;
+    });
+    // Reassign types to slots in centroid order, distributing counts
+    let ti = 0;
+    const newTypes = [];
+    // repeat types by demand
+    neededTypes.forEach(type => {
+        const c = typeCounts[type] || 0;
+        if (c > 0) newTypes.push({ type, count: c });
+    });
+    // fill remaining slots with original non-needed or null
+    FEEDERS.tape.forEach(f => {
+        if (f.type && !neededTypes.includes(f.type) && f.count > 0) newTypes.push({ type: f.type, count: f.count });
+    });
+
+    // Apply to feeders: set each feeder's type/count from newTypes list (pad with null)
+    let idx = 0;
+    const flat = [];
+    newTypes.forEach(nt => flat.push(nt));
+    FEEDERS.tape.forEach((f, i) => {
+        if (idx < flat.length) {
+            f.type = flat[idx].type;
+            f.count = flat[idx].count;
+            idx++;
+        } else {
+            f.type = null;
+            f.count = 0;
+        }
+    });
+    // rebuild UI
+    if (typeof buildFeederUI === 'function') buildFeederUI();
+    if (status) status.textContent = `Feeders optimized (${neededTypes.length} types)`;
+    logConsole(`Feeder optimization: ${neededTypes.length} component types reordered`, 'success');
+}
+
+// Turntable (circular tray) optimization: assign slots by angular target centroid
+function runTrayOptimization() {
+    const status = document.getElementById('opt-status');
+    if (status) status.textContent = 'Optimizing tray...';
+    // Compute angle centroid per type from targets relative to turntable center
+    const angCentroid = {};
+    PCB_TARGETS.forEach(t => {
+        if (t.placed) return;
+        const a = Math.atan2(t.z - CFG.turntable.z, t.x - CFG.turntable.x);
+        if (!angCentroid[t.type]) angCentroid[t.type] = { a:0, n:0 };
+        angCentroid[t.type].a += a; angCentroid[t.type].n++;
+    });
+    for (const k in angCentroid) angCentroid[k].a /= angCentroid[k].n;
+
+    const neededTypes = Object.keys(angCentroid).sort((a,b) => angCentroid[a].a - angCentroid[b].a);
+
+    // Assign to turntable slots in angular order
+    let slotIdx = 0;
+    // keep counts from existing
+    const typeCounts = {};
+    FEEDERS.turntable.forEach(s => { if (s.type) typeCounts[s.type] = (typeCounts[s.type]||0) + s.count; });
+
+    // Clear
+    FEEDERS.turntable.forEach(s => { s.type = null; s.count = 0; });
+
+    neededTypes.forEach(type => {
+        if (slotIdx >= FEEDERS.turntable.length) return;
+        FEEDERS.turntable[slotIdx].type = type;
+        FEEDERS.turntable[slotIdx].count = typeCounts[type] || 0;
+        slotIdx++;
+    });
+    // fill remaining with original extras
+    // (none)
+
+    if (typeof buildTurntable === 'function') buildTurntable();
+    if (status) status.textContent = `Tray optimized (${neededTypes.length} slots)`;
+    logConsole(`Turntable optimization: ${neededTypes.length} slots assigned`, 'success');
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // INPUT HANDLING
@@ -2942,7 +3201,7 @@ function tryPlace() {
             if (d < bestDist) { bestDist = d; bestTarget = t; }
         });
         
-        if (bestTarget && bestDist < 10) {
+        if (bestTarget && bestDist < 10 * (STATE.profileAccuracy || 1)) {
             bestTarget.placed = true;
             STATE.placedCount++;
             
@@ -3335,6 +3594,13 @@ function updateMovement() {
         STATE.velocity.x *= damp;
         STATE.velocity.y *= damp;
         STATE.velocity.z *= damp;
+
+        // Clamp velocity to physical max (profile-aware)
+        const maxV = CFG.speed.xy * 1.5;
+        const maxVz = CFG.speed.z * 1.5;
+        STATE.velocity.x = Math.max(-maxV, Math.min(maxV, STATE.velocity.x));
+        STATE.velocity.y = Math.max(-maxV, Math.min(maxV, STATE.velocity.y));
+        STATE.velocity.z = Math.max(-maxVz, Math.min(maxVz, STATE.velocity.z));
 
         // Apply velocity
         STATE.pos.x += STATE.velocity.x;
@@ -4011,6 +4277,7 @@ window.addEventListener('resize', () => {
 // INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════════════════
 function init() {
+    applyMachineProfile('standard');
     buildMachine();
     buildPCB();
     buildFeeders();
@@ -4041,6 +4308,12 @@ window.resetJob = resetJob;
 window.calibrate = calibrate;
 window.toggleConsole = toggleConsole;
 window.toggleSettings = toggleSettings;
+window.applyMachineProfile = applyMachineProfile;
+window.runPlacementOptimization = runPlacementOptimization;
+window.runFeederOptimization = runFeederOptimization;
+window.runTrayOptimization = runTrayOptimization;
+window.runFeederOptimization = runFeederOptimization;
+window.runTrayOptimization = runTrayOptimization;
 window.toggleSwitch = toggleSwitch;
 
 init();

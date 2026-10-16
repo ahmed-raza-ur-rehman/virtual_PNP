@@ -1,0 +1,24 @@
+* text=auto eol=lf
+
+*.sv    text diff=verilog
+*.v     text diff=verilog
+*.vh    text diff=verilog
+*.vhd   text
+*.gds   binary
+*.gdsii binary
+*.oasis binary
+*.def   text
+*.lef   text
+*.lib   text
+*.spef  text
+*.sdf   text
+
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+*.whl binary
+
+docs/** linguist-documentation
+verification/reports/** linguist-generated
+synthesis/**/build/** linguist-generated

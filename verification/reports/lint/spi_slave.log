@@ -1,0 +1,249 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/comm/spi_slave.sv
+hierarchy -top spi_slave
+proc
+opt
+check
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/comm/spi_slave.sv
+hierarchy -top spi_slave
+proc
+opt
+check
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/comm/spi_slave.sv
+Parsing SystemVerilog input from `rtl/comm/spi_slave.sv' to AST representation.
+rtl/comm/spi_slave.sv:38: Warning: Yosys has only limited support for tri-state logic at the moment.
+Generating RTLIL representation for module `\spi_slave'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \spi_slave
+
+2.2. Analyzing design hierarchy..
+Top module:  \spi_slave
+Removed 0 unused modules.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/comm/spi_slave.sv:40$10 in module spi_slave.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 7 redundant assignments.
+Promoted 0 assignments to connections.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~5 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+     1/11: $0\tx_load[0:0]
+     2/11: $0\rx_valid[0:0]
+     3/11: $0\cs_d[0:0]
+     4/11: $0\sck_d[0:0]
+     5/11: $0\mosi_sync[2:0]
+     6/11: $0\cs_sync[2:0]
+     7/11: $0\sck_sync[2:0]
+     8/11: $0\shifter_tx[7:0]
+     9/11: $0\shifter_rx[7:0]
+    10/11: $0\bit_idx[2:0]
+    11/11: $0\rx_data[7:0]
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\spi_slave.\rx_data' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$54' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\rx_valid' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$59' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\tx_load' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$64' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\sck_sync' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$69' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\cs_sync' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$74' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\mosi_sync' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$79' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\bit_idx' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$84' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\shifter_rx' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$89' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\shifter_tx' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$94' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\sck_d' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$99' with positive edge clock and positive level reset.
+Creating register for signal `\spi_slave.\cs_d' using process `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+  created $adff cell `$procdff$104' with positive edge clock and positive level reset.
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 5 empty switches in `\spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+Removing empty process `spi_slave.$proc$rtl/comm/spi_slave.sv:40$10'.
+Cleaned up 5 empty switches.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module spi_slave.
+<suppressed ~29 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module spi_slave.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\spi_slave'.
+Computing hashes of 50 cells of `\spi_slave'.
+Finding duplicate cells in `\spi_slave'.
+Computing hashes of 38 cells of `\spi_slave'.
+Finding duplicate cells in `\spi_slave'.
+<suppressed ~36 debug messages>
+Removed a total of 12 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \spi_slave..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~30 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \spi_slave.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\spi_slave'.
+Computing hashes of 38 cells of `\spi_slave'.
+Finding duplicate cells in `\spi_slave'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$54 ($adff) from module spi_slave (D = { \shifter_rx [6:0] \mosi_sync [2] }, Q = \rx_data).
+Adding EN signal on $procdff$89 ($adff) from module spi_slave (D = { \shifter_rx [6:0] \mosi_sync [2] }, Q = \shifter_rx).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \spi_slave..
+Removed 7 unused cells and 62 unused wires.
+<suppressed ~8 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module spi_slave.
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \spi_slave..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~23 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \spi_slave.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\spi_slave'.
+Computing hashes of 35 cells of `\spi_slave'.
+Finding duplicate cells in `\spi_slave'.
+Computing hashes of 34 cells of `\spi_slave'.
+Finding duplicate cells in `\spi_slave'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \spi_slave..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module spi_slave.
+
+4.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \spi_slave..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~23 debug messages>
+
+4.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \spi_slave.
+Performed a total of 0 changes.
+
+4.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\spi_slave'.
+Computing hashes of 34 cells of `\spi_slave'.
+Finding duplicate cells in `\spi_slave'.
+Removed a total of 0 cells.
+
+4.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \spi_slave..
+
+4.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module spi_slave.
+
+4.23. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing CHECK pass (checking for obvious problems).
+Checking module spi_slave...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== spi_slave ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       43 wires
+      110 wire bits
+       24 public wires
+       60 public wire bits
+       10 ports
+       24 port bits
+       34 cells
+        1   $add
+        9   $adff
+        2   $adffe
+        1   $eq
+        3   $logic_and
+        1   $logic_not
+       12   $mux
+        1   $ne
+        2   $not
+        2   $reduce_and
+
+Warnings: 1 unique messages, 1 total
+End of script. Logfile hash: 7ce7e36373, time: 0.01s, user: 0.01s, system: 0.00s
+Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+Time spent: 31% 2x read_verilog (0 sec), 14% 5x opt_expr (0 sec), ...

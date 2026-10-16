@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "virtual-pnp"
+version = "2.0.0"
+description = "Professional virtual SMD pick-and-place: simulation, optimization, vision, ML, firmware, RTL-to-GDSII"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Virtual PnP Team" }]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pydantic>=2.0",
+    "typer>=0.9",
+    "rich>=13.0",
+    "pyyaml>=6.0",
+]
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.1", "mypy>=1.5", "pre-commit>=3.0"]
+vision = ["opencv-python>=4.8"]
+ml = ["torch>=2.0"]
+api = ["fastapi>=0.100", "uvicorn>=0.23"]
+opt = ["ortools>=9.6"]
+gui = ["PyQt5>=5.15"]
+
+[project.scripts]
+vpnp = "pnp.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pnp*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+# PYI034 wants `__enter__` annotated with `typing.Self`, which needs 3.11;
+# the context managers here already return the instance and the annotation is
+# kept as the class name so that the code stays 3.10-compatible.
+ignore = ["PYI034"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --cov=pnp"

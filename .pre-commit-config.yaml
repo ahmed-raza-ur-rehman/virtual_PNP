@@ -1,0 +1,32 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: hdl-lint
+        name: HDL lint (yosys read + check)
+        entry: bash -c 'if command -v yosys >/dev/null 2>&1 || [ -x .venv/bin/yowasp-yosys ]; then make hdl-lint; else echo "yosys not installed - skipped"; fi'
+        language: system
+        files: '\.(v|sv|svh)$'
+        pass_filenames: false
+      - id: pytest-fast
+        name: pytest (fast subset)
+        entry: bash -c 'if [ -x .venv/bin/pytest ]; then .venv/bin/pytest -q -m "not slow"; else echo "venv missing - run scripts/bootstrap.sh"; fi'
+        language: system
+        files: '\.py$'
+        pass_filenames: false

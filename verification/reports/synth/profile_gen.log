@@ -1,0 +1,1704 @@
+$ .venv/bin/yowasp-yosys -p read_verilog -sv -I rtl/common rtl/common/seq_div.sv rtl/motion/profile_gen.sv
+hierarchy -top profile_gen
+synth -top profile_gen -flatten
+opt -fast
+write_verilog -noattr synthesis/build/profile_gen_netlist.sv
+write_json synthesis/build/profile_gen.json
+stat
+
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70 (git sha1 28ba3cb92, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)
+
+-- Running command `read_verilog -sv -I rtl/common rtl/common/seq_div.sv rtl/motion/profile_gen.sv
+hierarchy -top profile_gen
+synth -top profile_gen -flatten
+opt -fast
+write_verilog -noattr synthesis/build/profile_gen_netlist.sv
+write_json synthesis/build/profile_gen.json
+stat' --
+
+1. Executing Verilog-2005 frontend: rtl/common/seq_div.sv
+Parsing SystemVerilog input from `rtl/common/seq_div.sv' to AST representation.
+Generating RTLIL representation for module `\seq_div'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/motion/profile_gen.sv
+Parsing SystemVerilog input from `rtl/motion/profile_gen.sv' to AST representation.
+Generating RTLIL representation for module `\profile_gen'.
+Successfully finished Verilog frontend.
+
+3. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     \seq_div
+Parameter \W = 64
+
+3.2. Executing AST frontend in derive mode using pre-parsed AST for module `\seq_div'.
+Parameter \W = 64
+Generating RTLIL representation for module `$paramod\seq_div\W=s32'00000000000000000000000001000000'.
+
+3.3. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     $paramod\seq_div\W=s32'00000000000000000000000001000000
+
+3.4. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     $paramod\seq_div\W=s32'00000000000000000000000001000000
+Removing unused module `\seq_div'.
+Removed 1 unused modules.
+
+4. Executing SYNTH pass.
+
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+
+4.1.1. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     $paramod\seq_div\W=s32'00000000000000000000000001000000
+
+4.1.2. Analyzing design hierarchy..
+Top module:  \profile_gen
+Used module:     $paramod\seq_div\W=s32'00000000000000000000000001000000
+Removed 0 unused modules.
+
+4.2. Executing PROC pass (convert processes to netlists).
+
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 35 switch rules as full_case in process $proc$rtl/motion/profile_gen.sv:97$33 in module profile_gen.
+Marked 2 switch rules as full_case in process $proc$rtl/common/seq_div.sv:50$400 in module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+Removed a total of 0 dead cases.
+
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 49 assignments to connections.
+
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+Found async reset \rst_n in `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~39 debug messages>
+
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:67$391'.
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:66$385'.
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:65$379'.
+Creating decoders for process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+     1/245: $4\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$364
+     2/245: $3\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$362
+     3/245: $8\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$359
+     4/245: $7\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$357
+     5/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$351
+     6/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$354
+     7/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$353
+     8/245: $6\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$352
+     9/245: $8\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$349
+    10/245: $7\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$347
+    11/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$341
+    12/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$344
+    13/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$343
+    14/245: $6\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$342
+    15/245: $8\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$339
+    16/245: $7\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$337
+    17/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$331
+    18/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$334
+    19/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$333
+    20/245: $6\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$332
+    21/245: $8\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$329
+    22/245: $7\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$327
+    23/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$320
+    24/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$323
+    25/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$322
+    26/245: $6\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$321
+    27/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$309
+    28/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$308
+    29/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$307
+    30/245: $5\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$306
+    31/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$305
+    32/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$304
+    33/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$303
+    34/245: $5\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$302
+    35/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$317
+    36/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$316
+    37/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$315
+    38/245: $5\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$314
+    39/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$313
+    40/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$312
+    41/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$311
+    42/245: $5\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$310
+    43/245: $8\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$300
+    44/245: $7\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$298
+    45/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$292
+    46/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$295
+    47/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$294
+    48/245: $6\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$293
+    49/245: $8\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$289
+    50/245: $7\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$287
+    51/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$280
+    52/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$283
+    53/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$282
+    54/245: $6\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$281
+    55/245: $8\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$277
+    56/245: $7\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$275
+    57/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$269
+    58/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$272
+    59/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$271
+    60/245: $6\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$270
+    61/245: $8\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$267
+    62/245: $7\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$265
+    63/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$259
+    64/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$262
+    65/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$261
+    66/245: $6\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$260
+    67/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$249
+    68/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$248
+    69/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$247
+    70/245: $5\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$246
+    71/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$245
+    72/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$244
+    73/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$243
+    74/245: $5\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$242
+    75/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$257
+    76/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$256
+    77/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$255
+    78/245: $5\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$254
+    79/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$253
+    80/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$252
+    81/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$251
+    82/245: $5\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$250
+    83/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$224
+    84/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$223
+    85/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$222
+    86/245: $4\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$221
+    87/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$220
+    88/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$219
+    89/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$218
+    90/245: $4\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$217
+    91/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$216
+    92/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$215
+    93/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$214
+    94/245: $4\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$213
+    95/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$212
+    96/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$211
+    97/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$210
+    98/245: $4\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$209
+    99/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$240
+   100/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$239
+   101/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$238
+   102/245: $4\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$237
+   103/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$236
+   104/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$235
+   105/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$234
+   106/245: $4\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$233
+   107/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$232
+   108/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$231
+   109/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$230
+   110/245: $4\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$229
+   111/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$228
+   112/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$227
+   113/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$226
+   114/245: $4\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$225
+   115/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$204
+   116/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$203
+   117/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$202
+   118/245: $3\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$201
+   119/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$200
+   120/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$199
+   121/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$198
+   122/245: $3\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$197
+   123/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$196
+   124/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$195
+   125/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$194
+   126/245: $3\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$193
+   127/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$192
+   128/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$191
+   129/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$190
+   130/245: $3\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$189
+   131/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$188
+   132/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$187
+   133/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$186
+   134/245: $3\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$185
+   135/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$184
+   136/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$183
+   137/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$182
+   138/245: $3\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$181
+   139/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$180
+   140/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$179
+   141/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$178
+   142/245: $3\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$177
+   143/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$176
+   144/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$175
+   145/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$174
+   146/245: $3\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$173
+   147/245: $3\abs_s$func$rtl/motion/profile_gen.sv:145$19.v[31:0]$172
+   148/245: $3\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result[31:0]$171
+   149/245: $4\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$164
+   150/245: $4\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$165
+   151/245: $3\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$162
+   152/245: $3\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$161
+   153/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.wide[32:0]$154
+   154/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.b[31:0]$153
+   155/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.a[31:0]$152
+   156/245: $2\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$151
+   157/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$150
+   158/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$149
+   159/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$148
+   160/245: $2\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$147
+   161/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$146
+   162/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$145
+   163/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$144
+   164/245: $2\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$143
+   165/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$142
+   166/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$141
+   167/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$140
+   168/245: $2\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$139
+   169/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$138
+   170/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$137
+   171/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$136
+   172/245: $2\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$135
+   173/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$134
+   174/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$133
+   175/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$132
+   176/245: $2\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$131
+   177/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$130
+   178/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$129
+   179/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$128
+   180/245: $2\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$127
+   181/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$126
+   182/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$125
+   183/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$124
+   184/245: $2\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$123
+   185/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$122
+   186/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$121
+   187/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$120
+   188/245: $2\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$119
+   189/245: $2\abs_s$func$rtl/motion/profile_gen.sv:145$19.v[31:0]$118
+   190/245: $2\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result[31:0]$117
+   191/245: $2\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$116
+   192/245: $2\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$115
+   193/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.wide[32:0]$114
+   194/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.b[31:0]$113
+   195/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.a[31:0]$112
+   196/245: $1\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result[31:0]$111
+   197/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide[32:0]$110
+   198/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.b[31:0]$109
+   199/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.a[31:0]$108
+   200/245: $1\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result[31:0]$107
+   201/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide[32:0]$106
+   202/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.b[31:0]$105
+   203/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.a[31:0]$104
+   204/245: $1\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result[31:0]$103
+   205/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide[32:0]$102
+   206/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.b[31:0]$101
+   207/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.a[31:0]$100
+   208/245: $1\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result[31:0]$99
+   209/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide[32:0]$98
+   210/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.b[31:0]$97
+   211/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.a[31:0]$96
+   212/245: $1\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result[31:0]$95
+   213/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide[32:0]$94
+   214/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.b[31:0]$93
+   215/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.a[31:0]$92
+   216/245: $1\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result[31:0]$91
+   217/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide[32:0]$90
+   218/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.b[31:0]$89
+   219/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.a[31:0]$88
+   220/245: $1\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result[31:0]$87
+   221/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide[32:0]$86
+   222/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.b[31:0]$85
+   223/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.a[31:0]$84
+   224/245: $1\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result[31:0]$83
+   225/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide[32:0]$82
+   226/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.b[31:0]$81
+   227/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.a[31:0]$80
+   228/245: $1\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result[31:0]$79
+   229/245: $1\abs_s$func$rtl/motion/profile_gen.sv:145$19.v[31:0]$78
+   230/245: $1\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result[31:0]$77
+   231/245: $1\abs_s$func$rtl/motion/profile_gen.sv:129$18.v[31:0]$76
+   232/245: $1\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result[31:0]$75
+   233/245: $0\at_target[0:0]
+   234/245: $0\triangular[0:0]
+   235/245: $0\state[2:0]
+   236/245: $0\div_start[0:0]
+   237/245: $0\divis[63:0]
+   238/245: $0\divid[63:0]
+   239/245: $0\brake[31:0]
+   240/245: $0\dir[31:0]
+   241/245: $0\dist[31:0]
+   242/245: $0\accel[31:0]
+   243/245: $0\velocity[31:0]
+   244/245: $0\position[31:0]
+   245/245: $0\busy[0:0]
+Creating decoders for process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+     1/10: $0\done[0:0]
+     2/10: $0\cnt[6:0]
+     3/10: $0\zero_div[0:0]
+     4/10: $0\div[63:0]
+     5/10: $0\dend[63:0]
+     6/10: $0\quo[63:0]
+     7/10: $0\rem[63:0]
+     8/10: $0\busy[0:0]
+     9/10: $0\remainder[63:0]
+    10/10: $0\quotient[63:0]
+
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:67$17.$result' from process `\profile_gen.$proc$rtl/motion/profile_gen.sv:67$391'.
+No latch inferred for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:66$16.$result' from process `\profile_gen.$proc$rtl/motion/profile_gen.sv:66$385'.
+No latch inferred for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:65$15.$result' from process `\profile_gen.$proc$rtl/motion/profile_gen.sv:65$379'.
+
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\profile_gen.\busy' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2663' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\position' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2668' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\velocity' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2673' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\accel' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2678' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\at_target' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2683' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\dist' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2688' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\dir' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2693' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\brake' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2698' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\divid' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2703' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\divis' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2708' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\div_start' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2713' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\state' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2718' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\triangular' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2723' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:129$18.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2728' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:129$18.v' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2733' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:145$19.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2738' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\abs_s$func$rtl/motion/profile_gen.sv:145$19.v' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2743' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2748' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2753' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2758' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:147$20.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2763' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2768' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2773' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2778' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:148$21.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2783' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2788' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2793' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2798' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:150$22.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2803' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2808' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2813' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2818' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:151$23.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2823' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2828' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2833' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2838' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:155$24.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2843' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2848' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2853' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2858' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:156$25.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2863' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2868' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2873' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2878' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:158$26.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2883' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2888' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2893' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2898' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:159$27.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2903' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.$result' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2908' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.a' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2913' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.b' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2918' with positive edge clock and positive level reset.
+Creating register for signal `\profile_gen.\sat_add$func$rtl/motion/profile_gen.sv:164$28.wide' using process `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+  created $adff cell `$procdff$2923' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\quotient' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2928' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\remainder' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2933' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\busy' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2938' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\done' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2943' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\rem' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2948' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\quo' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2953' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\dend' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2958' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\div' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2963' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\zero_div' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2968' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\seq_div\W=s32'00000000000000000000000001000000.\cnt' using process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+  created $adff cell `$procdff$2973' with positive edge clock and positive level reset.
+
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:67$391'.
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:66$385'.
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:65$379'.
+Found and cleaned up 36 empty switches in `\profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+Removing empty process `profile_gen.$proc$rtl/motion/profile_gen.sv:97$33'.
+Found and cleaned up 3 empty switches in `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+Removing empty process `$paramod\seq_div\W=s32'00000000000000000000000001000000.$proc$rtl/common/seq_div.sv:50$400'.
+Cleaned up 39 empty switches.
+
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~112 debug messages>
+Optimizing module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+<suppressed ~22 debug messages>
+
+4.3. Executing CHECK pass (checking for obvious problems).
+Checking module profile_gen...
+Checking module $paramod\seq_div\W=s32'00000000000000000000000001000000...
+Found and reported 0 problems.
+
+4.4. Executing FLATTEN pass (flatten design).
+Deleting now unused module $paramod\seq_div\W=s32'00000000000000000000000001000000.
+<suppressed ~1 debug messages>
+
+4.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.6. Executing CHECK pass (checking for obvious problems).
+Checking module profile_gen...
+Found and reported 0 problems.
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 795 unused cells and 1651 unused wires.
+<suppressed ~828 debug messages>
+
+4.8. Executing OPT pass (performing simple optimizations).
+
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 318 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 270 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 260 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 258 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~180 debug messages>
+Removed a total of 60 cells.
+
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $flatten\u_brake_div.$procmux$2640: \u_brake_div.busy -> 1'0
+      Replacing known input bits on port A of cell $flatten\u_brake_div.$procmux$2638: \u_brake_div.busy -> 1'1
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$396: \j_max -> { 1'0 \j_max [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$390: \a_max -> { 1'0 \a_max [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$384: \v_max -> { 1'0 \v_max [30:0] }
+      Replacing known input bits on port A of cell $ternary$rtl/motion/profile_gen.sv:60$206: \dist -> { 1'0 \dist [30:0] }
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$1200.
+    dead port 2/2 on $mux $procmux$1076.
+    dead port 2/2 on $mux $procmux$1410.
+    dead port 1/2 on $mux $procmux$1303.
+    dead port 1/2 on $mux $procmux$1074.
+    dead port 2/2 on $mux $procmux$782.
+    dead port 1/2 on $mux $procmux$1198.
+    dead port 1/2 on $mux $procmux$780.
+    dead port 1/2 on $mux $procmux$777.
+    dead port 2/2 on $mux $procmux$774.
+    dead port 2/2 on $mux $procmux$772.
+    dead port 2/2 on $mux $procmux$763.
+    dead port 1/2 on $mux $procmux$761.
+    dead port 1/2 on $mux $procmux$758.
+    dead port 2/2 on $mux $procmux$755.
+    dead port 2/2 on $mux $procmux$753.
+    dead port 1/2 on $mux $procmux$751.
+    dead port 2/2 on $mux $procmux$1071.
+    dead port 1/2 on $mux $procmux$1408.
+    dead port 1/2 on $mux $procmux$1069.
+    dead port 2/2 on $mux $procmux$1066.
+    dead port 1/2 on $mux $procmux$1088.
+    dead port 2/2 on $mux $procmux$1195.
+    dead port 1/2 on $mux $procmux$1064.
+    dead port 2/2 on $mux $procmux$1405.
+    dead port 1/2 on $mux $procmux$1193.
+    dead port 2/2 on $mux $procmux$1286.
+    dead port 2/2 on $mux $procmux$1190.
+    dead port 2/2 on $mux $procmux$1095.
+    dead port 2/2 on $mux $procmux$1403.
+    dead port 2/2 on $mux $procmux$1181.
+    dead port 2/2 on $mux $procmux$1300.
+    dead port 2/2 on $mux $procmux$677.
+    dead port 1/2 on $mux $procmux$675.
+    dead port 1/2 on $mux $procmux$672.
+    dead port 2/2 on $mux $procmux$669.
+    dead port 2/2 on $mux $procmux$667.
+    dead port 2/2 on $mux $procmux$658.
+    dead port 1/2 on $mux $procmux$656.
+    dead port 1/2 on $mux $procmux$653.
+    dead port 2/2 on $mux $procmux$650.
+    dead port 2/2 on $mux $procmux$648.
+    dead port 1/2 on $mux $procmux$646.
+    dead port 1/2 on $mux $procmux$1179.
+    dead port 2/2 on $mux $procmux$1401.
+    dead port 2/2 on $mux $procmux$1176.
+    dead port 1/2 on $mux $procmux$1174.
+    dead port 2/2 on $mux $procmux$1298.
+    dead port 2/2 on $mux $procmux$1090.
+    dead port 2/2 on $mux $procmux$1171.
+    dead port 2/2 on $mux $procmux$1296.
+    dead port 1/2 on $mux $procmux$1169.
+    dead port 1/2 on $mux $procmux$1284.
+    dead port 2/2 on $mux $procmux$1391.
+    dead port 2/2 on $mux $procmux$572.
+    dead port 1/2 on $mux $procmux$570.
+    dead port 1/2 on $mux $procmux$567.
+    dead port 1/2 on $mux $procmux$564.
+    dead port 2/2 on $mux $procmux$561.
+    dead port 2/2 on $mux $procmux$553.
+    dead port 1/2 on $mux $procmux$551.
+    dead port 1/2 on $mux $procmux$548.
+    dead port 1/2 on $mux $procmux$545.
+    dead port 2/2 on $mux $procmux$542.
+    dead port 1/2 on $mux $procmux$540.
+    dead port 2/2 on $mux $procmux$1281.
+    dead port 2/2 on $mux $procmux$1279.
+    dead port 2/2 on $mux $procmux$1277.
+    dead port 1/2 on $mux $procmux$1275.
+    dead port 1/2 on $mux $procmux$1389.
+    dead port 2/2 on $mux $procmux$1305.
+    dead port 2/2 on $mux $procmux$1386.
+    dead port 2/2 on $mux $procmux$1384.
+    dead port 1/2 on $mux $procmux$1093.
+    dead port 2/2 on $mux $procmux$467.
+    dead port 1/2 on $mux $procmux$465.
+    dead port 1/2 on $mux $procmux$462.
+    dead port 1/2 on $mux $procmux$459.
+    dead port 2/2 on $mux $procmux$456.
+    dead port 2/2 on $mux $procmux$448.
+    dead port 1/2 on $mux $procmux$446.
+    dead port 1/2 on $mux $procmux$443.
+    dead port 1/2 on $mux $procmux$440.
+    dead port 2/2 on $mux $procmux$437.
+    dead port 1/2 on $mux $procmux$435.
+    dead port 2/2 on $mux $procmux$426.
+    dead port 2/2 on $mux $procmux$419.
+    dead port 1/2 on $mux $procmux$417.
+    dead port 2/2 on $mux $procmux$1382.
+    dead port 1/2 on $mux $procmux$1380.
+    dead port 2/2 on $mux $procmux$1085.
+Removed 91 multiplexer ports.
+<suppressed ~206 debug messages>
+
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+  Optimizing cells in module \profile_gen.
+Performed a total of 1 changes.
+
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 166 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 161 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 156 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 154 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~36 debug messages>
+Removed a total of 12 cells.
+
+4.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 0 unused cells and 164 unused wires.
+<suppressed ~1 debug messages>
+
+4.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~125 debug messages>
+
+4.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+Performed a total of 0 changes.
+
+4.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 154 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.9. Executing FSM pass (extract and optimize FSM).
+
+4.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+Found FSM state register profile_gen.state.
+Found FSM state register profile_gen.dir.
+
+4.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+Extracting FSM `\state' from module `\profile_gen'.
+  found $adff cell for state register: $procdff$2718
+  root of input selection tree: $0\state[2:0]
+  found reset state: 3'000 (from async reset)
+  found ctrl input: $procmux$1077_CMP
+  found ctrl input: $procmux$2468_CMP
+  found ctrl input: $procmux$2471_CMP
+  found ctrl input: $logic_or$rtl/motion/profile_gen.sv:167$378_Y
+  found state code: 3'011
+  found ctrl input: $logic_and$rtl/motion/profile_gen.sv:119$160_Y
+  found ctrl input: \u_brake_div.done
+  found state code: 3'010
+  found ctrl input: \start
+  found state code: 3'001
+  found ctrl output: $procmux$1077_CMP
+  found ctrl output: $procmux$2468_CMP
+  found ctrl output: $procmux$2471_CMP
+  found ctrl output: $procmux$2444_CMP
+  ctrl inputs: { \u_brake_div.done $logic_or$rtl/motion/profile_gen.sv:167$378_Y $logic_and$rtl/motion/profile_gen.sv:119$160_Y \start }
+  ctrl outputs: { $procmux$2471_CMP $procmux$2468_CMP $procmux$2444_CMP $procmux$1077_CMP $0\state[2:0] }
+  transition:      3'000 4'---0 ->      3'000 7'1000000
+  transition:      3'000 4'---1 ->      3'001 7'1000001
+  transition:      3'010 4'-0-- ->      3'010 7'0001010
+  transition:      3'010 4'-1-- ->      3'011 7'0001011
+  transition:      3'001 4'0-0- ->      3'001 7'0100001
+  transition:      3'001 4'1-0- ->      3'010 7'0100010
+  transition:      3'001 4'--1- ->      3'001 7'0100001
+  transition:      3'011 4'---- ->      3'000 7'0010000
+Extracting FSM `\dir' from module `\profile_gen'.
+  found $adff cell for state register: $procdff$2693
+  root of input selection tree: $0\dir[31:0]
+  found reset state: 0 (from async reset)
+  found ctrl input: $procmux$2471_CMP
+  found ctrl input: \start
+  found ctrl input: $ge$rtl/motion/profile_gen.sv:111$156_Y
+  found state code: 32'11111111111111111111111111111111
+  found state code: 1
+  found ctrl output: $gt$rtl/motion/profile_gen.sv:146$241_Y
+  found ctrl output: $lt$rtl/motion/profile_gen.sv:168$374_Y
+  ctrl inputs: { $procmux$2471_CMP $ge$rtl/motion/profile_gen.sv:111$156_Y \start }
+  ctrl outputs: { $lt$rtl/motion/profile_gen.sv:168$374_Y $gt$rtl/motion/profile_gen.sv:146$241_Y $0\dir[31:0] }
+  transition:          0 3'0-- ->          0 34'0000000000000000000000000000000000
+  transition:          0 3'1-0 ->          0 34'0000000000000000000000000000000000
+  transition:          0 3'101 -> 32'11111111111111111111111111111111 34'0011111111111111111111111111111111
+  transition:          0 3'111 ->          1 34'0000000000000000000000000000000001
+  transition:          1 3'0-- ->          1 34'0100000000000000000000000000000001
+  transition:          1 3'1-0 ->          1 34'0100000000000000000000000000000001
+  transition:          1 3'101 -> 32'11111111111111111111111111111111 34'0111111111111111111111111111111111
+  transition:          1 3'111 ->          1 34'0100000000000000000000000000000001
+  transition: 32'11111111111111111111111111111111 3'0-- -> 32'11111111111111111111111111111111 34'1011111111111111111111111111111111
+  transition: 32'11111111111111111111111111111111 3'1-0 -> 32'11111111111111111111111111111111 34'1011111111111111111111111111111111
+  transition: 32'11111111111111111111111111111111 3'101 -> 32'11111111111111111111111111111111 34'1011111111111111111111111111111111
+  transition: 32'11111111111111111111111111111111 3'111 ->          1 34'1000000000000000000000000000000001
+
+4.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+Optimizing FSM `$fsm$\dir$2981' from module `\profile_gen'.
+Optimizing FSM `$fsm$\state$2975' from module `\profile_gen'.
+
+4.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 16 unused cells and 16 unused wires.
+<suppressed ~17 debug messages>
+
+4.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+Optimizing FSM `$fsm$\state$2975' from module `\profile_gen'.
+  Removing unused output signal $0\state[2:0] [0].
+  Removing unused output signal $0\state[2:0] [1].
+  Removing unused output signal $0\state[2:0] [2].
+Optimizing FSM `$fsm$\dir$2981' from module `\profile_gen'.
+  Removing unused output signal $0\dir[31:0] [0].
+  Removing unused output signal $0\dir[31:0] [1].
+  Removing unused output signal $0\dir[31:0] [2].
+  Removing unused output signal $0\dir[31:0] [3].
+  Removing unused output signal $0\dir[31:0] [4].
+  Removing unused output signal $0\dir[31:0] [5].
+  Removing unused output signal $0\dir[31:0] [6].
+  Removing unused output signal $0\dir[31:0] [7].
+  Removing unused output signal $0\dir[31:0] [8].
+  Removing unused output signal $0\dir[31:0] [9].
+  Removing unused output signal $0\dir[31:0] [10].
+  Removing unused output signal $0\dir[31:0] [11].
+  Removing unused output signal $0\dir[31:0] [12].
+  Removing unused output signal $0\dir[31:0] [13].
+  Removing unused output signal $0\dir[31:0] [14].
+  Removing unused output signal $0\dir[31:0] [15].
+  Removing unused output signal $0\dir[31:0] [16].
+  Removing unused output signal $0\dir[31:0] [17].
+  Removing unused output signal $0\dir[31:0] [18].
+  Removing unused output signal $0\dir[31:0] [19].
+  Removing unused output signal $0\dir[31:0] [20].
+  Removing unused output signal $0\dir[31:0] [21].
+  Removing unused output signal $0\dir[31:0] [22].
+  Removing unused output signal $0\dir[31:0] [23].
+  Removing unused output signal $0\dir[31:0] [24].
+  Removing unused output signal $0\dir[31:0] [25].
+  Removing unused output signal $0\dir[31:0] [26].
+  Removing unused output signal $0\dir[31:0] [27].
+  Removing unused output signal $0\dir[31:0] [28].
+  Removing unused output signal $0\dir[31:0] [29].
+  Removing unused output signal $0\dir[31:0] [30].
+  Removing unused output signal $0\dir[31:0] [31].
+
+4.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+Recoding FSM `$fsm$\state$2975' from module `\profile_gen' using `auto' encoding:
+  mapping auto encoding to `one-hot` for this FSM.
+  000 -> ---1
+  010 -> --1-
+  001 -> -1--
+  011 -> 1---
+Recoding FSM `$fsm$\dir$2981' from module `\profile_gen' using `auto' encoding:
+  mapping auto encoding to `one-hot` for this FSM.
+  00000000000000000000000000000000 -> --1
+  00000000000000000000000000000001 -> -1-
+  11111111111111111111111111111111 -> 1--
+
+4.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+FSM `$fsm$\state$2975' from module `profile_gen':
+-------------------------------------
+
+  Information on FSM $fsm$\state$2975 (\state):
+
+  Number of input signals:    4
+  Number of output signals:   4
+  Number of state bits:       4
+
+  Input signals:
+    0: \start
+    1: $logic_and$rtl/motion/profile_gen.sv:119$160_Y
+    2: $logic_or$rtl/motion/profile_gen.sv:167$378_Y
+    3: \u_brake_div.done
+
+  Output signals:
+    0: $procmux$1077_CMP
+    1: $procmux$2444_CMP
+    2: $procmux$2468_CMP
+    3: $procmux$2471_CMP
+
+  State encoding:
+    0:     4'---1  <RESET STATE>
+    1:     4'--1-
+    2:     4'-1--
+    3:     4'1---
+
+  Transition Table (state_in, ctrl_in, state_out, ctrl_out):
+      0:     0 4'---0   ->     0 4'1000
+      1:     0 4'---1   ->     2 4'1000
+      2:     1 4'-0--   ->     1 4'0001
+      3:     1 4'-1--   ->     3 4'0001
+      4:     2 4'1-0-   ->     1 4'0100
+      5:     2 4'0-0-   ->     2 4'0100
+      6:     2 4'--1-   ->     2 4'0100
+      7:     3 4'----   ->     0 4'0010
+
+-------------------------------------
+
+FSM `$fsm$\dir$2981' from module `profile_gen':
+-------------------------------------
+
+  Information on FSM $fsm$\dir$2981 (\dir):
+
+  Number of input signals:    3
+  Number of output signals:   2
+  Number of state bits:       3
+
+  Input signals:
+    0: \start
+    1: $ge$rtl/motion/profile_gen.sv:111$156_Y
+    2: $procmux$2471_CMP
+
+  Output signals:
+    0: $gt$rtl/motion/profile_gen.sv:146$241_Y
+    1: $lt$rtl/motion/profile_gen.sv:168$374_Y
+
+  State encoding:
+    0:      3'--1  <RESET STATE>
+    1:      3'-1-
+    2:      3'1--
+
+  Transition Table (state_in, ctrl_in, state_out, ctrl_out):
+      0:     0 3'1-0   ->     0 2'00
+      1:     0 3'0--   ->     0 2'00
+      2:     0 3'111   ->     1 2'00
+      3:     0 3'101   ->     2 2'00
+      4:     1 3'1-0   ->     1 2'01
+      5:     1 3'111   ->     1 2'01
+      6:     1 3'0--   ->     1 2'01
+      7:     1 3'101   ->     2 2'01
+      8:     2 3'111   ->     1 2'10
+      9:     2 3'1-0   ->     2 2'10
+     10:     2 3'101   ->     2 2'10
+     11:     2 3'0--   ->     2 2'10
+
+-------------------------------------
+
+4.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+Mapping FSM `$fsm$\state$2975' from module `\profile_gen'.
+Mapping FSM `$fsm$\dir$2981' from module `\profile_gen'.
+
+4.10. Executing OPT pass (performing simple optimizations).
+
+4.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~9 debug messages>
+
+4.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 171 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 167 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~12 debug messages>
+Removed a total of 4 cells.
+
+4.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~115 debug messages>
+
+4.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+Performed a total of 0 changes.
+
+4.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 167 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $flatten\u_brake_div.$procdff$2953 ($adff) from module profile_gen (D = $flatten\u_brake_div.$0\quo[63:0], Q = \u_brake_div.quo).
+Adding EN signal on $flatten\u_brake_div.$procdff$2968 ($adff) from module profile_gen (D = $flatten\u_brake_div.$eq$rtl/common/seq_div.sv:67$404_Y, Q = \u_brake_div.zero_div).
+Adding EN signal on $flatten\u_brake_div.$procdff$2973 ($adff) from module profile_gen (D = $flatten\u_brake_div.$0\cnt[6:0], Q = \u_brake_div.cnt).
+Adding EN signal on $procdff$2668 ($adff) from module profile_gen (D = $0\position[31:0], Q = \position).
+Adding EN signal on $procdff$2708 ($adff) from module profile_gen (D = { 31'0000000000000000000000000000000 \abs_s$func$rtl/motion/profile_gen.sv:66$16.$result 1'0 }, Q = \divis).
+Adding EN signal on $procdff$2703 ($adff) from module profile_gen (D = $mul$rtl/motion/profile_gen.sv:120$163_Y, Q = \divid).
+Adding EN signal on $procdff$2698 ($adff) from module profile_gen (D = { 4'0000 \u_brake_div.quotient [31:4] }, Q = \brake).
+Adding EN signal on $flatten\u_brake_div.$procdff$2963 ($adff) from module profile_gen (D = $flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:67$405_Y, Q = \u_brake_div.div).
+Adding EN signal on $procdff$2673 ($adff) from module profile_gen (D = $0\velocity[31:0], Q = \velocity).
+Adding EN signal on $flatten\u_brake_div.$procdff$2958 ($adff) from module profile_gen (D = $flatten\u_brake_div.$0\dend[63:0], Q = \u_brake_div.dend).
+Adding EN signal on $flatten\u_brake_div.$procdff$2928 ($adff) from module profile_gen (D = $flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:82$409_Y, Q = \u_brake_div.quotient).
+Adding EN signal on $procdff$2688 ($adff) from module profile_gen (D = $0\dist[31:0], Q = \dist).
+Adding EN signal on $procdff$2678 ($adff) from module profile_gen (D = $0\accel[31:0], Q = \accel).
+Adding EN signal on $procdff$2663 ($adff) from module profile_gen (D = $0\busy[0:0], Q = \busy).
+Adding EN signal on $procdff$2713 ($adff) from module profile_gen (D = $procmux$2476_Y, Q = \div_start).
+Adding EN signal on $flatten\u_brake_div.$procdff$2948 ($adff) from module profile_gen (D = $flatten\u_brake_div.$0\rem[63:0], Q = \u_brake_div.rem).
+Setting constant 0-bit at position 28 on $auto$ff.cc:337:slice$3071 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 29 on $auto$ff.cc:337:slice$3071 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 30 on $auto$ff.cc:337:slice$3071 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 31 on $auto$ff.cc:337:slice$3071 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 33 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 34 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 35 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 36 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 37 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 38 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 39 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 40 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 41 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 42 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 43 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 44 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 45 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 46 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 47 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 48 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 49 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 50 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 51 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 52 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 53 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 54 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 55 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 56 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 57 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 58 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 59 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 60 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 61 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 62 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+Setting constant 0-bit at position 63 on $auto$ff.cc:337:slice$3065 ($adffe) from module profile_gen.
+
+4.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 13 unused cells and 32 unused wires.
+<suppressed ~14 debug messages>
+
+4.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~9 debug messages>
+
+4.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~98 debug messages>
+
+4.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+Performed a total of 0 changes.
+
+4.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 181 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 173 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 172 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~27 debug messages>
+Removed a total of 9 cells.
+
+4.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 0 unused cells and 9 unused wires.
+<suppressed ~1 debug messages>
+
+4.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~101 debug messages>
+
+4.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+Performed a total of 0 changes.
+
+4.10.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 172 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.10.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.10.23. Finished fast OPT passes. (There is nothing left to do.)
+
+4.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 64) from FF cell profile_gen.$auto$ff.cc:337:slice$3122 ($adffe).
+Removed top 32 bits (of 64) from FF cell profile_gen.$auto$ff.cc:337:slice$3097 ($adffe).
+Removed top 1 bits (of 2) from port B of cell profile_gen.$auto$simple.cc:194:make_patterns_logic$3091 ($ne).
+Removed top 1 bits (of 5) from port B of cell profile_gen.$auto$simple.cc:194:make_patterns_logic$3085 ($ne).
+Removed top 2 bits (of 5) from port B of cell profile_gen.$auto$simple.cc:194:make_patterns_logic$3083 ($ne).
+Removed top 1 bits (of 5) from port B of cell profile_gen.$auto$simple.cc:194:make_patterns_logic$3081 ($ne).
+Removed top 2 bits (of 5) from port B of cell profile_gen.$auto$simple.cc:194:make_patterns_logic$3079 ($ne).
+Removed top 1 bits (of 64) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 3 bits (of 32) from port A of cell profile_gen.$add$rtl/motion/profile_gen.sv:145$207 ($add).
+Converting cell profile_gen.$add$rtl/motion/profile_gen.sv:47$325 ($add) from unsigned to signed.
+Removed top 1 bits (of 33) from port A of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$325 ($add).
+Removed top 1 bits (of 33) from port B of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$325 ($add).
+Removed top 2 bits (of 33) from port B of cell profile_gen.$gt$rtl/motion/profile_gen.sv:48$326 ($gt).
+Removed top 31 bits (of 32) from port B of cell profile_gen.$gt$rtl/motion/profile_gen.sv:156$330 ($gt).
+Converting cell profile_gen.$add$rtl/motion/profile_gen.sv:47$345 ($add) from unsigned to signed.
+Removed top 1 bits (of 33) from port A of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$345 ($add).
+Removed top 1 bits (of 33) from port B of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$345 ($add).
+Removed top 2 bits (of 33) from port B of cell profile_gen.$gt$rtl/motion/profile_gen.sv:48$346 ($gt).
+Removed top 31 bits (of 32) from port B of cell profile_gen.$lt$rtl/motion/profile_gen.sv:159$350 ($lt).
+Converting cell profile_gen.$add$rtl/motion/profile_gen.sv:47$355 ($add) from unsigned to signed.
+Removed top 1 bits (of 33) from port A of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$355 ($add).
+Removed top 1 bits (of 33) from port B of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$355 ($add).
+Removed top 2 bits (of 33) from port B of cell profile_gen.$gt$rtl/motion/profile_gen.sv:48$356 ($gt).
+Converting cell profile_gen.$add$rtl/motion/profile_gen.sv:47$360 ($add) from unsigned to signed.
+Removed top 1 bits (of 33) from port A of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$360 ($add).
+Removed top 1 bits (of 33) from port B of cell profile_gen.$add$rtl/motion/profile_gen.sv:47$360 ($add).
+Removed top 2 bits (of 33) from port B of cell profile_gen.$gt$rtl/motion/profile_gen.sv:48$361 ($gt).
+Removed top 31 bits (of 32) from port B of cell profile_gen.$le$rtl/motion/profile_gen.sv:167$368 ($le).
+Removed top 31 bits (of 32) from port B of cell profile_gen.$le$rtl/motion/profile_gen.sv:167$371 ($le).
+Removed top 31 bits (of 32) from port B of cell profile_gen.$ge$rtl/motion/profile_gen.sv:168$373 ($ge).
+Removed top 31 bits (of 32) from port B of cell profile_gen.$ge$rtl/motion/profile_gen.sv:168$376 ($ge).
+Removed top 1 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2636 ($mux).
+Removed top 1 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2633 ($mux).
+Removed top 1 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 32 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:82$409 ($mux).
+Removed top 6 bits (of 7) from port B of cell profile_gen.$flatten\u_brake_div.$eq$rtl/common/seq_div.sv:76$408 ($eq).
+Removed top 31 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:67$405 ($mux).
+Removed top 1 bits (of 64) from mux cell profile_gen.$flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:48$399 ($mux).
+Removed top 1 bits (of 64) from port Y of cell profile_gen.$flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398 ($sub).
+Removed top 1 bits (of 64) from port A of cell profile_gen.$flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398 ($sub).
+Removed top 1 bits (of 64) from port B of cell profile_gen.$flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398 ($sub).
+Removed top 1 bits (of 65) from port A of cell profile_gen.$flatten\u_brake_div.$ge$rtl/common/seq_div.sv:47$397 ($ge).
+Removed top 1 bits (of 65) from port B of cell profile_gen.$flatten\u_brake_div.$ge$rtl/common/seq_div.sv:47$397 ($ge).
+Removed top 31 bits (of 64) from FF cell profile_gen.$auto$ff.cc:337:slice$3076 ($adffe).
+Removed top 1 bits (of 63) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 63) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 63) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 30 bits (of 63) from port B of cell profile_gen.$flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398 ($sub).
+Removed top 31 bits (of 64) from port B of cell profile_gen.$flatten\u_brake_div.$ge$rtl/common/seq_div.sv:47$397 ($ge).
+Removed top 1 bits (of 62) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 62) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 62) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 61) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 61) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 61) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 60) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 60) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 60) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 59) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 59) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 59) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 58) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 58) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 58) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 57) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 57) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 57) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 56) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 56) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 56) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 55) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 55) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 55) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 54) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 54) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 54) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 53) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 53) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 53) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 52) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 52) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 52) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 51) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 51) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 51) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 50) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 50) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 50) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 49) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 49) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 49) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 48) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 48) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 48) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 47) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 47) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 47) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 46) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 46) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 46) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 45) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 45) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 45) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 44) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 44) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 44) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 43) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 43) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 43) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 42) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 42) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 42) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 41) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 41) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 41) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 40) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 40) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 40) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 39) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 39) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 39) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 38) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 38) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 38) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 37) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 37) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 37) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 36) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 36) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 36) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 35) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 35) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 35) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 34) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 34) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 34) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 33) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 33) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 33) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 32) from FF cell profile_gen.$auto$ff.cc:337:slice$3055 ($adffe).
+Removed top 1 bits (of 32) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2631 ($mux).
+Removed top 1 bits (of 32) from mux cell profile_gen.$flatten\u_brake_div.$procmux$2628 ($mux).
+Removed top 1 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$procmux$2633_Y.
+Removed top 33 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$procmux$2628_Y.
+Removed top 32 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:82$409_Y.
+Removed top 31 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$ternary$rtl/common/seq_div.sv:67$405_Y.
+Removed top 33 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$0\quo[63:0].
+Removed top 1 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$0\rem[63:0].
+Removed top 1 bits (of 64) from wire profile_gen.$flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398_Y.
+Removed top 32 bits (of 64) from wire profile_gen.quo_w.
+Removed top 31 bits (of 64) from wire profile_gen.divis.
+Removed top 31 bits (of 64) from wire profile_gen.denom.
+Removed top 4 bits (of 32) from wire profile_gen.brake.
+
+4.12. Executing PEEPOPT pass (run peephole optimizers).
+
+4.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 0 unused cells and 11 unused wires.
+<suppressed ~1 debug messages>
+
+4.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module profile_gen:
+  creating $macc model for $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398 ($sub).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:60$395 ($neg).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:60$389 ($neg).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:60$383 ($neg).
+  creating $macc model for $sub$rtl/motion/profile_gen.sv:165$367 ($sub).
+  creating $macc model for $add$rtl/motion/profile_gen.sv:47$360 ($add).
+  creating $macc model for $add$rtl/motion/profile_gen.sv:47$355 ($add).
+  creating $macc model for $add$rtl/motion/profile_gen.sv:47$345 ($add).
+  creating $macc model for $add$rtl/motion/profile_gen.sv:47$325 ($add).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:155$324 ($neg).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:155$318 ($neg).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:151$290 ($neg).
+  creating $macc model for $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:75$407 ($sub).
+  creating $macc model for $add$rtl/motion/profile_gen.sv:145$207 ($add).
+  creating $macc model for $neg$rtl/motion/profile_gen.sv:60$205 ($neg).
+  creating $macc model for $mul$rtl/motion/profile_gen.sv:120$163 ($mul).
+  creating $macc model for $sub$rtl/motion/profile_gen.sv:110$155 ($sub).
+  merging $macc model for $neg$rtl/motion/profile_gen.sv:155$324 into $add$rtl/motion/profile_gen.sv:47$325.
+  creating $alu model for $macc $neg$rtl/motion/profile_gen.sv:60$205.
+  creating $alu model for $macc $add$rtl/motion/profile_gen.sv:145$207.
+  creating $alu model for $macc $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:75$407.
+  creating $alu model for $macc $neg$rtl/motion/profile_gen.sv:151$290.
+  creating $alu model for $macc $neg$rtl/motion/profile_gen.sv:155$318.
+  creating $alu model for $macc $sub$rtl/motion/profile_gen.sv:110$155.
+  creating $alu model for $macc $add$rtl/motion/profile_gen.sv:47$325.
+  creating $alu model for $macc $add$rtl/motion/profile_gen.sv:47$345.
+  creating $alu model for $macc $add$rtl/motion/profile_gen.sv:47$355.
+  creating $alu model for $macc $add$rtl/motion/profile_gen.sv:47$360.
+  creating $alu model for $macc $sub$rtl/motion/profile_gen.sv:165$367.
+  creating $alu model for $macc $neg$rtl/motion/profile_gen.sv:60$383.
+  creating $alu model for $macc $neg$rtl/motion/profile_gen.sv:60$389.
+  creating $alu model for $macc $neg$rtl/motion/profile_gen.sv:60$395.
+  creating $alu model for $macc $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398.
+  creating $macc cell for $mul$rtl/motion/profile_gen.sv:120$163: $auto$alumacc.cc:427:replace_macc$3138
+  creating $alu model for $ge$rtl/motion/profile_gen.sv:168$376 ($ge): new $alu
+  creating $alu model for $ge$rtl/motion/profile_gen.sv:168$373 ($ge): new $alu
+  creating $alu model for $le$rtl/motion/profile_gen.sv:167$371 ($le): merged with $ge$rtl/motion/profile_gen.sv:168$376.
+  creating $alu model for $le$rtl/motion/profile_gen.sv:167$368 ($le): merged with $ge$rtl/motion/profile_gen.sv:168$373.
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:50$363 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:48$361 ($gt): new $alu
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:50$358 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:48$356 ($gt): new $alu
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:159$350 ($lt): merged with $ge$rtl/motion/profile_gen.sv:168$376.
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:50$348 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:48$346 ($gt): new $alu
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:158$340 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:156$330 ($gt): merged with $ge$rtl/motion/profile_gen.sv:168$376.
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:50$328 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:48$326 ($gt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:155$319 ($gt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:151$291 ($gt): new $alu
+  creating $alu model for $lt$rtl/motion/profile_gen.sv:148$268 ($lt): new $alu
+  creating $alu model for $gt$rtl/motion/profile_gen.sv:145$208 ($gt): new $alu
+  creating $alu model for $ge$rtl/motion/profile_gen.sv:111$156 ($ge): merged with $sub$rtl/motion/profile_gen.sv:110$155.
+  creating $alu model for $flatten\u_brake_div.$ge$rtl/common/seq_div.sv:47$397 ($ge): new $alu
+  creating $alu model for $flatten\u_brake_div.$eq$rtl/common/seq_div.sv:76$408 ($eq): merged with $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:75$407.
+  creating $alu cell for $flatten\u_brake_div.$ge$rtl/common/seq_div.sv:47$397: $auto$alumacc.cc:578:replace_alu$3155
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:145$208: $auto$alumacc.cc:578:replace_alu$3168
+  creating $alu cell for $lt$rtl/motion/profile_gen.sv:148$268: $auto$alumacc.cc:578:replace_alu$3181
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:151$291: $auto$alumacc.cc:578:replace_alu$3188
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:155$319: $auto$alumacc.cc:578:replace_alu$3201
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:48$326: $auto$alumacc.cc:578:replace_alu$3214
+  creating $alu cell for $lt$rtl/motion/profile_gen.sv:50$328: $auto$alumacc.cc:578:replace_alu$3225
+  creating $alu cell for $lt$rtl/motion/profile_gen.sv:158$340: $auto$alumacc.cc:578:replace_alu$3230
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:48$346: $auto$alumacc.cc:578:replace_alu$3237
+  creating $alu cell for $lt$rtl/motion/profile_gen.sv:50$348: $auto$alumacc.cc:578:replace_alu$3248
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:48$356: $auto$alumacc.cc:578:replace_alu$3253
+  creating $alu cell for $lt$rtl/motion/profile_gen.sv:50$358: $auto$alumacc.cc:578:replace_alu$3264
+  creating $alu cell for $gt$rtl/motion/profile_gen.sv:48$361: $auto$alumacc.cc:578:replace_alu$3269
+  creating $alu cell for $lt$rtl/motion/profile_gen.sv:50$363: $auto$alumacc.cc:578:replace_alu$3280
+  creating $alu cell for $ge$rtl/motion/profile_gen.sv:168$373, $le$rtl/motion/profile_gen.sv:167$368: $auto$alumacc.cc:578:replace_alu$3285
+  creating $alu cell for $ge$rtl/motion/profile_gen.sv:168$376, $le$rtl/motion/profile_gen.sv:167$371, $lt$rtl/motion/profile_gen.sv:159$350, $gt$rtl/motion/profile_gen.sv:156$330: $auto$alumacc.cc:578:replace_alu$3302
+  creating $alu cell for $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:48$398: $auto$alumacc.cc:578:replace_alu$3319
+  creating $alu cell for $neg$rtl/motion/profile_gen.sv:60$395: $auto$alumacc.cc:578:replace_alu$3322
+  creating $alu cell for $neg$rtl/motion/profile_gen.sv:60$389: $auto$alumacc.cc:578:replace_alu$3325
+  creating $alu cell for $neg$rtl/motion/profile_gen.sv:60$383: $auto$alumacc.cc:578:replace_alu$3328
+  creating $alu cell for $sub$rtl/motion/profile_gen.sv:165$367: $auto$alumacc.cc:578:replace_alu$3331
+  creating $alu cell for $add$rtl/motion/profile_gen.sv:47$360: $auto$alumacc.cc:578:replace_alu$3334
+  creating $alu cell for $add$rtl/motion/profile_gen.sv:47$355: $auto$alumacc.cc:578:replace_alu$3337
+  creating $alu cell for $add$rtl/motion/profile_gen.sv:47$345: $auto$alumacc.cc:578:replace_alu$3340
+  creating $alu cell for $add$rtl/motion/profile_gen.sv:47$325: $auto$alumacc.cc:578:replace_alu$3343
+  creating $alu cell for $sub$rtl/motion/profile_gen.sv:110$155, $ge$rtl/motion/profile_gen.sv:111$156: $auto$alumacc.cc:578:replace_alu$3346
+  creating $alu cell for $neg$rtl/motion/profile_gen.sv:155$318: $auto$alumacc.cc:578:replace_alu$3361
+  creating $alu cell for $neg$rtl/motion/profile_gen.sv:151$290: $auto$alumacc.cc:578:replace_alu$3364
+  creating $alu cell for $flatten\u_brake_div.$sub$rtl/common/seq_div.sv:75$407, $flatten\u_brake_div.$eq$rtl/common/seq_div.sv:76$408: $auto$alumacc.cc:578:replace_alu$3367
+  creating $alu cell for $add$rtl/motion/profile_gen.sv:145$207: $auto$alumacc.cc:578:replace_alu$3372
+  creating $alu cell for $neg$rtl/motion/profile_gen.sv:60$205: $auto$alumacc.cc:578:replace_alu$3375
+  created 31 $alu and 1 $macc cells.
+
+4.15. Executing SHARE pass (SAT-based resource sharing).
+
+4.16. Executing OPT pass (performing simple optimizations).
+
+4.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~19 debug messages>
+
+4.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 229 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~101 debug messages>
+
+4.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+    New input vector for $reduce_and cell $auto$simple.cc:211:make_patterns_logic$3101: { \u_brake_div.busy $auto$rtlil.cc:3245:Not$3099 $auto$alumacc.cc:594:replace_alu$3368 }
+  Optimizing cells in module \profile_gen.
+Performed a total of 1 changes.
+
+4.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 229 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 10 unused cells and 42 unused wires.
+<suppressed ~13 debug messages>
+
+4.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~101 debug messages>
+
+4.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+Performed a total of 0 changes.
+
+4.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 217 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.17. Executing MEMORY pass.
+
+4.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+4.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+4.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+4.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+4.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+4.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+4.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+4.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+4.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.19. Executing OPT pass (performing simple optimizations).
+
+4.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~84 debug messages>
+
+4.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 443 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 323 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~360 debug messages>
+Removed a total of 120 cells.
+
+4.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 4 unused cells and 262 unused wires.
+<suppressed ~5 debug messages>
+
+4.19.5. Finished fast OPT passes.
+
+4.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+4.21. Executing OPT pass (performing simple optimizations).
+
+4.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 319 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~62 debug messages>
+
+4.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+    New ctrl vector for $pmux cell $procmux$2526: \state [1]
+    New ctrl vector for $pmux cell $procmux$2561: \state [1]
+  Optimizing cells in module \profile_gen.
+Performed a total of 2 changes.
+
+4.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 319 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.21.6. Executing OPT_SHARE pass.
+
+4.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.21.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.21.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \profile_gen..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~62 debug messages>
+
+4.21.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \profile_gen.
+Performed a total of 0 changes.
+
+4.21.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 319 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Removed a total of 0 cells.
+
+4.21.14. Executing OPT_SHARE pass.
+
+4.21.15. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+
+4.21.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+
+4.21.18. Finished fast OPT passes. (There is nothing left to do.)
+
+4.22. Executing TECHMAP pass (map to technology primitives).
+
+4.22.1. Executing Verilog-2005 frontend: /share/techmap.v
+Parsing Verilog input from `/share/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+4.22.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod$c6baa65225090ac0a120feab1b920965244aa496\_90_alu for cells of type $alu.
+Using template $paramod$1df2966beb883ef1f7a620dbf2842c5d6450c0eb\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$10ed987432f06055e5279101f9ec60a49861b43c\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$2653f68ddb8eab7b1907b4a20767b72a824a7a36\_90_alu for cells of type $alu.
+Using template $paramod$670c02bdf2c02360c72deaf543d10c35268f9d8f\_90_alu for cells of type $alu.
+Using template $paramod$ae8134539efa37db87ecf1fc722501dae128903f\_90_alu for cells of type $alu.
+Using template $paramod$7e708ae28ab761f11d0fb59d3ffc72f6a4baf5d9\_90_alu for cells of type $alu.
+Using template $paramod$b8c0a997bce700f23568a5ada79cc6781d1f5ca0\_90_alu for cells of type $alu.
+Using template $paramod$70f28923492077fbcb7a8682ed66fb74142395cb\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \vmax_abs * \vmax_abs (32x32 bits, signed)
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $adff.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $logic_or.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod$039520c137afc9cd69dd56c3fb11a4e1fbe5f664\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100001 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000111 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000011 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000011 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000010 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000010 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000111111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000111111 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~5518 debug messages>
+
+4.23. Executing OPT pass (performing simple optimizations).
+
+4.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module profile_gen.
+<suppressed ~7737 debug messages>
+
+4.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\profile_gen'.
+Computing hashes of 16633 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 15180 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 14553 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 14180 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13991 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13789 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13593 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13495 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13374 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13257 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13191 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13152 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13105 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13080 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13060 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13048 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13022 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 13008 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 12983 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 12972 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 12956 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 12951 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 12945 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+Computing hashes of 12944 cells of `\profile_gen'.
+Finding duplicate cells in `\profile_gen'.
+<suppressed ~11067 debug messages>
+Removed a total of 3689 cells.
+
+4.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \profile_gen..
+Removed 599 unused cells and 2792 unused wires.
+<suppressed ~600 debug messages>
+
+4.23.5. Finished fast OPT passes.
+
+4.24. Executing ABC pass (technology mapping using ABC).
+
+4.24.1. Summary of detected clock domains:
+  1 cells in clk={ }, en={ }, arst={ }, srst={ }
+  3 cells in clk=\clk, en=$auto$simple.cc:193:make_patterns_logic$3119, arst=!\rst_n, srst={ }
+  2 cells in clk=\clk, en=\state [2], arst=!\rst_n, srst={ }
+  211 cells in clk=\clk, en=$auto$simple.cc:210:make_patterns_logic$3074, arst=!\rst_n, srst={ }
+  2003 cells in clk=\clk, en=$auto$simple.cc:210:make_patterns_logic$3116, arst=!\rst_n, srst={ }
+  665 cells in clk=\clk, en=$auto$simple.cc:210:make_patterns_logic$3107, arst=!\rst_n, srst={ }
+  55 cells in clk=\clk, en=$auto$simple.cc:210:make_patterns_logic$3100, arst=!\rst_n, srst={ }
+  1045 cells in clk=\clk, en=$auto$simple.cc:210:make_patterns_logic$3092, arst=!\rst_n, srst={ }
+  83 cells in clk=\clk, en=$flatten\u_brake_div.$logic_and$rtl/common/seq_div.sv:59$403_Y, arst=!\rst_n, srst={ }
+  6819 cells in clk=\clk, en=$auto$fsm_map.cc:118:implement_pattern_cache$3013, arst=!\rst_n, srst={ }
+  142 cells in clk=\clk, en=$auto$simple.cc:193:make_patterns_logic$3063, arst=!\rst_n, srst={ }
+  887 cells in clk=\clk, en=$auto$simple.cc:193:make_patterns_logic$3056, arst=!\rst_n, srst={ }
+  429 cells in clk=\clk, en={ }, arst=!\rst_n, srst={ }
+
+4.24.2. Extracting gate netlist of module `\profile_gen' to `<abc-temp-dir>/input.blif'..
+No matching clock domain found. Not extracting any FF cells.
+
+4.24.2.1. Executed ABC.
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+
+4.24.3. Extracting gate netlist of module `\profile_gen' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, enabled by $auto$simple.cc:193:make_patterns_logic$3119, asynchronously reset by !\rst_n

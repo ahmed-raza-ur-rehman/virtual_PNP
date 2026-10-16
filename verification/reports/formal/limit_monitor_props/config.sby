@@ -1,0 +1,14 @@
+[options]
+mode bmc
+depth 25
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv limit_monitor_props.sv limit_monitor.sv
+prep -top limit_monitor_props
+
+[files]
+verification/formal/props/limit_monitor_props.sv
+rtl/safety/limit_monitor.sv

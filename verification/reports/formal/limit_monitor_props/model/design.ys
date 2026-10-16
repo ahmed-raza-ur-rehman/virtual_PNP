@@ -1,0 +1,8 @@
+# running in /home/user/virtual_PNP/verification/reports/formal/limit_monitor_props/src/
+read -formal -sv limit_monitor_props.sv limit_monitor.sv
+prep -top limit_monitor_props
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

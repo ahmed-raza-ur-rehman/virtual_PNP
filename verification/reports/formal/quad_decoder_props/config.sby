@@ -1,0 +1,14 @@
+[options]
+mode bmc
+depth 30
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv quad_decoder_props.sv quad_decoder.sv
+prep -top quad_decoder_props
+
+[files]
+verification/formal/props/quad_decoder_props.sv
+rtl/motion/quad_decoder.sv

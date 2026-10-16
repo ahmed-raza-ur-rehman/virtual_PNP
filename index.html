@@ -1,0 +1,4324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced SMD Pick & Place System - Air-Suspended Linear Arm</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --primary: #00d4aa;
+    --primary-dark: #00a888;
+    --secondary: #6366f1;
+    --accent: #f59e0b;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --bg-dark: #0a0e14;
+    --bg-card: #12171f;
+    --bg-elevated: #1a2130;
+    --border: rgba(255,255,255,0.08);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-bright: #f8fafc;
+    --glow: 0 0 20px rgba(0,212,170,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    color: var(--text);
+    user-select: none;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    grid-template-rows: 48px 1fr 200px 32px;
+    height: 100vh;
+    gap: 1px;
+    background: var(--border);
+}
+
+/* Header */
+#header {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+#logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--primary);
+}
+
+#logo svg { width: 28px; height: 28px; }
+
+.header-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.header-tab {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.header-tab:hover { background: var(--bg-elevated); color: var(--text); }
+.header-tab.active { background: var(--primary); color: var(--bg-dark); }
+
+.header-status {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--bg-elevated);
+    border-radius: 12px;
+}
+
+.status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.online { background: var(--success); box-shadow: 0 0 8px var(--success); }
+.status-dot.busy { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+.status-dot.error { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Left Panel */
+#left-panel {
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-section {
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.panel-header:hover { background: var(--bg-elevated); }
+.panel-header .icon { font-size: 14px; }
+.panel-header .toggle { font-size: 10px; opacity: 0.5; transition: transform 0.2s; }
+.panel-header.collapsed .toggle { transform: rotate(-90deg); }
+
+.panel-content {
+    padding: 12px 16px;
+    font-size: 12px;
+    transition: all 0.3s;
+    overflow: hidden;
+}
+
+.panel-content.collapsed { padding: 0 16px; max-height: 0; }
+
+/* Controls Grid */
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.ctrl-key {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 4px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.ctrl-key:hover { border-color: var(--primary); }
+
+.ctrl-key .key {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 2px;
+}
+
+.ctrl-key .label {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Machine State */
+.state-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.state-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background: var(--bg-elevated);
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.state-row.active {
+    border-color: var(--primary);
+    background: rgba(0,212,170,0.1);
+}
+
+.state-row .indicator {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: all 0.3s;
+}
+
+.state-row.active .indicator {
+    box-shadow: 0 0 10px currentColor;
+}
+
+.state-row.active[data-state="idle"] .indicator { background: var(--success); }
+.state-row.active[data-state="moving"] .indicator { background: var(--warning); }
+.state-row.active[data-state="picking"] .indicator { background: var(--secondary); }
+.state-row.active[data-state="holding"] .indicator { background: var(--accent); }
+.state-row.active[data-state="placing"] .indicator { background: #a855f7; }
+.state-row.active[data-state="error"] .indicator { background: var(--danger); animation: blink 0.5s infinite; }
+
+@keyframes blink { 50% { opacity: 0.3; } }
+
+/* Position Display */
+.position-display {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pos-axis {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pos-axis .axis-label {
+    width: 24px; height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.pos-axis.x .axis-label { background: rgba(239,68,68,0.2); color: #f87171; }
+.pos-axis.y .axis-label { background: rgba(34,197,94,0.2); color: #4ade80; }
+.pos-axis.z .axis-label { background: rgba(59,130,246,0.2); color: #60a5fa; }
+.pos-axis.r .axis-label { background: rgba(168,85,247,0.2); color: #c084fc; }
+
+.pos-axis .bar-container {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-dark);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.pos-axis .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.05s;
+}
+
+.pos-axis.x .bar-fill { background: linear-gradient(90deg, #ef4444, #f87171); }
+.pos-axis.y .bar-fill { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.pos-axis.z .bar-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.pos-axis.r .bar-fill { background: linear-gradient(90deg, #a855f7, #c084fc); }
+
+.pos-axis .value {
+    width: 60px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-bright);
+}
+
+/* Mode Selector */
+.mode-selector {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-dark);
+    border-radius: 8px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.mode-btn:hover { background: var(--bg-elevated); color: var(--text); }
+.mode-btn.active { background: var(--primary); color: var(--bg-dark); }
+
+.mode-btn.ai { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; }
+
+/* Canvas Container */
+#canvas-container {
+    background: var(--bg-dark);
+    position: relative;
+    overflow: hidden;
+}
+
+#main-canvas { width: 100%; height: 100%; display: block; }
+
+/* Viewport Overlay */
+.viewport-overlay {
+    position: absolute;
+    pointer-events: none;
+}
+
+#crosshair {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px; height: 60px;
+    opacity: 0.5;
+}
+
+#crosshair::before, #crosshair::after {
+    content: '';
+    position: absolute;
+    background: var(--primary);
+}
+
+#crosshair::before { width: 1px; height: 100%; left: 50%; }
+#crosshair::after { width: 100%; height: 1px; top: 50%; }
+
+#crosshair .corner {
+    position: absolute;
+    width: 12px; height: 12px;
+    border: 2px solid var(--primary);
+}
+
+#crosshair .corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+#crosshair .corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+#crosshair .corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+#crosshair .corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+/* Mini Views */
+#mini-views {
+    position: absolute;
+    top: 12px; right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.mini-view {
+    width: 160px; height: 120px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mini-view:hover { border-color: var(--primary); }
+
+.mini-view-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--bg-elevated);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.mini-view-header .zoom {
+    color: var(--primary);
+}
+
+.mini-view-canvas {
+    width: 100%;
+    height: calc(100% - 28px);
+    background: #000;
+}
+
+/* Prism View */
+#prism-view {
+    position: absolute;
+    bottom: 12px; left: 12px;
+    width: 200px; height: 200px;
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+#prism-view .view-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 100%; height: calc(100% - 32px);
+    gap: 1px;
+    background: var(--border);
+}
+
+#prism-view .view-cell {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+#prism-view .view-cell canvas {
+    width: 100%; height: 100%;
+}
+
+#prism-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg-elevated);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+#prism-header .badge {
+    padding: 2px 6px;
+    background: var(--primary);
+    color: var(--bg-dark);
+    border-radius: 4px;
+    font-size: 9px;
+}
+
+/* Collision Alert */
+#collision-alert {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95));
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    display: none;
+    z-index: 100;
+    animation: collisionPulse 0.3s ease-out;
+    box-shadow: 0 0 40px rgba(239,68,68,0.5);
+}
+
+@keyframes collisionPulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Right Panel */
+#right-panel {
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Statistics Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.stat-card {
+    padding: 12px;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.stat-card .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.stat-card .value {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-bright);
+}
+
+.stat-card .value.primary { color: var(--primary); }
+.stat-card .value.warning { color: var(--warning); }
+.stat-card .value.danger { color: var(--danger); }
+
+.stat-card .sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Job Queue */
+.job-queue {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.job-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.job-item:hover { border-color: var(--primary); }
+.job-item.active { border-color: var(--primary); background: rgba(0,212,170,0.1); }
+
+.job-item .icon {
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.job-item .info { flex: 1; }
+.job-item .name { font-size: 12px; font-weight: 600; }
+.job-item .desc { font-size: 10px; color: var(--text-muted); }
+
+.job-item .progress {
+    width: 50px; height: 50px;
+    position: relative;
+}
+
+.job-item .progress svg {
+    transform: rotate(-90deg);
+}
+
+.job-item .progress .value {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Bottom Panel - Feeders */
+#bottom-panel {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#feeder-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 8px 16px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+.feeder-tab {
+    padding: 6px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.feeder-tab:hover { background: var(--bg-dark); color: var(--text); }
+.feeder-tab.active { background: var(--primary); color: var(--bg-dark); }
+
+#feeder-content {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 12px 16px;
+}
+
+.feeder-grid {
+    display: flex;
+    gap: 8px;
+    min-width: max-content;
+}
+
+.feeder-slot {
+    width: 80px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.feeder-slot:hover { border-color: var(--primary); transform: translateY(-2px); }
+.feeder-slot.active { border-color: var(--primary); background: rgba(0,212,170,0.1); }
+.feeder-slot.empty { opacity: 0.4; }
+
+.feeder-slot .component-preview {
+    width: 48px; height: 32px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feeder-slot .component-preview .chip {
+    background: currentColor;
+    border-radius: 2px;
+}
+
+.feeder-slot .name {
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.feeder-slot .count {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.feeder-slot .progress-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--bg-dark);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.feeder-slot .progress-bar .fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: width 0.3s;
+}
+
+/* Turntable View */
+.turntable-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.turntable {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    border: 3px solid var(--border);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.turntable-center {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 2px solid var(--text-muted);
+}
+
+.turntable-slot {
+    position: absolute;
+    width: 24px; height: 24px;
+    background: var(--bg-elevated);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.turntable-slot:hover { border-color: var(--primary); }
+.turntable-slot.active { border-color: var(--primary); background: var(--primary); }
+
+.turntable-slot .dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+}
+
+.turntable-pointer {
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid var(--primary);
+}
+
+/* Status Bar */
+#status-bar {
+    grid-column: 1 / -1;
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 24px;
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-item .label { color: var(--text-muted); }
+.status-item .value { color: var(--primary); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+/* Developer Console */
+#dev-console {
+    position: fixed;
+    bottom: 40px; right: 12px;
+    width: 400px;
+    max-height: 300px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 200;
+    display: none;
+}
+
+#dev-console.visible { display: block; }
+
+#dev-console-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+#dev-console-header h4 {
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#dev-console-content {
+    padding: 10px 14px;
+    max-height: 250px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+
+.console-line {
+    padding: 3px 0;
+    display: flex;
+    gap: 8px;
+}
+
+.console-line .time { color: var(--text-muted); }
+.console-line .msg { color: var(--text); }
+.console-line.error .msg { color: var(--danger); }
+.console-line.success .msg { color: var(--success); }
+.console-line.info .msg { color: var(--secondary); }
+
+/* Settings Modal */
+#settings-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+}
+
+#settings-modal.visible { display: flex; }
+
+.modal-content {
+    width: 600px;
+    max-height: 80vh;
+    background: var(--bg-card);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 { font-size: 16px; font-weight: 600; }
+
+.modal-close {
+    width: 32px; height: 32px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.modal-close:hover { background: var(--bg-dark); color: var(--text); }
+
+.modal-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.settings-group {
+    margin-bottom: 24px;
+}
+
+.settings-group h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.setting-row .label {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.setting-row .desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.slider-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slider-input input[type="range"] {
+    width: 120px;
+    height: 4px;
+    -webkit-appearance: none;
+    background: var(--bg-dark);
+    border-radius: 2px;
+    outline: none;
+}
+
+.slider-input input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+}
+
+.slider-input .value {
+    width: 40px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--primary);
+}
+
+.toggle-switch {
+    width: 44px; height: 24px;
+    background: var(--bg-dark);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.toggle-switch.active { background: var(--primary); }
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 3px; left: 3px;
+    transition: transform 0.3s;
+}
+
+.toggle-switch.active::after { transform: translateX(20px); }
+
+/* Responsive */
+@media (max-width: 1200px) {
+    #app {
+        grid-template-columns: 240px 1fr 280px;
+    }
+}
+
+@media (max-width: 900px) {
+    #app {
+        grid-template-columns: 1fr;
+        grid-template-rows: 48px 1fr auto 32px;
+    }
+    
+    #left-panel, #right-panel {
+        display: none;
+    }
+    
+    #bottom-panel {
+        grid-column: 1;
+    }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* Tooltips */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 100;
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+    <!-- Header -->
+    <header id="header">
+        <div id="logo">
+            <svg viewBox="0 0 32 32" fill="none">
+                <rect x="2" y="8" width="28" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="16" cy="16" r="4" fill="currentColor"/>
+                <line x1="16" y1="4" x2="16" y2="8" stroke="currentColor" stroke-width="2"/>
+                <line x1="8" y1="16" x2="2" y2="16" stroke="currentColor" stroke-width="2"/>
+                <line x1="30" y1="16" x2="24" y2="16" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>PRISM<strong>PLACE</strong> Pro</span>
+        </div>
+        
+        <div class="header-tabs">
+            <button class="header-tab active" data-view="operate">Operate</button>
+            <button class="header-tab" data-view="program">Program</button>
+            <button class="header-tab" data-view="setup">Setup</button>
+            <button class="header-tab" data-view="inspect">Inspect</button>
+        </div>
+        
+        <div class="header-status">
+            <div class="status-indicator">
+                <div class="status-dot online" id="connection-status"></div>
+                <span>System Online</span>
+            </div>
+            <div class="status-indicator">
+                <span id="vacuum-status" style="color: var(--text-muted);">Vacuum: OFF</span>
+            </div>
+            <button class="header-tab" onclick="toggleSettings()" style="padding: 6px 12px;">⚙️ Settings</button>
+        </div>
+    </header>
+
+    <!-- Left Panel -->
+    <aside id="left-panel">
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">🎮</span> Controls</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <div class="controls-grid">
+                    <div class="ctrl-key"><span class="key">W</span><span class="label">Forward</span></div>
+                    <div class="ctrl-key"><span class="key">A</span><span class="label">Left</span></div>
+                    <div class="ctrl-key"><span class="key">S</span><span class="label">Back</span></div>
+                    <div class="ctrl-key"><span class="key">D</span><span class="label">Right</span></div>
+                    <div class="ctrl-key"><span class="key">Q</span><span class="label">Down</span></div>
+                    <div class="ctrl-key"><span class="key">E</span><span class="label">Up</span></div>
+                    <div class="ctrl-key"><span class="key">R</span><span class="label">Rotate</span></div>
+                    <div class="ctrl-key"><span class="key">␣</span><span class="label">Pick/Place</span></div>
+                    <div class="ctrl-key"><span class="key">T</span><span class="label">Tray</span></div>
+                    <div class="ctrl-key"><span class="key">Tab</span><span class="label">Auto</span></div>
+                    <div class="ctrl-key"><span class="key">C</span><span class="label">Camera</span></div>
+                    <div class="ctrl-key"><span class="key">P</span><span class="label">Prism</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">⚡</span> Machine State</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <div class="state-grid">
+                    <div class="state-row active" data-state="idle"><div class="indicator"></div><span>IDLE</span></div>
+                    <div class="state-row" data-state="moving"><div class="indicator"></div><span>MOVING</span></div>
+                    <div class="state-row" data-state="picking"><div class="indicator"></div><span>PICKING</span></div>
+                    <div class="state-row" data-state="holding"><div class="indicator"></div><span>HOLDING</span></div>
+                    <div class="state-row" data-state="placing"><div class="indicator"></div><span>PLACING</span></div>
+                    <div class="state-row" data-state="error"><div class="indicator"></div><span>ERROR</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">📍</span> Position (mm)</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <div class="position-display">
+                    <div class="pos-axis x">
+                        <div class="axis-label">X</div>
+                        <div class="bar-container"><div class="bar-fill" id="x-bar" style="width: 50%;"></div></div>
+                        <div class="value" id="x-val">0.00</div>
+                    </div>
+                    <div class="pos-axis y">
+                        <div class="axis-label">Y</div>
+                        <div class="bar-container"><div class="bar-fill" id="y-bar" style="width: 50%;"></div></div>
+                        <div class="value" id="y-val">0.00</div>
+                    </div>
+                    <div class="pos-axis z">
+                        <div class="axis-label">Z</div>
+                        <div class="bar-container"><div class="bar-fill" id="z-bar" style="width: 80%;"></div></div>
+                        <div class="value" id="z-val">80.00</div>
+                    </div>
+                    <div class="pos-axis r">
+                        <div class="axis-label">R</div>
+                        <div class="bar-container"><div class="bar-fill" id="r-bar" style="width: 0%;"></div></div>
+                        <div class="value" id="r-val">0°</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">🏭</span> Machine Profile</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <select id="machine-profile" style="width:100%;padding:6px;background:var(--bg-elevated);color:var(--text);border:1px solid var(--border);border-radius:6px;" onchange="applyMachineProfile(this.value)">
+                    <option value="standard">Standard (balanced)</option>
+                    <option value="highspeed">High-Speed (fast, lower accuracy)</option>
+                    <option value="highaccuracy">High-Accuracy (slow, precise)</option>
+                    <option value="multihead">Multi-Head x4 (parallel)</option>
+                </select>
+                <div style="margin-top:8px;font-size:11px;color:var(--text-muted);" id="profile-desc">Balanced speed & accuracy</div>
+                <div style="margin-top:8px;display:flex;gap:6px;">
+                    <button class="mode-btn" onclick="runPlacementOptimization()" style="flex:1;">Optimize Placement</button>
+                </div>
+                <div style="margin-top:6px;display:flex;gap:6px;">
+                    <button class="mode-btn" onclick="runFeederOptimization()" style="flex:1;">Optimize Feeders</button>
+                </div>
+                <div style="margin-top:6px;display:flex;gap:6px;">
+                    <button class="mode-btn" onclick="runTrayOptimization()" style="flex:1;">Optimize Tray</button>
+                </div>
+                <div style="margin-top:8px;font-size:10px;color:var(--text-muted);" id="opt-status">Ready</div>
+            </div>
+        </div>
+
+        <div class="panel-section" style="flex: 1;">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">🤖</span> Operation Mode</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="manual" onclick="setMode('manual')">Manual</button>
+                    <button class="mode-btn" data-mode="semi" onclick="setMode('semi')">Semi</button>
+                    <button class="mode-btn" data-mode="auto" onclick="setMode('auto')">Auto</button>
+                    <button class="mode-btn ai" data-mode="ai" onclick="setMode('ai')">AI</button>
+                </div>
+                <div style="margin-top: 12px; padding: 10px; background: var(--bg-elevated); border-radius: 8px;">
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Current Mode</div>
+                    <div style="font-size: 14px; font-weight: 700;" id="current-mode">MANUAL</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;" id="mode-desc">Full manual control of all axes</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Canvas Container -->
+    <main id="canvas-container">
+        <div id="collision-alert">⚠️ COLLISION DETECTED</div>
+        
+        <div id="crosshair" class="viewport-overlay">
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner bl"></div>
+            <div class="corner br"></div>
+        </div>
+
+        <div id="mini-views" class="viewport-overlay">
+            <div class="mini-view" data-view="top">
+                <div class="mini-view-header">
+                    <span>TOP VIEW</span>
+                    <span class="zoom">1x</span>
+                </div>
+                <canvas class="mini-view-canvas" id="top-view-canvas"></canvas>
+            </div>
+            <div class="mini-view" data-view="component">
+                <div class="mini-view-header">
+                    <span>COMPONENT</span>
+                    <span class="zoom">10x</span>
+                </div>
+                <canvas class="mini-view-canvas" id="component-view-canvas"></canvas>
+            </div>
+        </div>
+
+        <div id="prism-view">
+            <div id="prism-header">
+                <span>🔷 PRISM VIEW</span>
+                <span class="badge">4-SIDED</span>
+            </div>
+            <div class="view-grid">
+                <div class="view-cell" id="prism-top">TOP</div>
+                <div class="view-cell" id="prism-front">FRONT</div>
+                <div class="view-cell" id="prism-left">LEFT</div>
+                <div class="view-cell" id="prism-right">RIGHT</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Right Panel -->
+    <aside id="right-panel">
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">📊</span> Statistics</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">Session Time</div>
+                        <div class="value" id="stat-time">0:00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Components</div>
+                        <div class="value primary" id="stat-placed">0<span style="font-size: 12px; color: var(--text-muted);">/30</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Accuracy</div>
+                        <div class="value" id="stat-accuracy">100.0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">CPH</div>
+                        <div class="value" id="stat-cph">0</div>
+                        <div class="sub">components/hour</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Collisions</div>
+                        <div class="value danger" id="stat-collisions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Cycle Time</div>
+                        <div class="value" id="stat-cycle">--</div>
+                        <div class="sub">seconds</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section" style="flex: 1;">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">📋</span> Job Queue</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content" style="padding: 0;">
+                <div class="job-queue" id="job-queue">
+                    <!-- Jobs will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-header" onclick="togglePanel(this)">
+                <span><span class="icon">🔧</span> Quick Actions</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="panel-content">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <button class="mode-btn" onclick="homeAll()" style="flex: 1; min-width: 80px;">🏠 Home</button>
+                    <button class="mode-btn" onclick="resetJob()" style="flex: 1; min-width: 80px;">🔄 Reset</button>
+                    <button class="mode-btn" onclick="calibrate()" style="flex: 1; min-width: 80px;">🎯 Calibrate</button>
+                    <button class="mode-btn" onclick="toggleConsole()" style="flex: 1; min-width: 80px;">💻 Console</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Bottom Panel - Feeders -->
+    <section id="bottom-panel">
+        <div id="feeder-tabs">
+            <button class="feeder-tab active" data-type="tape" onclick="switchFeederTab('tape')">📼 Tape Feeders</button>
+            <button class="feeder-tab" data-type="turntable" onclick="switchFeederTab('turntable')">🔄 Turntable</button>
+            <button class="feeder-tab" data-type="stick" onclick="switchFeederTab('stick')">📏 Stick Feeders</button>
+            <button class="feeder-tab" data-type="tray" onclick="switchFeederTab('tray')">📦 Tray</button>
+            <button class="feeder-tab" data-type="dispense" onclick="switchFeederTab('dispense')">💧 Dispenser</button>
+        </div>
+        <div id="feeder-content">
+            <div class="feeder-grid" id="tape-feeders">
+                <!-- Tape feeders will be generated -->
+            </div>
+            <div class="feeder-grid" id="turntable-feeders" style="display: none;">
+                <!-- Turntable will be generated -->
+            </div>
+            <div class="feeder-grid" id="stick-feeders" style="display: none;">
+                <!-- Stick feeders will be generated -->
+            </div>
+            <div class="feeder-grid" id="tray-feeders" style="display: none;">
+                <!-- Tray feeders will be generated -->
+            </div>
+            <div class="feeder-grid" id="dispense-options" style="display: none;">
+                <!-- Dispenser options will be generated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Status Bar -->
+    <footer id="status-bar">
+        <div class="status-item">
+            <span class="label">FPS:</span>
+            <span class="value" id="fps">60</span>
+        </div>
+        <div class="status-item">
+            <span class="label">Camera:</span>
+            <span class="value" id="camera-mode">FREE</span>
+        </div>
+        <div class="status-item">
+            <span class="label">Feeder:</span>
+            <span class="value" id="active-feeder">TAPE-01</span>
+        </div>
+        <div class="status-item">
+            <span class="label">Nozzle:</span>
+            <span class="value" id="nozzle-type">N08 (0.8mm)</span>
+        </div>
+        <div class="status-item">
+            <span class="label">Objects:</span>
+            <span class="value" id="obj-count">0</span>
+        </div>
+        <div class="status-item" style="margin-left: auto;">
+            <span class="label">v2.0.0</span>
+        </div>
+    </footer>
+</div>
+
+<!-- Developer Console -->
+<div id="dev-console">
+    <div id="dev-console-header">
+        <h4>🖥️ Console</h4>
+        <button onclick="toggleConsole()" style="background: none; border: none; color: var(--text-muted); cursor: pointer;">✕</button>
+    </div>
+    <div id="dev-console-content"></div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>⚙️ System Settings</h3>
+            <button class="modal-close" onclick="toggleSettings()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="settings-group">
+                <h4>Movement Parameters</h4>
+                <div class="setting-row">
+                    <div><div class="label">XY Speed</div><div class="desc">Gantry movement speed</div></div>
+                    <div class="slider-input">
+                        <input type="range" id="set-xy-speed" min="0.5" max="10" step="0.5" value="2">
+                        <span class="value" id="set-xy-speed-val">2.0</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Z Speed</div><div class="desc">Nozzle vertical speed</div></div>
+                    <div class="slider-input">
+                        <input type="range" id="set-z-speed" min="0.5" max="5" step="0.25" value="1.5">
+                        <span class="value" id="set-z-speed-val">1.5</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Acceleration</div><div class="desc">Motion smoothing</div></div>
+                    <div class="slider-input">
+                        <input type="range" id="set-accel" min="0.01" max="0.3" step="0.01" value="0.08">
+                        <span class="value" id="set-accel-val">0.08</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h4>Visual Settings</h4>
+                <div class="setting-row">
+                    <div><div class="label">Shadows</div><div class="desc">Enable shadow rendering</div></div>
+                    <button class="toggle-switch active" id="set-shadows" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Grid</div><div class="desc">Show reference grid</div></div>
+                    <button class="toggle-switch active" id="set-grid" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Bounding Boxes</div><div class="desc">Show collision boundaries</div></div>
+                    <button class="toggle-switch" id="set-bbox" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Trail Effect</div><div class="desc">Show nozzle movement trail</div></div>
+                    <button class="toggle-switch" id="set-trail" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Crosshair</div><div class="desc">Show center crosshair</div></div>
+                    <button class="toggle-switch active" id="set-crosshair" onclick="toggleSwitch(this)"></button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h4>Machine Dimensions (mm)</h4>
+                <div class="setting-row">
+                    <div><div class="label">Work Area Width</div></div>
+                    <div class="slider-input">
+                        <input type="range" id="set-width" min="300" max="800" step="50" value="500">
+                        <span class="value" id="set-width-val">500</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div><div class="label">Work Area Depth</div></div>
+                    <div class="slider-input">
+                        <input type="range" id="set-depth" min="250" max="600" step="50" value="400">
+                        <span class="value" id="set-depth-val">400</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="three.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIGURATION
+// ═══════════════════════════════════════════════════════════════════════════════
+const CFG = {
+    workArea: { w: 500, d: 400 },
+    table: { w: 560, d: 440, h: 20 },
+    gantry: {
+        towerW: 120,        // Tower width (needs to be wide for stability)
+        towerD: 520,        // Tower depth
+        towerH: 320,        // Tower height
+        towerX: -340,       // Position left of table
+        armLength: 520,     // Length of cantilever arm (extends over work area)
+        armW: 60,           // Arm width
+        armH: 50,           // Arm height
+        yRailSpacing: 400,  // Spacing between Y rails on tower
+    },
+    carriage: {
+        w: 80,
+        h: 45,
+        d: 70
+    },
+    spindle: {
+        housingR: 22,
+        housingH: 100,
+        shaftR: 5,
+        shaftH: 80,
+        nozzleR: 1.8,
+        nozzleH: 15
+    },
+    pcb: { w: 140, d: 100, h: 1.6, x: 60, z: 0 },
+    tapeFeederArea: { x: -200, z: -180, w: 300, d: 40 },
+    turntable: { x: -180, z: 80, r: 75, slots: 12 },
+    speed: { xy: 2, z: 1.5, accel: 0.08, damp: 0.92 },
+    zRange: { min: 2, max: 140 },
+    xyRange: { x: [-180, 220], y: [-180, 180] }
+};
+// Component database
+const COMPONENTS = {
+    '0201': { name: '0201', color: 0x8B6914, w: 0.6, d: 0.3, h: 0.25, package: 'Chip' },
+    '0402': { name: '0402 R', color: 0x9B7924, w: 1.0, d: 0.5, h: 0.35, package: 'Chip' },
+    '0603': { name: '0603 R', color: 0xA88934, w: 1.6, d: 0.8, h: 0.45, package: 'Chip' },
+    '0805': { name: '0805 C', color: 0xB89944, w: 2.0, d: 1.25, h: 0.6, package: 'Chip' },
+    '1206': { name: '1206', color: 0xC8A954, w: 3.2, d: 1.6, h: 0.7, package: 'Chip' },
+    'LED0603': { name: 'LED 0603', color: 0xFF3030, w: 1.6, d: 0.8, h: 0.6, package: 'LED' },
+    'SOT23': { name: 'SOT-23', color: 0x222222, w: 2.9, d: 1.3, h: 1.0, package: 'Transistor' },
+    'SOT223': { name: 'SOT-223', color: 0x1a1a1a, w: 6.5, d: 3.5, h: 1.6, package: 'Voltage Reg' },
+    'SOIC8': { name: 'SOIC-8', color: 0x151515, w: 5.0, d: 4.0, h: 1.5, package: 'IC' },
+    'SOIC16': { name: 'SOIC-16', color: 0x101010, w: 10.0, d: 4.0, h: 1.5, package: 'IC' },
+    'TQFP32': { name: 'TQFP-32', color: 0x0a0a0a, w: 7.0, d: 7.0, h: 1.0, package: 'MCU' },
+    'QFN24': { name: 'QFN-24', color: 0x080808, w: 4.0, d: 4.0, h: 0.9, package: 'IC' },
+    'BGA100': { name: 'BGA-100', color: 0x050505, w: 10.0, d: 10.0, h: 1.2, package: 'BGA' }
+};
+
+// Feeders configuration
+const FEEDERS = {
+    tape: [
+        { id: 'T01', type: '0402', width: 8, count: 500, maxCount: 1000 },
+        { id: 'T02', type: '0603', width: 8, count: 400, maxCount: 1000 },
+        { id: 'T03', type: '0805', width: 8, count: 350, maxCount: 800 },
+        { id: 'T04', type: '1206', width: 12, count: 200, maxCount: 500 },
+        { id: 'T05', type: 'LED0603', width: 8, count: 150, maxCount: 400 },
+        { id: 'T06', type: 'SOT23', width: 8, count: 120, maxCount: 300 },
+        { id: 'T07', type: '0402', width: 8, count: 500, maxCount: 1000 },
+        { id: 'T08', type: '0603', width: 8, count: 400, maxCount: 1000 },
+        { id: 'T09', type: 'SOIC8', width: 16, count: 50, maxCount: 100 },
+        { id: 'T10', type: 'SOIC16', width: 16, count: 40, maxCount: 80 }
+    ],
+    turntable: [
+        { slot: 0, type: 'TQFP32', count: 10 },
+        { slot: 1, type: 'QFN24', count: 15 },
+        { slot: 2, type: 'BGA100', count: 5 },
+        { slot: 3, type: 'SOT223', count: 20 },
+        { slot: 4, type: 'SOIC8', count: 25 },
+        { slot: 5, type: 'SOIC16', count: 12 },
+        { slot: 6, type: null, count: 0 },
+        { slot: 7, type: null, count: 0 },
+        { slot: 8, type: null, count: 0 },
+        { slot: 9, type: null, count: 0 },
+        { slot: 10, type: null, count: 0 },
+        { slot: 11, type: null, count: 0 }
+    ],
+    stick: [
+        { id: 'S01', type: 'SOIC8', count: 25 },
+        { id: 'S02', type: 'SOIC16', count: 15 },
+        { id: 'S03', type: null, count: 0 },
+        { id: 'S04', type: null, count: 0 }
+    ],
+    tray: [
+        { id: 'TR01', type: 'TQFP32', cols: 5, rows: 5, count: 25 },
+        { id: 'TR02', type: 'BGA100', cols: 4, rows: 4, count: 16 }
+    ]
+};
+
+// PCB placement targets
+let PCB_TARGETS = [];
+
+function generateTargets() {
+    PCB_TARGETS = [];
+    const types = Object.keys(COMPONENTS);
+    const pw = CFG.pcb.w, pd = CFG.pcb.d;
+    let id = 0;
+    
+    // Generate a more realistic board layout
+    const layout = [
+        { type: '0402', x: -50, z: -35, rot: 0 },
+        { type: '0402', x: -45, z: -35, rot: 0 },
+        { type: '0402', x: -40, z: -35, rot: 0 },
+        { type: '0603', x: -50, z: -28, rot: 0 },
+        { type: '0603', x: -45, z: -28, rot: 0 },
+        { type: '0805', x: -50, z: -20, rot: 90 },
+        { type: '0805', x: -42, z: -20, rot: 90 },
+        { type: 'LED0603', x: 40, z: -35, rot: 0 },
+        { type: 'LED0603', x: 45, z: -35, rot: 0 },
+        { type: 'LED0603', x: 50, z: -35, rot: 0 },
+        { type: 'SOT23', x: -30, z: 0, rot: 0 },
+        { type: 'SOT23', x: -20, z: 0, rot: 0 },
+        { type: 'SOT223', x: 40, z: 0, rot: 90 },
+        { type: 'SOIC8', x: -10, z: 20, rot: 0 },
+        { type: 'SOIC8', x: 10, z: 20, rot: 0 },
+        { type: 'SOIC16', x: 0, z: -10, rot: 0 },
+        { type: 'TQFP32', x: 0, z: 5, rot: 45 },
+        { type: 'QFN24', x: -35, z: 25, rot: 0 },
+        { type: '0402', x: 20, z: 35, rot: 0 },
+        { type: '0402', x: 25, z: 35, rot: 0 },
+        { type: '0603', x: -35, z: 35, rot: 90 },
+        { type: '0805', x: -25, z: 35, rot: 90 },
+        { type: '1206', x: 35, z: 25, rot: 0 },
+        { type: '0402', x: -55, z: 10, rot: 0 },
+        { type: '0402', x: -55, z: 15, rot: 0 },
+        { type: '0603', x: 55, z: 10, rot: 0 },
+        { type: '0603', x: 55, z: 15, rot: 0 },
+        { type: 'SOT23', x: 55, z: -15, rot: 90 },
+        { type: '0805', x: -55, z: -5, rot: 0 },
+        { type: 'LED0603', x: 0, z: 38, rot: 0 }
+    ];
+    
+    layout.forEach(item => {
+        const comp = COMPONENTS[item.type];
+        if (comp) {
+            PCB_TARGETS.push({
+                id: id++,
+                type: item.type,
+                x: CFG.pcb.x + item.x,
+                z: CFG.pcb.z + item.z,
+                rotation: item.rot,
+                placed: false
+            });
+        }
+    });
+}
+
+generateTargets();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// THREE.JS SETUP
+// ═══════════════════════════════════════════════════════════════════════════════
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1218);
+scene.fog = new THREE.FogExp2(0x0f1218, 0.0015);
+
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.5, 3000);
+camera.position.set(400, 350, 450);
+camera.lookAt(0, 80, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+container.appendChild(renderer.domElement);
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xb8c4e0, 0.4);
+scene.add(ambientLight);
+
+const mainLight = new THREE.DirectionalLight(0xfff8f0, 0.8);
+mainLight.position.set(250, 400, 200);
+mainLight.castShadow = true;
+mainLight.shadow.mapSize.set(2048, 2048);
+mainLight.shadow.camera.left = -350;
+mainLight.shadow.camera.right = 350;
+mainLight.shadow.camera.top = 350;
+mainLight.shadow.camera.bottom = -350;
+mainLight.shadow.camera.near = 100;
+mainLight.shadow.camera.far = 900;
+mainLight.shadow.bias = -0.0005;
+scene.add(mainLight);
+
+const fillLight = new THREE.DirectionalLight(0x90a0c0, 0.3);
+fillLight.position.set(-200, 150, -150);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0x4080ff, 0.2);
+rimLight.position.set(0, 100, -300);
+scene.add(rimLight);
+
+const headLight = new THREE.SpotLight(0x80ffff, 0.8, 150, Math.PI / 6, 0.5, 2);
+headLight.castShadow = true;
+headLight.shadow.mapSize.set(512, 512);
+scene.add(headLight);
+scene.add(headLight.target);
+
+// Grid
+const gridHelper = new THREE.GridHelper(800, 80, 0x2a3040, 0x1a2030);
+gridHelper.position.y = 0.1;
+scene.add(gridHelper);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MATERIALS
+// ═══════════════════════════════════════════════════════════════════════════════
+const MAT = {
+    aluminum: new THREE.MeshStandardMaterial({ color: 0xe0e0e8, metalness: 0.85, roughness: 0.2 }),
+    darkAlum: new THREE.MeshStandardMaterial({ color: 0x505058, metalness: 0.8, roughness: 0.25 }),
+    steel: new THREE.MeshStandardMaterial({ color: 0xa0a0a8, metalness: 0.9, roughness: 0.15 }),
+    darkSteel: new THREE.MeshStandardMaterial({ color: 0x404048, metalness: 0.85, roughness: 0.2 }),
+    black: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.2, roughness: 0.7 }),
+    carbon: new THREE.MeshStandardMaterial({ color: 0x252525, metalness: 0.3, roughness: 0.5 }),
+    pcbGreen: new THREE.MeshStandardMaterial({ color: 0x0a5028, metalness: 0.1, roughness: 0.75 }),
+    pcbMask: new THREE.MeshStandardMaterial({ color: 0x0a6030, metalness: 0.05, roughness: 0.85 }),
+    copper: new THREE.MeshStandardMaterial({ color: 0xd4a050, metalness: 0.9, roughness: 0.25 }),
+    gold: new THREE.MeshStandardMaterial({ color: 0xe8c840, metalness: 0.95, roughness: 0.15 }),
+    solder: new THREE.MeshStandardMaterial({ color: 0xc0c0c0, metalness: 0.7, roughness: 0.4 }),
+    rubber: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0, roughness: 0.95 }),
+    acrylic: new THREE.MeshPhysicalMaterial({ 
+    color: 0x80a0c0,
+    metalness: 0,
+    roughness: 0.1,
+    transparent: true,
+    opacity: 0.4,
+    envMapIntensity: 1
+    }),
+    ledGreen: new THREE.MeshStandardMaterial({ color: 0x20ff50, emissive: 0x00ff20, emissiveIntensity: 0.8 }),
+    ledRed: new THREE.MeshStandardMaterial({ color: 0xff2020, emissive: 0xff0000, emissiveIntensity: 0.3 }),
+    ledBlue: new THREE.MeshStandardMaterial({ color: 0x2080ff, emissive: 0x0040ff, emissiveIntensity: 0.5 }),
+    ghost: new THREE.MeshStandardMaterial({ color: 0x00d4aa, transparent: true, opacity: 0.2 })
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SCENE GROUPS
+// ═══════════════════════════════════════════════════════════════════════════════
+const machineBase = new THREE.Group();
+const armAssembly = new THREE.Group();
+const carriageGroup = new THREE.Group();
+const spindleGroup = new THREE.Group();
+const nozzleGroup = new THREE.Group();
+const pcbGroup = new THREE.Group();
+const feedersGroup = new THREE.Group();
+const turntableGroup = new THREE.Group();
+const placedComponents = new THREE.Group();
+const effectsGroup = new THREE.Group();
+
+scene.add(machineBase, armAssembly, pcbGroup, feedersGroup, turntableGroup, placedComponents, effectsGroup);
+armAssembly.add(carriageGroup);
+carriageGroup.add(spindleGroup);
+spindleGroup.add(nozzleGroup);
+
+// Helper functions
+function box(w, h, d, mat, shadows = true) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    if (shadows) { mesh.castShadow = true; mesh.receiveShadow = true; }
+    return mesh;
+}
+
+function cyl(rt, rb, h, seg, mat, shadows = true) {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mat);
+    if (shadows) { mesh.castShadow = true; mesh.receiveShadow = true; }
+    return mesh;
+}
+
+function tube(path, radius, segments, mat) {
+    const curve = new THREE.CatmullRomCurve3(path);
+    const geom = new THREE.TubeGeometry(curve, segments, radius, 8, false);
+    const mesh = new THREE.Mesh(geom, mat);
+    mesh.castShadow = true;
+    return mesh;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BUILD MACHINE - AIR SUSPENDED LINEAR ARM DESIGN
+// ═══════════════════════════════════════════════════════════════════════════════
+let springMesh, vacuumHose;
+const ledIndicators = [];
+
+function buildMachine() {
+    // Clear all groups
+    while (machineBase.children.length) machineBase.remove(machineBase.children[0]);
+    while (armAssembly.children.length > 0) {
+        const child = armAssembly.children[0];
+        if (child !== carriageGroup) armAssembly.remove(child);
+        else if (armAssembly.children.length > 1) armAssembly.remove(armAssembly.children[1]);
+        else break;
+    }
+    if (!armAssembly.children.includes(carriageGroup)) armAssembly.add(carriageGroup);
+    
+    while (carriageGroup.children.length > 0) {
+        const child = carriageGroup.children[0];
+        if (child !== spindleGroup) carriageGroup.remove(child);
+        else if (carriageGroup.children.length > 1) carriageGroup.remove(carriageGroup.children[1]);
+        else break;
+    }
+    if (!carriageGroup.children.includes(spindleGroup)) carriageGroup.add(spindleGroup);
+    
+    while (spindleGroup.children.length > 0) {
+        const child = spindleGroup.children[0];
+        if (child !== nozzleGroup) spindleGroup.remove(child);
+        else if (spindleGroup.children.length > 1) spindleGroup.remove(spindleGroup.children[1]);
+        else break;
+    }
+    if (!spindleGroup.children.includes(nozzleGroup)) spindleGroup.add(nozzleGroup);
+    
+    while (nozzleGroup.children.length) nozzleGroup.remove(nozzleGroup.children[0]);
+
+    const tw = CFG.table.w, td = CFG.table.d, th = CFG.table.h;
+    const g = CFG.gantry;
+    
+    // ═══════════════════════════════════════════════════════════════
+    // FLOOR
+    // ═══════════════════════════════════════════════════════════════
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(2000, 2000),
+        new THREE.MeshStandardMaterial({ color: 0x12161e, roughness: 0.9 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.5;
+    floor.receiveShadow = true;
+    machineBase.add(floor);
+
+    // ═══════════════════════════════════════════════════════════════
+    // MAIN WORK TABLE
+    // ═══════════════════════════════════════════════════════════════
+    const tableTop = box(tw, th, td, MAT.aluminum);
+    tableTop.position.y = -th / 2;
+    tableTop.receiveShadow = true;
+    machineBase.add(tableTop);
+
+    // Table edge trim
+    const edgeMat = MAT.darkSteel;
+    const trimH = 8;
+    const frontTrim = box(tw, trimH, 5, edgeMat);
+    frontTrim.position.set(0, trimH/2, -td/2 - 2.5);
+    machineBase.add(frontTrim);
+    
+    const backTrim = box(tw, trimH, 5, edgeMat);
+    backTrim.position.set(0, trimH/2, td/2 + 2.5);
+    machineBase.add(backTrim);
+    
+    const rightTrim = box(5, trimH, td, edgeMat);
+    rightTrim.position.set(tw/2 + 2.5, trimH/2, 0);
+    machineBase.add(rightTrim);
+
+    // T-slots on table surface
+    for (let i = -4; i <= 4; i++) {
+        const slot = box(tw - 40, 2, 4, MAT.darkSteel);
+        slot.position.set(0, 1, i * 45);
+        machineBase.add(slot);
+    }
+
+    // Table legs with leveling feet
+    for (let sx of [-1, 1]) {
+        for (let sz of [-1, 1]) {
+            // Main leg
+            const leg = box(30, 70, 30, MAT.darkAlum);
+            leg.position.set(sx * (tw/2 - 40), -th - 35, sz * (td/2 - 40));
+            machineBase.add(leg);
+            
+            // Leveling foot
+            const foot = cyl(18, 22, 12, 16, MAT.rubber);
+            foot.position.set(sx * (tw/2 - 40), -th - 76, sz * (td/2 - 40));
+            machineBase.add(foot);
+            
+            // Adjustment bolt visual
+            const bolt = cyl(8, 8, 15, 8, MAT.steel);
+            bolt.position.set(sx * (tw/2 - 40), -th - 62, sz * (td/2 - 40));
+            machineBase.add(bolt);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // LEFT SIDE INVERTED-U GANTRY TOWER
+    // Single-sided support structure - FRONT IS OPEN
+    // ═══════════════════════════════════════════════════════════════
+    
+    const towerX = g.towerX;
+    const towerW = g.towerW;
+    const towerD = g.towerD;
+    const towerH = g.towerH;
+    
+    // ── TOWER BASE PLATE ──
+    const basePlate = box(towerW + 40, 15, towerD + 60, MAT.darkAlum);
+    basePlate.position.set(towerX, 7.5, 0);
+    machineBase.add(basePlate);
+    
+    // ── BACK VERTICAL COLUMN (Main structural support) ──
+    const backColW = towerW * 0.8;
+    const backColD = towerD * 0.27;
+    const backColumn = box(backColW, towerH, backColD, MAT.aluminum);
+    backColumn.position.set(towerX, towerH/2, towerD/2 -10);
+    machineBase.add(backColumn);
+
+    
+    const backColumnr = box(backColW, towerH, backColD, MAT.aluminum);
+    backColumnr.position.set(towerX, towerH/2,1- towerD/2 +10);
+    machineBase.add(backColumnr);
+    
+    // Back column reinforcement ribs
+    for (let i = 0; i < 4; i++) {
+        const ribY = 60 + i * 70;
+        const rib = box(backColW + 15, 8, 15, MAT.darkAlum);
+        rib.position.set(towerX, ribY, towerD/2 + 20 + backColD/2 + 7);
+        machineBase.add(rib);
+    }
+    
+    // ── FRONT VERTICAL COLUMN (Shorter for open front access) ──
+    const frontColH = towerH * 0.35; // Much shorter for open front
+    const frontColumn = box(backColW * 0.6, frontColH, backColD * 0.6, MAT.aluminum);
+    frontColumn.position.set(towerX, frontColH/2, -towerD/2 - 10);
+    machineBase.add(frontColumn);
+    
+    // ── TOP HORIZONTAL CROSS BEAM (Connects columns - forms the "U" top) ──
+    const crossBeamLength = towerD + 80;
+    const crossBeam = box(towerW, 45, crossBeamLength, MAT.aluminum);
+    crossBeam.position.set(towerX, towerH + 22.5, 10);
+    machineBase.add(crossBeam);
+    
+    // Cross beam top cover
+    const beamCover = box(towerW + 20, 8, crossBeamLength + 10, MAT.darkAlum);
+    beamCover.position.set(towerX, towerH + 49, 10);
+    machineBase.add(beamCover);
+    
+    // ── DIAGONAL BRACES (For rigidity) ──
+    // Back brace
+    const backBraceGeom = new THREE.BoxGeometry(15, 120, 15);
+    const backBrace = new THREE.Mesh(backBraceGeom, MAT.darkAlum);
+    backBrace.position.set(towerX - towerW/4, towerH - 40, towerD/2 + 40);
+    backBrace.rotation.x = Math.PI / 6;
+    machineBase.add(backBrace);
+    
+    // ── Y-AXIS RAILS (Mounted on tower, for arm's Y motion) ──
+    // These rails allow the entire arm to move forward/backward
+    const yRailLength = crossBeamLength - 40;
+    const yRailSpacing = g.yRailSpacing;
+    
+    for (let side of [-1, 1]) {
+        // Main Y rail
+        const yRail = box(25, 20, yRailLength, MAT.steel);
+        yRail.position.set(towerX + side * (towerW/2 - 20), towerH - 5, 10);
+        machineBase.add(yRail);
+        
+        // Rail mounting blocks
+        for (let i = 0; i < 4; i++) {
+            const block = box(35, 12, 25, MAT.darkSteel);
+            block.position.set(
+                towerX + side * (towerW/2 - 20),
+                towerH - 18,
+                -yRailLength/2 + 30 + i * (yRailLength/4)
+            );
+            machineBase.add(block);
+        }
+    }
+    
+    // ── CONTROL PANEL (On back of tower) ──
+    const controlPanel = box(towerW - 20, 80, 8, MAT.black);
+    controlPanel.position.set(towerX, towerH - 80, towerD/2 + 20 + backColD/2 + 4);
+    machineBase.add(controlPanel);
+    
+    // LED indicators
+    ledIndicators.length = 0;
+    const ledTypes = [MAT.ledGreen, MAT.ledBlue, MAT.ledRed];
+    for (let i = 0; i < 3; i++) {
+        const led = cyl(5, 5, 4, 12, ledTypes[i]);
+        led.rotation.x = Math.PI / 2;
+        led.position.set(
+            towerX - 25 + i * 25,
+            towerH - 45,
+            towerD/2 + 20 + backColD/2 + 8
+        );
+        machineBase.add(led);
+        ledIndicators.push(led);
+    }
+    
+    // Display screen
+    const screen = box(60, 40, 3, new THREE.MeshStandardMaterial({
+        color: 0x001830,
+        emissive: 0x001020,
+        emissiveIntensity: 0.5
+    }));
+    screen.position.set(towerX, towerH - 100, towerD/2 + 20 + backColD/2 + 5);
+    machineBase.add(screen);
+    
+    // ── E-STOP BUTTON ──
+    const eStopBase = cyl(20, 20, 10, 24, MAT.darkSteel);
+    eStopBase.position.set(towerX + towerW/2 - 10, 100, towerD/2 + 20 + backColD/2 + 5);
+    eStopBase.rotation.x = Math.PI / 2;
+    machineBase.add(eStopBase);
+    
+    const eStopBtn = cyl(15, 18, 12, 24, MAT.ledRed);
+    eStopBtn.position.set(towerX + towerW/2 - 10, 100, towerD/2 + 20 + backColD/2 + 16);
+    eStopBtn.rotation.x = Math.PI / 2;
+    machineBase.add(eStopBtn);
+
+    // ═══════════════════════════════════════════════════════════════
+    // CANTILEVER ARM (X-AXIS) - Extends from tower over work area
+    // ═══════════════════════════════════════════════════════════════
+    
+    const armLength = g.armLength;
+    const armW = g.armW;
+    const armH = g.armH;
+    const armY = towerH - 40;
+    
+    // ── Y-AXIS CARRIAGE (Moves arm forward/backward) ──
+    // This connects the arm to the Y rails on the tower
+    const yCarriageW = towerW + 20;
+    const yCarriageH = 35;
+    const yCarriageD = 60;
+    
+    const yCarriage = box(yCarriageW, yCarriageH, yCarriageD, MAT.darkAlum);
+    yCarriage.position.set(towerX, armY, 0); // Will move with armAssembly.position.z
+    armAssembly.add(yCarriage);
+    
+    // Y-axis linear bearing blocks
+    for (let side of [-1, 1]) {
+        for (let fb of [-1, 1]) {
+            const bearing = box(30, 15, 25, MAT.steel);
+            bearing.position.set(
+                towerX + side * (towerW/2 - 20),
+                armY + yCarriageH/2 + 5,
+                fb * 15
+            );
+            armAssembly.add(bearing);
+        }
+    }
+    
+    // ── MAIN CANTILEVER ARM BEAM ──
+    // This is the horizontal arm extending from tower over the work area
+    const armStartX = towerX + towerW/2 + 20;
+    const armCenterX = armStartX + armLength/2;
+    
+    // Main arm structure (box beam for rigidity)
+    const mainArm = box(armLength, armH, armW, MAT.aluminum);
+    mainArm.position.set(armCenterX, armY, 0);
+    armAssembly.add(mainArm);
+    
+    // Arm top rail (for cable carrier)
+    const armTopRail = box(armLength - 40, 8, 20, MAT.darkAlum);
+    armTopRail.position.set(armCenterX, armY + armH/2 + 4, 0);
+    armAssembly.add(armTopRail);
+    
+    // ── X-AXIS LINEAR RAILS (Mounted on arm bottom) ──
+    const xRailSpacing = 35;
+    for (let side of [-1, 1]) {
+        const xRail = box(armLength - 30, 10, 15, MAT.steel);
+        xRail.position.set(armCenterX, armY - armH/2 - 5, side * xRailSpacing/2);
+        armAssembly.add(xRail);
+    }
+    
+    // ── ARM END CAP ──
+    const endCap = box(20, armH + 20, armW + 20, MAT.darkAlum);
+    endCap.position.set(armStartX + armLength + 10, armY, 0);
+    armAssembly.add(endCap);
+    
+    // ── ARM CONNECTION TO TOWER (Reinforced joint) ──
+    const armJoint = box(50, armH + 30, armW + 40, MAT.darkAlum);
+    armJoint.position.set(armStartX - 15, armY, 0);
+    armAssembly.add(armJoint);
+    
+    // Diagonal support underneath arm (near tower)
+    const armSupportGeom = new THREE.BufferGeometry();
+    const supportVerts = new Float32Array([
+        armStartX - 30, armY - armH/2, -armW/2 - 10,
+        armStartX + 80, armY - armH/2, -armW/2 - 10,
+        armStartX - 30, armY - 80, -armW/2 - 10,
+        
+        armStartX - 30, armY - armH/2, armW/2 + 10,
+        armStartX + 80, armY - armH/2, armW/2 + 10,
+        armStartX - 30, armY - 80, armW/2 + 10,
+    ]);
+    armSupportGeom.setAttribute('position', new THREE.BufferAttribute(supportVerts, 3));
+    armSupportGeom.computeVertexNormals();
+    const armSupport = new THREE.Mesh(armSupportGeom, MAT.darkAlum);
+    armSupport.castShadow = true;
+    armAssembly.add(armSupport);
+    
+    // Solid triangular brace
+    const braceShape = new THREE.Shape();
+    braceShape.moveTo(0, 0);
+    braceShape.lineTo(100, 0);
+    braceShape.lineTo(0, -70);
+    braceShape.closePath();
+    
+    const braceGeom = new THREE.ExtrudeGeometry(braceShape, { depth: 10, bevelEnabled: false });
+    const brace = new THREE.Mesh(braceGeom, MAT.aluminum);
+    brace.rotation.y = Math.PI / 2;
+    brace.position.set(armStartX - 25, armY - armH/2, -5);
+    armAssembly.add(brace);
+    
+    // ── AIR SUSPENSION BELLOWS (Visual elements) ──
+    for (let i = 0; i < 2; i++) {
+        const bellowsGroup = new THREE.Group();
+        const bellowsX = armStartX + 60 + i * 180;
+        
+        for (let j = 0; j < 5; j++) {
+            const ringR = 12 - j * 0.5;
+            const ring = cyl(ringR, ringR - 0.5, 4, 16, MAT.rubber);
+            ring.position.y = j * 4;
+            bellowsGroup.add(ring);
+        }
+        bellowsGroup.position.set(bellowsX, armY + armH/2 + 2, 0);
+        armAssembly.add(bellowsGroup);
+    }
+    
+    // ── CABLE CARRIER (Energy chain) ──
+    const chainPts = [];
+    const chainSegments = 25;
+    for (let i = 0; i <= chainSegments; i++) {
+        const t = i / chainSegments;
+        const x = armStartX + t * (armLength * 0.6);
+        const y = armY + armH/2 + 15 + Math.sin(t * Math.PI) * 25;
+        const z = armW/2 + 15;
+        chainPts.push(new THREE.Vector3(x, y, z));
+    }
+    const cableChain = tube(chainPts, 8, chainSegments, MAT.black);
+    armAssembly.add(cableChain);
+
+    // ═══════════════════════════════════════════════════════════════
+    // X-AXIS CARRIAGE (Moves along the arm)
+    // ═══════════════════════════════════════════════════════════════
+    
+    const cW = CFG.carriage.w;
+    const cH = CFG.carriage.h;
+    const cD = CFG.carriage.d;
+    const carriageBaseY = armY - armH/2 - cH/2 - 8;
+    
+    // Main carriage body
+    const carriageBody = box(cW, cH, cD, MAT.darkAlum);
+    carriageBody.position.y = carriageBaseY;
+    carriageGroup.add(carriageBody);
+    
+    // Top mounting plate (connects to rails)
+    const mountPlate = box(cW + 20, 12, cD + 10, MAT.aluminum);
+    mountPlate.position.y = carriageBaseY + cH/2 + 6;
+    carriageGroup.add(mountPlate);
+    
+    // Linear bearing blocks (4 corners)
+    for (let fx of [-1, 1]) {
+        for (let fz of [-1, 1]) {
+            const lmBlock = box(25, 18, 20, MAT.steel);
+            lmBlock.position.set(
+                fx * (cW/2 - 5),
+                carriageBaseY + cH/2 + 15,
+                fz * xRailSpacing/2
+            );
+            carriageGroup.add(lmBlock);
+        }
+    }
+    
+    // Carriage side covers
+    for (let side of [-1, 1]) {
+        const cover = box(5, cH - 10, cD - 10, MAT.black);
+        cover.position.set(side * (cW/2 + 2.5), carriageBaseY, 0);
+        carriageGroup.add(cover);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // SPINDLE/HEAD ASSEMBLY (Z-AXIS)
+    // ═══════════════════════════════════════════════════════════════
+    
+    const sp = CFG.spindle;
+    const spindleBaseY = carriageBaseY - cH/2;
+    spindleGroup.position.set(0, spindleBaseY, 0);
+    
+    // ── Z-AXIS MOTOR HOUSING (Top) ──
+    const motorHousing = box(50, 45, 50, MAT.darkAlum);
+    motorHousing.position.y = 20;
+    spindleGroup.add(motorHousing);
+    
+    // Motor cap
+    const motorCap = cyl(22, 22, 8, 24, MAT.aluminum);
+    motorCap.position.y = 45;
+    spindleGroup.add(motorCap);
+    
+    // ── Z-AXIS LINEAR GUIDES ──
+    for (let side of [-1, 1]) {
+        const zGuide = box(8, sp.housingH + 40, 12, MAT.steel);
+        zGuide.position.set(side * 20, -sp.housingH/2 + 10, 0);
+        spindleGroup.add(zGuide);
+    }
+    
+    // ── MAIN SPINDLE HOUSING ──
+    const housing = cyl(sp.housingR, sp.housingR, sp.housingH, 32, MAT.darkAlum);
+    housing.position.y = -sp.housingH/2;
+    spindleGroup.add(housing);
+    
+    // Housing top flange
+    const topFlange = cyl(sp.housingR + 10, sp.housingR + 8, 15, 32, MAT.aluminum);
+    topFlange.position.y = 5;
+    spindleGroup.add(topFlange);
+    
+    // Housing bottom flange
+    const botFlange = cyl(sp.housingR + 5, sp.housingR + 3, 10, 32, MAT.aluminum);
+    botFlange.position.y = -sp.housingH + 5;
+    spindleGroup.add(botFlange);
+    
+    // Cooling fins
+    const finCount = 12;
+    for (let i = 0; i < finCount; i++) {
+        const angle = (i / finCount) * Math.PI * 2;
+        const fin = box(3, sp.housingH - 30, 10, MAT.aluminum);
+        fin.position.set(
+            Math.cos(angle) * (sp.housingR + 3),
+            -sp.housingH/2,
+            Math.sin(angle) * (sp.housingR + 3)
+        );
+        fin.rotation.y = -angle;
+        spindleGroup.add(fin);
+    }
+    
+    // ── VACUUM FITTING ──
+    const vacFitting = cyl(8, 8, 20, 12, MAT.steel);
+    vacFitting.position.set(sp.housingR + 15, -20, 0);
+    vacFitting.rotation.z = Math.PI / 2;
+    spindleGroup.add(vacFitting);
+    
+    const vacElbow = cyl(6, 6, 15, 12, MAT.steel);
+    vacElbow.position.set(sp.housingR + 28, -20, 0);
+    spindleGroup.add(vacElbow);
+    
+    // ── PRISM CAMERA ASSEMBLY ──
+    const prismHousingBox = box(35, 25, 40, MAT.black);
+    prismHousingBox.position.set(0, -sp.housingH - 18, 35);
+    spindleGroup.add(prismHousingBox);
+    
+    // Prism glass
+    const prismGlass = new THREE.Mesh(
+        new THREE.BoxGeometry(28, 20, 28),
+        MAT.acrylic
+    );
+    prismGlass.position.set(0, -sp.housingH - 18, 35);
+    spindleGroup.add(prismGlass);
+    
+    // Down-looking camera
+    const downCam = cyl(10, 8, 25, 16, MAT.black);
+    downCam.position.set(0, -sp.housingH - 35, 35);
+    spindleGroup.add(downCam);
+    
+    // Camera lens
+    const camLens = cyl(6, 6, 3, 16, MAT.acrylic);
+    camLens.position.set(0, -sp.housingH - 48, 35);
+    spindleGroup.add(camLens);
+    
+    // LED ring light
+    const ledRing = new THREE.Mesh(
+        new THREE.TorusGeometry(sp.housingR + 5, 3, 8, 24),
+        MAT.ledBlue
+    );
+    ledRing.rotation.x = Math.PI / 2;
+    ledRing.position.y = -sp.housingH - 5;
+    spindleGroup.add(ledRing);
+
+    // ═══════════════════════════════════════════════════════════════
+    // NOZZLE ASSEMBLY (Moves up/down within spindle)
+    // ═══════════════════════════════════════════════════════════════
+    
+    const nozzleBaseY = -sp.housingH;
+    nozzleGroup.position.y = nozzleBaseY;
+    
+    // ── MAIN SHAFT ──
+    const shaft = cyl(sp.shaftR, sp.shaftR, sp.shaftH, 20, MAT.steel);
+    shaft.position.y = -sp.shaftH/2;
+    nozzleGroup.add(shaft);
+    
+    // Shaft guide rings
+    for (let i = 0; i < 3; i++) {
+        const guide = cyl(sp.shaftR + 2, sp.shaftR + 2, 5, 20, MAT.darkSteel);
+        guide.position.y = -10 - i * 25;
+        nozzleGroup.add(guide);
+    }
+    
+    // ── SPRING (Visual compression spring) ──
+    buildSpring();
+    
+    // ── NOZZLE TIP ──
+    // Tapered tip
+    const tipGeom = new THREE.CylinderGeometry(sp.nozzleR * 3, sp.nozzleR * 1.5, sp.nozzleH, 16);
+    const tip = new THREE.Mesh(tipGeom, MAT.darkSteel);
+    tip.position.y = -sp.shaftH - sp.nozzleH/2;
+    nozzleGroup.add(tip);
+    
+    // Nozzle opening (rubber tip)
+    const nozzleTip = cyl(sp.nozzleR, sp.nozzleR * 0.5, 5, 12, MAT.rubber);
+    nozzleTip.position.y = -sp.shaftH - sp.nozzleH - 2;
+    nozzleGroup.add(nozzleTip);
+    
+    // ── VACUUM HOSE ──
+    buildVacuumHose();
+
+    // ═══════════════════════════════════════════════════════════════
+    // ADDITIONAL MACHINE ELEMENTS
+    // ═══════════════════════════════════════════════════════════════
+    
+    // ── UPWARD CAMERA (Fixed on table for component alignment) ──
+    const upCamX = -80;
+    const upCamZ = 0;
+    
+    const upCamBase = box(40, 15, 40, MAT.darkAlum);
+    upCamBase.position.set(upCamX, 7.5, upCamZ);
+    machineBase.add(upCamBase);
+    
+    const upCamBody = cyl(15, 12, 50, 16, MAT.black);
+    upCamBody.position.set(upCamX, 40, upCamZ);
+    machineBase.add(upCamBody);
+    
+    const upCamLens = cyl(8, 8, 5, 16, MAT.acrylic);
+    upCamLens.position.set(upCamX, 66, upCamZ);
+    machineBase.add(upCamLens);
+    
+    // Ring light around up camera
+    const upCamLight = new THREE.Mesh(
+        new THREE.TorusGeometry(18, 3, 8, 24),
+        MAT.ledBlue
+    );
+    upCamLight.rotation.x = Math.PI / 2;
+    upCamLight.position.set(upCamX, 68, upCamZ);
+    machineBase.add(upCamLight);
+
+    logConsole('Machine built - Air Suspended Cantilever Design', 'success');
+    logConsole('Front open for easy PCB access', 'info');
+}
+function buildSpring() {
+    if (springMesh && springMesh.parent) springMesh.parent.remove(springMesh);
+    
+    const coils = 10;
+    const springR = CFG.spindle.shaftR + 4;
+    const springH = 35;
+    const wireR = 1.2;
+    
+    const pts = [];
+    const segments = coils * 32;
+    
+    for (let i = 0; i <= segments; i++) {
+        const t = i / segments;
+        const angle = t * coils * Math.PI * 2;
+        pts.push(new THREE.Vector3(
+            Math.cos(angle) * springR,
+            -t * springH + 8,
+            Math.sin(angle) * springR
+        ));
+    }
+    
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const tubeGeom = new THREE.TubeGeometry(curve, segments, wireR, 8, false);
+    springMesh = new THREE.Mesh(tubeGeom, MAT.steel);
+    springMesh.castShadow = true;
+    spindleGroup.add(springMesh);
+}
+
+function buildVacuumHose() {
+    if (vacuumHose && vacuumHose.parent) vacuumHose.parent.remove(vacuumHose);
+    
+    const sp = CFG.spindle;
+    const hosePath = [
+        new THREE.Vector3(sp.housingR + 35, -20, 0),
+        new THREE.Vector3(sp.housingR + 50, 0, -15),
+        new THREE.Vector3(sp.housingR + 60, 30, -25),
+        new THREE.Vector3(sp.housingR + 50, 60, -35),
+        new THREE.Vector3(sp.housingR + 30, 90, -45),
+        new THREE.Vector3(0, 120, -60)
+    ];
+    
+    vacuumHose = tube(hosePath, 5, 40, MAT.rubber);
+    vacuumHose.castShadow = true;
+    spindleGroup.add(vacuumHose);
+}
+// ═══════════════════════════════════════════════════════════════════════════════
+// BUILD PCB
+// ═══════════════════════════════════════════════════════════════════════════════
+function buildPCB() {
+    while (pcbGroup.children.length) {
+        const c = pcbGroup.children[0];
+        if (c.geometry) c.geometry.dispose();
+        pcbGroup.remove(c);
+    }
+    
+    const pw = CFG.pcb.w, pd = CFG.pcb.d, ph = CFG.pcb.h;
+    const px = CFG.pcb.x, pz = CFG.pcb.z;
+    
+    // PCB board
+    const board = box(pw, ph, pd, MAT.pcbGreen);
+    board.position.set(px, ph/2 + 5, pz);
+    board.receiveShadow = true;
+    pcbGroup.add(board);
+    
+    // Solder mask
+    const mask = box(pw + 0.2, 0.1, pd + 0.2, MAT.pcbMask);
+    mask.position.set(px, ph + 5.1, pz);
+    pcbGroup.add(mask);
+    
+    // Silkscreen outline
+    const outlineGeom = new THREE.EdgesGeometry(new THREE.BoxGeometry(pw - 4, 0.1, pd - 4));
+    const outline = new THREE.LineSegments(outlineGeom, new THREE.LineBasicMaterial({ color: 0xf0f0f0 }));
+    outline.position.set(px, ph + 5.2, pz);
+    pcbGroup.add(outline);
+    
+    // Copper traces (procedural)
+    const traceMat = new THREE.LineBasicMaterial({ color: 0xa08030, transparent: true, opacity: 0.4 });
+    for (let i = 0; i < 25; i++) {
+        const pts = [];
+        let cx = (Math.random() - 0.5) * (pw - 10);
+        let cz = (Math.random() - 0.5) * (pd - 10);
+        pts.push(new THREE.Vector3(cx, 0.15, cz));
+        
+        for (let j = 0; j < Math.floor(Math.random() * 5) + 2; j++) {
+            if (Math.random() > 0.5) cx += (Math.random() - 0.5) * 25;
+            else cz += (Math.random() - 0.5) * 20;
+            cx = Math.max(-pw/2 + 3, Math.min(pw/2 - 3, cx));
+            cz = Math.max(-pd/2 + 3, Math.min(pd/2 - 3, cz));
+            pts.push(new THREE.Vector3(cx, 0.15, cz));
+        }
+        
+        const trace = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), traceMat);
+        trace.position.set(px, ph + 5, pz);
+        pcbGroup.add(trace);
+    }
+    
+    // Mounting holes
+    for (let sx of [-1, 1]) {
+        for (let sz of [-1, 1]) {
+            const holeOuter = cyl(2.5, 2.5, ph + 0.3, 16, MAT.copper);
+            holeOuter.position.set(px + sx * (pw/2 - 5), ph/2 + 5, pz + sz * (pd/2 - 5));
+            pcbGroup.add(holeOuter);
+            
+            const holeInner = cyl(1.5, 1.5, ph + 0.5, 16, MAT.darkSteel);
+            holeInner.position.set(px + sx * (pw/2 - 5), ph/2 + 5, pz + sz * (pd/2 - 5));
+            pcbGroup.add(holeInner);
+        }
+    }
+    
+    // Target pads and ghost components
+    PCB_TARGETS.forEach(target => {
+        const comp = COMPONENTS[target.type];
+        if (!comp) return;
+        
+        // Solder pads
+        const padW = comp.w + 0.8;
+        const padD = comp.d + 0.8;
+        const pad = box(padW, 0.15, padD, MAT.gold);
+        pad.position.set(target.x, ph + 5.1, target.z);
+        pad.rotation.y = target.rotation * Math.PI / 180;
+        pcbGroup.add(pad);
+        
+        // Ghost outline for unplaced components
+        if (!target.placed) {
+            const ghost = box(comp.w, comp.h, comp.d, MAT.ghost);
+            ghost.position.set(target.x, ph + 5 + comp.h/2 + 0.2, target.z);
+            ghost.rotation.y = target.rotation * Math.PI / 180;
+            ghost.userData = { targetId: target.id, isGhost: true };
+            pcbGroup.add(ghost);
+        }
+    });
+    
+    // PCB holder rails
+    for (let sx of [-1, 1]) {
+        const holder = box(12, 8, pd + 20, MAT.darkSteel);
+        holder.position.set(px + sx * (pw/2 + 8), 4 + 5, pz);
+        pcbGroup.add(holder);
+        
+        // Clamping edge
+        const clamp = box(6, 3, pd - 10, MAT.aluminum);
+        clamp.position.set(px + sx * (pw/2 + 3), ph + 5 + 1.5, pz);
+        pcbGroup.add(clamp);
+    }
+    
+    // PCB holder base
+    const holderBase = box(pw + 40, 5, pd + 30, MAT.aluminum);
+    holderBase.position.set(px, 2.5, pz);
+    pcbGroup.add(holderBase);
+    
+    logConsole(`PCB built with ${PCB_TARGETS.length} component targets`, 'info');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BUILD FEEDERS
+// ═══════════════════════════════════════════════════════════════════════════════
+function buildFeeders() {
+    while (feedersGroup.children.length) feedersGroup.remove(feedersGroup.children[0]);
+    
+    const baseY = 0;
+    const baseZ = -CFG.table.d/2 + 50;
+    
+    // Tape feeder bank
+    const feederBank = box(350, 10, 60, MAT.aluminum);
+    feederBank.position.set(-80, baseY + 5, baseZ - 20);
+    feedersGroup.add(feederBank);
+    
+    // Individual tape feeders
+    FEEDERS.tape.forEach((feeder, i) => {
+        const comp = COMPONENTS[feeder.type];
+        if (!comp) return;
+        
+        const fx = -230 + i * 35;
+        const fz = baseZ - 20;
+        
+        // Feeder body
+        const body = box(28, 40, 50, MAT.darkAlum);
+        body.position.set(fx, baseY + 25, fz);
+        feedersGroup.add(body);
+        
+        // Tape reel holder
+        const reelHolder = cyl(12, 12, 4, 20, MAT.steel);
+        reelHolder.rotation.x = Math.PI / 2;
+        reelHolder.position.set(fx, baseY + 35, fz - 20);
+        feedersGroup.add(reelHolder);
+        
+        // Pick window
+        const pickWindow = box(10, 2, 8, MAT.black);
+        pickWindow.position.set(fx, baseY + 46, fz + 15);
+        feedersGroup.add(pickWindow);
+        
+        // Component in window
+        const compMat = new THREE.MeshStandardMaterial({
+            color: comp.color, metalness: 0.3, roughness: 0.6
+        });
+        const sample = box(comp.w * 1.5, comp.h, comp.d * 1.5, compMat);
+        sample.position.set(fx, baseY + 47 + comp.h/2, fz + 15);
+        feedersGroup.add(sample);
+        
+        // Label
+        const label = box(26, 8, 1, MAT.black);
+        label.position.set(fx, baseY + 15, fz + 25);
+        feedersGroup.add(label);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BUILD TURNTABLE
+// ═══════════════════════════════════════════════════════════════════════════════
+let turntableAngle = 0;
+let turntableTargetAngle = 0;
+let currentTurntableSlot = 0;
+
+function buildTurntable() {
+    while (turntableGroup.children.length) turntableGroup.remove(turntableGroup.children[0]);
+    
+    const tx = CFG.turntable.x;
+    const tz = CFG.turntable.z;
+    const tr = CFG.turntable.r;
+    const slots = CFG.turntable.slots;
+    
+    turntableGroup.position.set(tx, 0, tz);
+    
+    // Base platform
+    const basePlat = cyl(tr + 20, tr + 20, 8, 32, MAT.aluminum);
+    basePlat.position.y = 4;
+    turntableGroup.add(basePlat);
+    
+    // Rotating disc
+    const disc = cyl(tr, tr, 12, 48, MAT.darkAlum);
+    disc.position.y = 12;
+    disc.userData.isDisc = true;
+    turntableGroup.add(disc);
+    
+    // Center hub
+    const hub = cyl(15, 15, 18, 24, MAT.steel);
+    hub.position.y = 15;
+    turntableGroup.add(hub);
+    
+    // Slot dividers and components
+    const angleStep = (Math.PI * 2) / slots;
+    
+    FEEDERS.turntable.forEach((slot, i) => {
+        const angle = i * angleStep;
+        const slotR = tr * 0.65;
+        
+        // Divider
+        const divider = box(tr - 20, 10, 2, MAT.darkSteel);
+        divider.position.set(
+            Math.cos(angle + angleStep/2) * (tr/2 + 5),
+            17,
+            Math.sin(angle + angleStep/2) * (tr/2 + 5)
+        );
+        divider.rotation.y = -(angle + angleStep/2) + Math.PI/2;
+        turntableGroup.add(divider);
+        
+        // Component bin
+        if (slot.type) {
+            const comp = COMPONENTS[slot.type];
+            if (comp) {
+                const binX = Math.cos(angle) * slotR;
+                const binZ = Math.sin(angle) * slotR;
+                
+                // Bin container
+                const bin = box(18, 8, 18, MAT.black);
+                bin.position.set(binX, 16, binZ);
+                turntableGroup.add(bin);
+                
+                // Sample components in bin
+                const compMat = new THREE.MeshStandardMaterial({
+                    color: comp.color, metalness: 0.3, roughness: 0.6
+                });
+                for (let j = 0; j < Math.min(slot.count, 3); j++) {
+                    const sample = box(comp.w, comp.h, comp.d, compMat);
+                    sample.position.set(
+                        binX + (Math.random() - 0.5) * 6,
+                        20 + j * comp.h,
+                        binZ + (Math.random() - 0.5) * 6
+                    );
+                    sample.rotation.y = Math.random() * 0.3;
+                    turntableGroup.add(sample);
+                }
+            }
+        }
+        
+        // Slot indicator LED
+        const led = cyl(2, 2, 1, 8, slot.type ? MAT.ledGreen : MAT.ledRed);
+        led.position.set(
+            Math.cos(angle) * (tr - 5),
+            19,
+            Math.sin(angle) * (tr - 5)
+        );
+        turntableGroup.add(led);
+    });
+    
+    // Pointer
+    const pointer = box(8, 3, 5, MAT.ledGreen);
+    pointer.position.set(0, 20, -tr - 12);
+    pointer.userData.isPointer = true;
+    turntableGroup.add(pointer);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BUILD UI ELEMENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+function buildFeederUI() {
+    // Tape feeders
+    const tapeFeedersDiv = document.getElementById('tape-feeders');
+    tapeFeedersDiv.innerHTML = '';
+    
+    FEEDERS.tape.forEach((feeder, i) => {
+        const comp = COMPONENTS[feeder.type];
+        const percent = (feeder.count / feeder.maxCount) * 100;
+        
+        const slot = document.createElement('div');
+        slot.className = `feeder-slot${i === 0 ? ' active' : ''}`;
+        slot.onclick = () => selectFeeder('tape', i);
+        
+        slot.innerHTML = `
+            <div class="component-preview" style="background: rgba(${hexToRgb(comp?.color || 0x888888)}, 0.2);">
+                <div class="chip" style="width: ${Math.min(30, (comp?.w || 2) * 8)}px; height: ${Math.min(20, (comp?.d || 1) * 8)}px; background: #${(comp?.color || 0x888888).toString(16).padStart(6, '0')};"></div>
+            </div>
+            <div class="name">${feeder.id}</div>
+            <div class="count">${feeder.count}</div>
+            <div class="progress-bar"><div class="fill" style="width: ${percent}%;"></div></div>
+        `;
+        
+        tapeFeedersDiv.appendChild(slot);
+    });
+    
+    // Turntable
+    buildTurntableUI();
+    
+    // Stick feeders
+    const stickFeedersDiv = document.getElementById('stick-feeders');
+    stickFeedersDiv.innerHTML = '';
+    
+    FEEDERS.stick.forEach((feeder, i) => {
+        const comp = feeder.type ? COMPONENTS[feeder.type] : null;
+        
+        const slot = document.createElement('div');
+        slot.className = `feeder-slot${!comp ? ' empty' : ''}`;
+        slot.onclick = () => selectFeeder('stick', i);
+        
+        slot.innerHTML = `
+            <div class="component-preview" style="background: ${comp ? `rgba(${hexToRgb(comp.color)}, 0.2)` : 'var(--bg-dark)'};">
+                ${comp ? `<div class="chip" style="width: 24px; height: 16px; background: #${comp.color.toString(16).padStart(6, '0')};"></div>` : '—'}
+            </div>
+            <div class="name">${feeder.id}</div>
+            <div class="count">${comp ? feeder.count : 'Empty'}</div>
+        `;
+        
+        stickFeedersDiv.appendChild(slot);
+    });
+    
+    // Tray
+    const trayFeedersDiv = document.getElementById('tray-feeders');
+    trayFeedersDiv.innerHTML = '';
+    
+    FEEDERS.tray.forEach((tray, i) => {
+        const comp = COMPONENTS[tray.type];
+        
+        const slot = document.createElement('div');
+        slot.className = 'feeder-slot';
+        slot.style.width = '120px';
+        slot.onclick = () => selectFeeder('tray', i);
+        
+        slot.innerHTML = `
+            <div class="component-preview" style="background: rgba(${hexToRgb(comp?.color || 0x888888)}, 0.2); width: 80px; height: 50px;">
+                <div style="display: grid; grid-template-columns: repeat(${tray.cols}, 1fr); gap: 2px; width: 70px;">
+                    ${Array(Math.min(12, tray.count)).fill().map(() => `<div style="width: 6px; height: 6px; background: #${(comp?.color || 0x888888).toString(16).padStart(6, '0')}; border-radius: 1px;"></div>`).join('')}
+                </div>
+            </div>
+            <div class="name">${tray.id} - ${comp?.name || 'Unknown'}</div>
+            <div class="count">${tray.count} / ${tray.cols * tray.rows}</div>
+        `;
+        
+        trayFeedersDiv.appendChild(slot);
+    });
+    
+    // Dispenser
+    const dispenseDiv = document.getElementById('dispense-options');
+    dispenseDiv.innerHTML = `
+        <div class="feeder-slot" style="width: 100px;">
+            <div class="component-preview" style="background: rgba(200,200,200,0.1);">💧</div>
+            <div class="name">Solder Paste</div>
+            <div class="count" style="color: var(--secondary);">Ready</div>
+        </div>
+        <div class="feeder-slot" style="width: 100px;">
+            <div class="component-preview" style="background: rgba(255,200,0,0.1);">🟡</div>
+            <div class="name">Flux</div>
+            <div class="count" style="color: var(--secondary);">Ready</div>
+        </div>
+        <div class="feeder-slot" style="width: 100px;">
+            <div class="component-preview" style="background: rgba(255,100,100,0.1);">🔴</div>
+            <div class="name">Adhesive</div>
+            <div class="count" style="color: var(--warning);">Low</div>
+        </div>
+    `;
+}
+
+function buildTurntableUI() {
+    const turntableDiv = document.getElementById('turntable-feeders');
+    turntableDiv.innerHTML = '';
+    
+    const container = document.createElement('div');
+    container.className = 'turntable-container';
+    
+    // Turntable visual
+    const turntable = document.createElement('div');
+    turntable.className = 'turntable';
+    turntable.innerHTML = '<div class="turntable-center"></div><div class="turntable-pointer"></div>';
+    
+    // Slots
+    FEEDERS.turntable.forEach((slot, i) => {
+        const comp = slot.type ? COMPONENTS[slot.type] : null;
+        const angle = (i / CFG.turntable.slots) * Math.PI * 2 - Math.PI/2;
+        const r = 50;
+        
+        const slotEl = document.createElement('div');
+        slotEl.className = `turntable-slot${i === currentTurntableSlot ? ' active' : ''}`;
+        slotEl.style.left = `${70 + Math.cos(angle) * r - 12}px`;
+        slotEl.style.top = `${70 + Math.sin(angle) * r - 12}px`;
+        slotEl.onclick = () => {
+            currentTurntableSlot = i;
+            turntableTargetAngle = -i * (Math.PI * 2 / CFG.turntable.slots);
+            updateTurntableUI();
+        };
+        
+        if (comp) {
+            slotEl.innerHTML = `<div class="dot" style="background: #${comp.color.toString(16).padStart(6, '0')};"></div>`;
+        }
+        
+        turntable.appendChild(slotEl);
+    });
+    
+    container.appendChild(turntable);
+    
+    // Slot details
+    const details = document.createElement('div');
+    details.style.cssText = 'flex: 1; display: flex; flex-wrap: wrap; gap: 8px;';
+    
+    FEEDERS.turntable.forEach((slot, i) => {
+        const comp = slot.type ? COMPONENTS[slot.type] : null;
+        
+        const slotCard = document.createElement('div');
+        slotCard.className = `feeder-slot${!comp ? ' empty' : ''}${i === currentTurntableSlot ? ' active' : ''}`;
+        slotCard.style.width = '70px';
+        slotCard.onclick = () => {
+            currentTurntableSlot = i;
+            turntableTargetAngle = -i * (Math.PI * 2 / CFG.turntable.slots);
+            updateTurntableUI();
+        };
+        
+        slotCard.innerHTML = `
+            <div class="component-preview" style="background: ${comp ? `rgba(${hexToRgb(comp.color)}, 0.2)` : 'var(--bg-dark)'}; height: 24px;">
+                ${comp ? `<div style="width: 12px; height: 12px; background: #${comp.color.toString(16).padStart(6, '0')}; border-radius: 2px;"></div>` : '—'}
+            </div>
+            <div class="name" style="font-size: 8px;">Slot ${i + 1}</div>
+            <div class="count" style="font-size: 10px;">${comp ? slot.count : '—'}</div>
+        `;
+        
+        details.appendChild(slotCard);
+    });
+    
+    container.appendChild(details);
+    turntableDiv.appendChild(container);
+}
+
+function updateTurntableUI() {
+    document.querySelectorAll('#turntable-feeders .turntable-slot').forEach((el, i) => {
+        el.classList.toggle('active', i === currentTurntableSlot);
+    });
+    document.querySelectorAll('#turntable-feeders .feeder-slot').forEach((el, i) => {
+        el.classList.toggle('active', i === currentTurntableSlot);
+    });
+}
+
+function buildJobQueue() {
+    const queue = document.getElementById('job-queue');
+    queue.innerHTML = '';
+    
+    const jobs = [
+        { name: 'Board Assembly', desc: `${PCB_TARGETS.length} components`, progress: 0, icon: '📋' },
+        { name: 'Resistors (0402)', desc: '8 placements', progress: 0, icon: '⚡' },
+        { name: 'Capacitors', desc: '6 placements', progress: 0, icon: '🔌' },
+        { name: 'ICs', desc: '5 placements', progress: 0, icon: '🔲' },
+        { name: 'Inspection', desc: 'Visual check', progress: 0, icon: '🔍' }
+    ];
+    
+    jobs.forEach((job, i) => {
+        const item = document.createElement('div');
+        item.className = `job-item${i === 0 ? ' active' : ''}`;
+        
+        item.innerHTML = `
+            <div class="icon">${job.icon}</div>
+            <div class="info">
+                <div class="name">${job.name}</div>
+                <div class="desc">${job.desc}</div>
+            </div>
+            <div class="progress">
+                <svg width="50" height="50" viewBox="0 0 36 36">
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none" stroke="var(--bg-dark)" stroke-width="3"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none" stroke="var(--primary)" stroke-width="3"
+                          stroke-dasharray="${job.progress}, 100"/>
+                </svg>
+                <div class="value">${job.progress}%</div>
+            </div>
+        `;
+        
+        queue.appendChild(item);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════════
+const STATE = {
+    machineState: 'IDLE',
+    mode: 'manual', // manual, semi, auto, ai
+    pos: { x: 0, y: 0 },
+    nozzleZ: 100,
+    rotation: 0,
+    velocity: { x: 0, y: 0, z: 0 },
+    vacuum: false,
+    heldComponent: null,
+    heldMesh: null,
+    placedCount: 0,
+    totalCollisions: 0,
+    accuracySum: 0,
+    accuracyCount: 0,
+    startTime: Date.now(),
+    lastPlaceTime: null,
+    cycleTimes: [],
+    cameraMode: 'FREE',
+    autoState: 'GOTO_FEEDER',
+    aiSuggestion: null,
+    feederType: 'tape',
+    feederIndex: 0,
+    profileAccuracy: 1,
+    profileHeads: 1,
+    optimizedOrder: null
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MACHINE PROFILES & OPTIMIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+const MACHINE_PROFILES = {
+    standard: { name: 'Standard', xy: 2.0, z: 1.5, accel: 0.08, damp: 0.92, accuracy: 1.0, heads: 1, desc: 'Balanced speed & accuracy' },
+    highspeed: { name: 'High-Speed', xy: 4.5, z: 3.0, accel: 0.22, damp: 0.86, accuracy: 0.8, heads: 1, desc: 'Fast throughput, slightly lower precision' },
+    highaccuracy: { name: 'High-Accuracy', xy: 1.1, z: 0.7, accel: 0.04, damp: 0.97, accuracy: 1.35, heads: 1, desc: 'Slow & precise for fine-pitch' },
+    multihead: { name: 'Multi-Head x4', xy: 3.2, z: 2.0, accel: 0.14, damp: 0.9, accuracy: 0.9, heads: 4, desc: '4 nozzles, parallel placement' }
+};
+
+let currentProfile = 'standard';
+let PLACEMENT_ORDER = null; // optimized order of target indices
+
+function applyMachineProfile(name) {
+    const prof = MACHINE_PROFILES[name];
+    if (!prof) return;
+    currentProfile = name;
+    CFG.speed.xy = prof.xy;
+    CFG.speed.z = prof.z;
+    CFG.speed.accel = prof.accel;
+    CFG.speed.damp = prof.damp;
+    // store accuracy multiplier on STATE for tryPlace tolerance
+    STATE.profileAccuracy = prof.accuracy;
+    STATE.profileHeads = prof.heads;
+    const desc = document.getElementById('profile-desc');
+    if (desc) desc.textContent = prof.desc;
+    logConsole(`Machine profile: ${prof.name} (heads=${prof.heads})`, 'info');
+}
+
+// Placement sequence optimization: nearest-neighbor + 2-opt + type grouping
+function runPlacementOptimization() {
+    const status = document.getElementById('opt-status');
+    if (status) status.textContent = 'Optimizing placement...';
+    const unplaced = PCB_TARGETS.filter(t => !t.placed);
+    if (unplaced.length === 0) { if (status) status.textContent = 'Nothing to optimize'; return; }
+
+    // Build distance matrix between targets (plus virtual start at current pos)
+    const pts = unplaced.map(t => ({ x: t.x, z: t.z }));
+    const start = { x: STATE.pos.x, z: STATE.pos.y };
+
+    // Nearest neighbor
+    let order = [];
+    let remaining = pts.map((p,i)=>i);
+    let cur = start;
+    while (remaining.length) {
+        let best = -1, bestD = Infinity;
+        for (const idx of remaining) {
+            const d = Math.hypot(pts[idx].x - cur.x, pts[idx].z - cur.z);
+            if (d < bestD) { bestD = d; best = idx; }
+        }
+        order.push(best);
+        cur = pts[best];
+        remaining = remaining.filter(i => i !== best);
+    }
+
+    // 2-opt improvement
+    function totalDist(seq) {
+        let d = Math.hypot(pts[seq[0]].x - start.x, pts[seq[0]].z - start.z);
+        for (let i = 0; i < seq.length - 1; i++) d += Math.hypot(pts[seq[i+1]].x - pts[seq[i]].x, pts[seq[i+1]].z - pts[seq[i]].z);
+        return d;
+    }
+    let improved = true;
+    let iters = 0;
+    while (improved && iters < 200) {
+        improved = false; iters++;
+        for (let i = 0; i < order.length - 1; i++) {
+            for (let j = i + 1; j < order.length; j++) {
+                const newSeq = order.slice(0, i).concat(order.slice(i, j+1).reverse()).concat(order.slice(j+1));
+                if (totalDist(newSeq) < totalDist(order) - 1e-9) {
+                    order = newSeq; improved = true;
+                }
+            }
+        }
+    }
+
+    // Group by component type to reduce feeder switches: stable sort by type blocks
+    // (keep within-type nearest neighbor already; reorder types by centroid travel)
+    const typeCentroid = {};
+    unplaced.forEach((t,i) => {
+        if (!typeCentroid[t.type]) typeCentroid[t.type] = { x:0, z:0, n:0 };
+        typeCentroid[t.type].x += t.x; typeCentroid[t.type].z += t.z; typeCentroid[t.type].n++;
+    });
+    for (const k in typeCentroid) { typeCentroid[k].x/=typeCentroid[k].n; typeCentroid[k].z/=typeCentroid[k].n; }
+    const typeOrder = Object.keys(typeCentroid).sort((a,b) => Math.hypot(typeCentroid[a].x-start.x, typeCentroid[a].z-start.z) - Math.hypot(typeCentroid[b].x-start.x, typeCentroid[b].z-start.z));
+    // Reorder: group targets by type in typeOrder, each group internally by nearest neighbor
+    const grouped = [];
+    typeOrder.forEach(type => {
+        const idxs = unplaced.map((t,i)=>i).filter(i => unplaced[i].type === type);
+        // sort within group by nearest neighbor
+        let rem = idxs.slice();
+        let c = grouped.length ? pts[order[grouped.length-1]] : start;
+        const gseq = [];
+        while (rem.length) {
+            let b=-1, bd=Infinity;
+            for (const r of rem) {
+                const d = Math.hypot(pts[r].x-c.x, pts[r].z-c.z);
+                if (d<bd){bd=d;b=r;}
+            }
+            gseq.push(b); c=pts[b]; rem=rem.filter(r=>r!==b);
+        }
+        grouped.push(...gseq);
+    });
+    order = grouped;
+
+    // Map back to PCB_TARGETS indices
+    const idToTarget = unplaced;
+    const newOrderIds = order.map(i => idToTarget[i].id);
+    // Store as a Set/array on STATE for auto mode to follow
+    STATE.optimizedOrder = newOrderIds;
+    // Also reorder PCB_TARGETS array to match optimized order (placed ones stay)
+    const placed = PCB_TARGETS.filter(t => t.placed);
+    const unplacedSorted = newOrderIds.map(id => PCB_TARGETS.find(t => t.id === id));
+    PCB_TARGETS = placed.concat(unplacedSorted);
+
+    const dist = totalDist(order);
+    if (status) status.textContent = `Optimized ${unplaced.length} placements (path ${dist.toFixed(0)}mm)`;
+    logConsole(`Placement optimization: ${unplaced.length} targets, path ${dist.toFixed(1)}mm`, 'success');
+}
+
+// Feeder order optimization: assign component types to tape slots by target centroid X
+function runFeederOptimization() {
+    const status = document.getElementById('opt-status');
+    if (status) status.textContent = 'Optimizing feeders...';
+    // Compute centroid X per component type from unplaced targets
+    const centroid = {};
+    PCB_TARGETS.forEach(t => {
+        if (t.placed) return;
+        if (!centroid[t.type]) centroid[t.type] = { x:0, n:0 };
+        centroid[t.type].x += t.x; centroid[t.type].n++;
+    });
+    for (const k in centroid) centroid[k].x /= centroid[k].n;
+
+    // Collect unique types needed
+    const neededTypes = Object.keys(centroid);
+    // Sort types by centroid X (left-to-right)
+    neededTypes.sort((a,b) => (centroid[a]?.x||0) - (centroid[b]?.x||0));
+
+    // Sort tape feeders by their X position
+    const slots = FEEDERS.tape.map((f,i) => ({ f, i, x: -230 + i*35 })).sort((a,b)=>a.x-b.x);
+
+    // Count demand per type
+    const demand = {};
+    PCB_TARGETS.forEach(t => { if (!t.placed) demand[t.type] = (demand[t.type]||0)+1; });
+
+    // Assign: for each slot left-to-right, pick the most demanded remaining type in centroid order
+    const assigned = new Set();
+    const typeQueue = neededTypes.slice();
+    FEEDERS.tape.forEach((f, i) => {
+        // keep existing counts; only change type if a needed type unassigned
+        if (f.count <= 0 && f.type) return;
+    });
+
+    // Simple: reorder FEEDERS.tape array types to match centroid order, preserving counts by type
+    // Build list of (type,count) from current feeders
+    const typeCounts = {};
+    FEEDERS.tape.forEach(f => {
+        if (f.type) typeCounts[f.type] = (typeCounts[f.type]||0) + f.count;
+    });
+    // Reassign types to slots in centroid order, distributing counts
+    let ti = 0;
+    const newTypes = [];
+    // repeat types by demand
+    neededTypes.forEach(type => {
+        const c = typeCounts[type] || 0;
+        if (c > 0) newTypes.push({ type, count: c });
+    });
+    // fill remaining slots with original non-needed or null
+    FEEDERS.tape.forEach(f => {
+        if (f.type && !neededTypes.includes(f.type) && f.count > 0) newTypes.push({ type: f.type, count: f.count });
+    });
+
+    // Apply to feeders: set each feeder's type/count from newTypes list (pad with null)
+    let idx = 0;
+    const flat = [];
+    newTypes.forEach(nt => flat.push(nt));
+    FEEDERS.tape.forEach((f, i) => {
+        if (idx < flat.length) {
+            f.type = flat[idx].type;
+            f.count = flat[idx].count;
+            idx++;
+        } else {
+            f.type = null;
+            f.count = 0;
+        }
+    });
+    // rebuild UI
+    if (typeof buildFeederUI === 'function') buildFeederUI();
+    if (status) status.textContent = `Feeders optimized (${neededTypes.length} types)`;
+    logConsole(`Feeder optimization: ${neededTypes.length} component types reordered`, 'success');
+}
+
+// Turntable (circular tray) optimization: assign slots by angular target centroid
+function runTrayOptimization() {
+    const status = document.getElementById('opt-status');
+    if (status) status.textContent = 'Optimizing tray...';
+    // Compute angle centroid per type from targets relative to turntable center
+    const angCentroid = {};
+    PCB_TARGETS.forEach(t => {
+        if (t.placed) return;
+        const a = Math.atan2(t.z - CFG.turntable.z, t.x - CFG.turntable.x);
+        if (!angCentroid[t.type]) angCentroid[t.type] = { a:0, n:0 };
+        angCentroid[t.type].a += a; angCentroid[t.type].n++;
+    });
+    for (const k in angCentroid) angCentroid[k].a /= angCentroid[k].n;
+
+    const neededTypes = Object.keys(angCentroid).sort((a,b) => angCentroid[a].a - angCentroid[b].a);
+
+    // Assign to turntable slots in angular order
+    let slotIdx = 0;
+    // keep counts from existing
+    const typeCounts = {};
+    FEEDERS.turntable.forEach(s => { if (s.type) typeCounts[s.type] = (typeCounts[s.type]||0) + s.count; });
+
+    // Clear
+    FEEDERS.turntable.forEach(s => { s.type = null; s.count = 0; });
+
+    neededTypes.forEach(type => {
+        if (slotIdx >= FEEDERS.turntable.length) return;
+        FEEDERS.turntable[slotIdx].type = type;
+        FEEDERS.turntable[slotIdx].count = typeCounts[type] || 0;
+        slotIdx++;
+    });
+    // fill remaining with original extras
+    // (none)
+
+    if (typeof buildTurntable === 'function') buildTurntable();
+    if (status) status.textContent = `Tray optimized (${neededTypes.length} slots)`;
+    logConsole(`Turntable optimization: ${neededTypes.length} slots assigned`, 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INPUT HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+const keys = {};
+window.addEventListener('keydown', e => {
+    keys[e.code] = true;
+    
+    switch(e.code) {
+        case 'Tab':
+            e.preventDefault();
+            cycleMode();
+            break;
+        case 'Space':
+            e.preventDefault();
+            toggleVacuum();
+            break;
+        case 'KeyR':
+            STATE.rotation = (STATE.rotation + 90) % 360;
+            break;
+        case 'KeyT':
+            rotateTurntable();
+            break;
+        case 'KeyC':
+            cycleCamera();
+            break;
+        case 'KeyP':
+            togglePrismView();
+            break;
+        case 'KeyG':
+            toggleSwitch(document.getElementById('set-grid'));
+            break;
+        case 'Escape':
+            if (document.getElementById('settings-modal').classList.contains('visible')) {
+                toggleSettings();
+            }
+            break;
+        case 'F1':
+            e.preventDefault();
+            toggleConsole();
+            break;
+    }
+});
+
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GAME LOGIC
+// ═══════════════════════════════════════════════════════════════════════════════
+function getNozzleTipWorldPos() {
+    const sp = CFG.spindle;
+    const tipLocalY = -sp.shaftH - sp.nozzleH - 2;
+    const v = new THREE.Vector3(0, tipLocalY, 0);
+    nozzleGroup.updateWorldMatrix(true, false);
+    nozzleGroup.localToWorld(v);
+    return v;
+}
+
+function toggleVacuum() {
+    if (STATE.vacuum && STATE.heldComponent) {
+        tryPlace();
+    } else if (!STATE.vacuum) {
+        tryPick();
+    }
+}
+
+function tryPick() {
+    if (STATE.heldComponent) return;
+    
+    const tipPos = getNozzleTipWorldPos();
+    let picked = false;
+    
+    // Check turntable
+    const tCenter = new THREE.Vector3(CFG.turntable.x, 0, CFG.turntable.z);
+    const distToTurntable = new THREE.Vector2(tipPos.x - tCenter.x, tipPos.z - tCenter.z).length();
+    
+    if (distToTurntable < CFG.turntable.r && tipPos.y < 30) {
+        const angle = Math.atan2(tipPos.z - tCenter.z, tipPos.x - tCenter.x) - turntableAngle;
+        const normalizedAngle = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+        const slotIdx = Math.floor(normalizedAngle / (Math.PI * 2 / CFG.turntable.slots));
+        const slot = FEEDERS.turntable[slotIdx];
+        
+        if (slot && slot.type && slot.count > 0) {
+            const comp = COMPONENTS[slot.type];
+            STATE.vacuum = true;
+            STATE.heldComponent = { type: slot.type, source: 'turntable', slotIdx };
+            slot.count--;
+            
+            const compMat = new THREE.MeshStandardMaterial({
+                color: comp.color, metalness: 0.3, roughness: 0.6
+            });
+            STATE.heldMesh = box(comp.w, comp.h, comp.d, compMat);
+            nozzleGroup.add(STATE.heldMesh);
+            STATE.heldMesh.position.y = -CFG.spindle.shaftH - CFG.spindle.nozzleH * 0.7 - 2 - comp.h/2;
+            
+            picked = true;
+            updateMachineState('HOLDING');
+            logConsole(`Picked: ${comp.name} from turntable slot ${slotIdx + 1}`, 'success');
+        }
+    }
+    
+    // Check tape feeders
+    if (!picked) {
+        const feederZ = -CFG.table.d/2 + 50 - 20 + 15;
+        if (Math.abs(tipPos.z - feederZ) < 20 && tipPos.y < 55) {
+            FEEDERS.tape.forEach((feeder, i) => {
+                if (picked) return;
+                const feederX = -230 + i * 35;
+                if (Math.abs(tipPos.x - feederX) < 12 && feeder.count > 0) {
+                    const comp = COMPONENTS[feeder.type];
+                    STATE.vacuum = true;
+                    STATE.heldComponent = { type: feeder.type, source: 'tape', slotIdx: i };
+                    feeder.count--;
+                    
+                    const compMat = new THREE.MeshStandardMaterial({
+                        color: comp.color, metalness: 0.3, roughness: 0.6
+                    });
+                    STATE.heldMesh = box(comp.w, comp.h, comp.d, compMat);
+                    nozzleGroup.add(STATE.heldMesh);
+                    STATE.heldMesh.position.y = -CFG.spindle.shaftH - CFG.spindle.nozzleH * 0.7 - 2 - comp.h/2;
+                    
+                    picked = true;
+                    updateMachineState('HOLDING');
+                    logConsole(`Picked: ${comp.name} from tape feeder ${feeder.id}`, 'success');
+                }
+            });
+        }
+    }
+    
+    if (!picked) {
+        logConsole('Pick failed - no component at position', 'error');
+    }
+    
+    updateFeederUI();
+}
+
+function tryPlace() {
+    if (!STATE.heldComponent) return;
+    
+    const tipPos = getNozzleTipWorldPos();
+    const comp = COMPONENTS[STATE.heldComponent.type];
+    
+    // Check if over PCB
+    const pcbLeft = CFG.pcb.x - CFG.pcb.w/2;
+    const pcbRight = CFG.pcb.x + CFG.pcb.w/2;
+    const pcbFront = CFG.pcb.z - CFG.pcb.d/2;
+    const pcbBack = CFG.pcb.z + CFG.pcb.d/2;
+    
+    if (tipPos.x >= pcbLeft && tipPos.x <= pcbRight &&
+        tipPos.z >= pcbFront && tipPos.z <= pcbBack &&
+        tipPos.y < CFG.pcb.h + 5 + comp.h + 8) {
+        
+        // Find nearest matching target
+        let bestTarget = null;
+        let bestDist = Infinity;
+        
+        PCB_TARGETS.forEach(t => {
+            if (t.placed || t.type !== STATE.heldComponent.type) return;
+            const d = Math.sqrt((tipPos.x - t.x)**2 + (tipPos.z - t.z)**2);
+            if (d < bestDist) { bestDist = d; bestTarget = t; }
+        });
+        
+        if (bestTarget && bestDist < 10 * (STATE.profileAccuracy || 1)) {
+            bestTarget.placed = true;
+            STATE.placedCount++;
+            
+            const accuracy = Math.max(0, 100 - bestDist * 8);
+            STATE.accuracySum += accuracy;
+            STATE.accuracyCount++;
+            
+            // Track cycle time
+            if (STATE.lastPlaceTime) {
+                const cycleTime = (Date.now() - STATE.lastPlaceTime) / 1000;
+                STATE.cycleTimes.push(cycleTime);
+                if (STATE.cycleTimes.length > 10) STATE.cycleTimes.shift();
+            }
+            STATE.lastPlaceTime = Date.now();
+            
+            // Remove from nozzle
+            if (STATE.heldMesh) nozzleGroup.remove(STATE.heldMesh);
+            
+            // Add to placed components
+            const placedMat = new THREE.MeshStandardMaterial({
+                color: comp.color, metalness: 0.3, roughness: 0.6
+            });
+            const placed = box(comp.w, comp.h, comp.d, placedMat);
+            placed.position.set(bestTarget.x, CFG.pcb.h + 5 + comp.h/2 + 0.15, bestTarget.z);
+            placed.rotation.y = (bestTarget.rotation || 0) * Math.PI / 180;
+            placedComponents.add(placed);
+            
+            // Remove ghost
+            for (let i = pcbGroup.children.length - 1; i >= 0; i--) {
+                const c = pcbGroup.children[i];
+                if (c.userData && c.userData.targetId === bestTarget.id && c.userData.isGhost) {
+                    pcbGroup.remove(c);
+                    if (c.geometry) c.geometry.dispose();
+                }
+            }
+            
+            showPlacementEffect(bestTarget.x, CFG.pcb.h + 5 + comp.h + 1, bestTarget.z, true);
+            logConsole(`Placed: ${comp.name} - Accuracy: ${accuracy.toFixed(1)}%`, 'success');
+        } else {
+            // Missed placement
+            if (STATE.heldMesh) nozzleGroup.remove(STATE.heldMesh);
+            showPlacementEffect(tipPos.x, tipPos.y, tipPos.z, false);
+            logConsole(`MISSED placement - Distance: ${bestDist.toFixed(1)}mm`, 'error');
+        }
+        
+        STATE.vacuum = false;
+        STATE.heldComponent = null;
+        STATE.heldMesh = null;
+        updateMachineState('IDLE');
+    } else {
+        // Not over PCB
+        if (STATE.heldMesh) nozzleGroup.remove(STATE.heldMesh);
+        STATE.vacuum = false;
+        STATE.heldComponent = null;
+        STATE.heldMesh = null;
+        updateMachineState('IDLE');
+        logConsole('Component dropped - not over PCB', 'error');
+    }
+    
+    updateStats();
+}
+
+function showPlacementEffect(x, y, z, success) {
+    const color = success ? 0x00d4aa : 0xef4444;
+    
+    // Ring effect
+    const ringGeom = new THREE.RingGeometry(1, 5, 24);
+    const ringMat = new THREE.MeshBasicMaterial({
+        color, transparent: true, opacity: 0.8, side: THREE.DoubleSide
+    });
+    const ring = new THREE.Mesh(ringGeom, ringMat);
+    ring.position.set(x, y, z);
+    ring.rotation.x = -Math.PI / 2;
+    ring.userData.effect = true;
+    ring.userData.startTime = Date.now();
+    effectsGroup.add(ring);
+    
+    // Particle dots
+    for (let i = 0; i < 8; i++) {
+        const dotGeom = new THREE.SphereGeometry(0.5, 8, 8);
+        const dotMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 });
+        const dot = new THREE.Mesh(dotGeom, dotMat);
+        const angle = (i / 8) * Math.PI * 2;
+        dot.position.set(x + Math.cos(angle) * 3, y, z + Math.sin(angle) * 3);
+        dot.userData.effect = true;
+        dot.userData.startTime = Date.now();
+        dot.userData.velocity = new THREE.Vector3(Math.cos(angle) * 0.5, 0.3, Math.sin(angle) * 0.5);
+        effectsGroup.add(dot);
+    }
+}
+
+function updateEffects() {
+    const now = Date.now();
+    
+    for (let i = effectsGroup.children.length - 1; i >= 0; i--) {
+        const effect = effectsGroup.children[i];
+        if (!effect.userData.effect) continue;
+        
+        const age = now - effect.userData.startTime;
+        
+        if (age > 1000) {
+            effectsGroup.remove(effect);
+            if (effect.geometry) effect.geometry.dispose();
+            continue;
+        }
+        
+        const t = age / 1000;
+        effect.material.opacity = 1 - t;
+        
+        if (effect.userData.velocity) {
+            effect.position.add(effect.userData.velocity);
+            effect.userData.velocity.y -= 0.02;
+        } else {
+            effect.scale.setScalar(1 + t * 2);
+        }
+    }
+}
+
+function checkCollisions() {
+    const tipPos = getNozzleTipWorldPos();
+    let collided = false;
+    
+    // Check PCB collision
+    if (tipPos.y <= CFG.pcb.h + 5 + 0.5 &&
+        tipPos.x >= CFG.pcb.x - CFG.pcb.w/2 && tipPos.x <= CFG.pcb.x + CFG.pcb.w/2 &&
+        tipPos.z >= CFG.pcb.z - CFG.pcb.d/2 && tipPos.z <= CFG.pcb.z + CFG.pcb.d/2) {
+        if (!STATE.heldComponent || STATE.nozzleZ > 15) {
+            showCollision();
+            collided = true;
+        }
+    }
+    
+    // Check table collision
+    if (tipPos.y <= 0.5) {
+        showCollision();
+        collided = true;
+    }
+    
+    // Check placed components
+    placedComponents.children.forEach(comp => {
+        const bb = new THREE.Box3().setFromObject(comp);
+        bb.expandByScalar(-0.5);
+        if (bb.containsPoint(tipPos)) {
+            showCollision();
+            collided = true;
+        }
+    });
+    
+    if (collided) {
+        STATE.nozzleZ = Math.max(STATE.nozzleZ + 2, STATE.nozzleZ);
+        STATE.velocity.z = Math.abs(STATE.velocity.z) * 0.3;
+    }
+    
+    return collided;
+}
+
+function showCollision() {
+    const now = Date.now();
+    if (now - (STATE.lastCollisionTime || 0) < 500) return;
+    STATE.lastCollisionTime = now;
+    STATE.totalCollisions++;
+    
+    const alert = document.getElementById('collision-alert');
+    alert.style.display = 'block';
+    setTimeout(() => alert.style.display = 'none', 600);
+    
+    document.getElementById('stat-collisions').textContent = STATE.totalCollisions;
+    logConsole('COLLISION DETECTED', 'error');
+    
+    updateMachineState('ERROR');
+    setTimeout(() => {
+        if (STATE.machineState === 'ERROR') updateMachineState('IDLE');
+    }, 500);
+}
+
+function updateMachineState(newState) {
+    STATE.machineState = newState;
+    
+    document.querySelectorAll('.state-row').forEach(row => {
+        const state = row.dataset.state;
+        row.classList.toggle('active', state === newState.toLowerCase());
+    });
+    
+    // Update LEDs
+    if (ledIndicators.length >= 3) {
+        ledIndicators[0].material = newState === 'IDLE' || newState === 'HOLDING' ? MAT.ledGreen : 
+            new THREE.MeshStandardMaterial({ color: 0x103010 });
+        ledIndicators[1].material = newState === 'MOVING' || newState === 'PICKING' || newState === 'PLACING' ? MAT.ledBlue :
+            new THREE.MeshStandardMaterial({ color: 0x101030 });
+        ledIndicators[2].material = newState === 'ERROR' ? MAT.ledRed :
+            new THREE.MeshStandardMaterial({ color: 0x301010 });
+    }
+    
+    // Update vacuum status
+    document.getElementById('vacuum-status').textContent = `Vacuum: ${STATE.vacuum ? 'ON' : 'OFF'}`;
+    document.getElementById('vacuum-status').style.color = STATE.vacuum ? 'var(--primary)' : 'var(--text-muted)';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUTO / AI MODES
+// ═══════════════════════════════════════════════════════════════════════════════
+function updateAutoMode(dt) {
+    if (STATE.mode !== 'auto' && STATE.mode !== 'ai') return;
+    
+    const nextTarget = PCB_TARGETS.find(t => !t.placed);
+    if (!nextTarget) {
+        setMode('manual');
+        logConsole('All components placed!', 'success');
+        return;
+    }
+    
+    const comp = COMPONENTS[nextTarget.type];
+    
+    // Find feeder with this component
+    let feederPos = null;
+    let feederFound = false;
+    
+    // Check tape feeders
+    FEEDERS.tape.forEach((f, i) => {
+        if (feederFound) return;
+        if (f.type === nextTarget.type && f.count > 0) {
+            feederPos = { x: -230 + i * 35, z: -CFG.table.d/2 + 50 - 20 + 15, pickZ: 50 };
+            feederFound = true;
+        }
+    });
+    
+    // Check turntable
+    if (!feederFound) {
+        FEEDERS.turntable.forEach((slot, i) => {
+            if (feederFound) return;
+            if (slot.type === nextTarget.type && slot.count > 0) {
+                const angle = i * (Math.PI * 2 / CFG.turntable.slots);
+                const slotR = CFG.turntable.r * 0.65;
+                feederPos = {
+                    x: CFG.turntable.x + Math.cos(angle + turntableAngle) * slotR,
+                    z: CFG.turntable.z + Math.sin(angle + turntableAngle) * slotR,
+                    pickZ: 25
+                };
+                feederFound = true;
+            }
+        });
+    }
+    
+    if (!feederFound) {
+        logConsole(`No feeder found for ${nextTarget.type}`, 'error');
+        nextTarget.placed = true; // Skip
+        return;
+    }
+    
+    const spd = CFG.speed.xy * 1.5;
+    const zspd = CFG.speed.z * 1.5;
+    
+    switch(STATE.autoState) {
+        case 'GOTO_FEEDER': {
+            if (STATE.nozzleZ < 80) {
+                STATE.nozzleZ = Math.min(80, STATE.nozzleZ + zspd);
+                updateMachineState('MOVING');
+            } else {
+                const dx = feederPos.x - STATE.pos.x;
+                const dy = feederPos.z - STATE.pos.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (dist > 2) {
+                    STATE.pos.x += (dx/dist) * spd;
+                    STATE.pos.y += (dy/dist) * spd;
+                    updateMachineState('MOVING');
+                } else {
+                    STATE.autoState = 'DESCEND_FEEDER';
+                }
+            }
+            break;
+        }
+        case 'DESCEND_FEEDER': {
+            if (STATE.nozzleZ > feederPos.pickZ) {
+                STATE.nozzleZ = Math.max(feederPos.pickZ, STATE.nozzleZ - zspd);
+                updateMachineState('PICKING');
+            } else {
+                tryPick();
+                STATE.autoState = STATE.heldComponent ? 'ASCEND_FEEDER' : 'GOTO_FEEDER';
+            }
+            break;
+        }
+        case 'ASCEND_FEEDER': {
+            if (STATE.nozzleZ < 80) {
+                STATE.nozzleZ = Math.min(80, STATE.nozzleZ + zspd);
+            } else {
+                STATE.autoState = 'GOTO_PCB';
+            }
+            break;
+        }
+        case 'GOTO_PCB': {
+            const dx = nextTarget.x - STATE.pos.x;
+            const dy = nextTarget.z - STATE.pos.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (dist > 1) {
+                STATE.pos.x += (dx/dist) * spd;
+                STATE.pos.y += (dy/dist) * spd;
+                updateMachineState('MOVING');
+            } else {
+                STATE.autoState = 'DESCEND_PCB';
+                STATE.rotation = nextTarget.rotation || 0;
+            }
+            break;
+        }
+        case 'DESCEND_PCB': {
+            const targetZ = CFG.pcb.h + 5 + (comp ? comp.h : 1) + 3;
+            if (STATE.nozzleZ > targetZ) {
+                STATE.nozzleZ = Math.max(targetZ, STATE.nozzleZ - zspd);
+                updateMachineState('PLACING');
+            } else {
+                                tryPlace();
+                STATE.autoState = 'ASCEND_PCB';
+            }
+            break;
+        }
+        case 'ASCEND_PCB': {
+            if (STATE.nozzleZ < 80) {
+                STATE.nozzleZ = Math.min(80, STATE.nozzleZ + zspd);
+            } else {
+                STATE.autoState = 'GOTO_FEEDER';
+                updateMachineState('IDLE');
+            }
+            break;
+        }
+    }
+}
+
+// AI Mode - Optimized path planning
+function calculateAIPath() {
+    const unplaced = PCB_TARGETS.filter(t => !t.placed);
+    if (unplaced.length === 0) return null;
+    
+    // Group by component type for efficiency
+    const byType = {};
+    unplaced.forEach(t => {
+        if (!byType[t.type]) byType[t.type] = [];
+        byType[t.type].push(t);
+    });
+    
+    // Find nearest component of each type and calculate optimal sequence
+    let suggestion = {
+        message: '',
+        nextTarget: null,
+        efficiency: 0
+    };
+    
+    // Simple nearest-neighbor for now
+    const currentPos = { x: STATE.pos.x, y: STATE.pos.y };
+    let nearestDist = Infinity;
+    let nearestTarget = null;
+    
+    unplaced.forEach(t => {
+        const dist = Math.sqrt((t.x - currentPos.x)**2 + (t.z - currentPos.y)**2);
+        if (dist < nearestDist) {
+            nearestDist = dist;
+            nearestTarget = t;
+        }
+    });
+    
+    if (nearestTarget) {
+        const comp = COMPONENTS[nearestTarget.type];
+        suggestion.nextTarget = nearestTarget;
+        suggestion.message = `AI suggests: Place ${comp.name} at (${nearestTarget.x.toFixed(0)}, ${nearestTarget.z.toFixed(0)})`;
+        suggestion.efficiency = Math.round((1 - nearestDist / 200) * 100);
+    }
+    
+    return suggestion;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MOVEMENT UPDATE
+// ═══════════════════════════════════════════════════════════════════════════════
+function updateMovement() {
+    const accel = CFG.speed.accel;
+    const damp = CFG.speed.damp;
+    const xySpeed = CFG.speed.xy;
+    const zSpeed = CFG.speed.z;
+
+    if (STATE.mode === 'manual' || STATE.mode === 'semi') {
+        // Manual input
+        if (keys['KeyW'] || keys['ArrowUp']) STATE.velocity.y -= accel * xySpeed;
+        if (keys['KeyS'] || keys['ArrowDown']) STATE.velocity.y += accel * xySpeed;
+        if (keys['KeyA'] || keys['ArrowLeft']) STATE.velocity.x -= accel * xySpeed;
+        if (keys['KeyD'] || keys['ArrowRight']) STATE.velocity.x += accel * xySpeed;
+        if (keys['KeyQ']) STATE.velocity.z -= accel * zSpeed;
+        if (keys['KeyE']) STATE.velocity.z += accel * zSpeed;
+
+        // Apply damping
+        STATE.velocity.x *= damp;
+        STATE.velocity.y *= damp;
+        STATE.velocity.z *= damp;
+
+        // Clamp velocity to physical max (profile-aware)
+        const maxV = CFG.speed.xy * 1.5;
+        const maxVz = CFG.speed.z * 1.5;
+        STATE.velocity.x = Math.max(-maxV, Math.min(maxV, STATE.velocity.x));
+        STATE.velocity.y = Math.max(-maxV, Math.min(maxV, STATE.velocity.y));
+        STATE.velocity.z = Math.max(-maxVz, Math.min(maxVz, STATE.velocity.z));
+
+        // Apply velocity
+        STATE.pos.x += STATE.velocity.x;
+        STATE.pos.y += STATE.velocity.y;
+        STATE.nozzleZ += STATE.velocity.z;
+
+        // Detect movement for state update
+        const moving = Math.abs(STATE.velocity.x) > 0.1 || 
+                      Math.abs(STATE.velocity.y) > 0.1 || 
+                      Math.abs(STATE.velocity.z) > 0.1;
+        
+        if (!STATE.heldComponent) {
+            if (moving) updateMachineState('MOVING');
+            else if (STATE.machineState === 'MOVING') updateMachineState('IDLE');
+        }
+    }
+
+    // Clamp positions
+    STATE.pos.x = Math.max(CFG.xyRange.x[0], Math.min(CFG.xyRange.x[1], STATE.pos.x));
+    STATE.pos.y = Math.max(CFG.xyRange.y[0], Math.min(CFG.xyRange.y[1], STATE.pos.y));
+    STATE.nozzleZ = Math.max(CFG.zRange.min, Math.min(CFG.zRange.max, STATE.nozzleZ));
+
+    // ═══════════════════════════════════════════════════════════════
+    // UPDATE 3D POSITIONS
+    // ═══════════════════════════════════════════════════════════════
+    
+    const g = CFG.gantry;
+    const armY = g.towerH - 40;
+    const armStartX = g.towerX + g.towerW/2 + 20;
+    
+    // Arm assembly Y position (forward-backward motion)
+    // The arm assembly moves along Z axis (which is Y in our coordinate system)
+    armAssembly.position.z = STATE.pos.y;
+    
+    // Carriage X position along the arm
+    // Carriage moves along the arm (which extends along X)
+    carriageGroup.position.x = armStartX + g.armLength/2 + STATE.pos.x;
+    
+    // Calculate spindle world position and set nozzle Z
+    const carriageBaseY = armY - g.armH/2 - CFG.carriage.h/2 - 8;
+    const spindleBaseY = carriageBaseY - CFG.carriage.h/2;
+    const sp = CFG.spindle;
+    
+    // The nozzle tip should be at STATE.nozzleZ above the table
+    // Work backwards to find the nozzle group offset
+    const tipLocalY = -sp.shaftH - sp.nozzleH - 2;
+    const targetTipWorldY = STATE.nozzleZ;
+    
+    // nozzleGroup is parented to spindleGroup
+    // spindleGroup.position.y is spindleBaseY relative to carriageGroup
+    // nozzleGroup.position.y needs to be set so tip is at targetTipWorldY
+    
+    const spindleWorldY = spindleBaseY; // Since carriageGroup doesn't have Y offset
+    const nozzleBaseY = -sp.housingH;
+    
+    nozzleGroup.position.y = nozzleBaseY + (targetTipWorldY - (spindleWorldY + nozzleBaseY + tipLocalY));
+    
+    // Clamp nozzle travel (physical limits of the Z stage)
+    const minNozzleTravel = -20;
+    const maxNozzleTravel = 60;
+    nozzleGroup.position.y = Math.max(nozzleBaseY + minNozzleTravel, 
+                                       Math.min(nozzleBaseY + maxNozzleTravel, 
+                                               nozzleGroup.position.y));
+
+    // Update spring compression based on nozzle position
+    if (springMesh) {
+        const normalTravel = (nozzleGroup.position.y - nozzleBaseY) / 40;
+        const springScale = Math.max(0.5, Math.min(1.5, 1.0 + normalTravel * 0.3));
+        springMesh.scale.y = springScale;
+    }
+
+    // Update held component rotation
+    if (STATE.heldMesh) {
+        STATE.heldMesh.rotation.y = STATE.rotation * Math.PI / 180;
+    }
+
+    // Update turntable rotation (smooth animation)
+    turntableAngle += (turntableTargetAngle - turntableAngle) * 0.08;
+    turntableGroup.rotation.y = turntableAngle;
+
+    // Update head spotlight
+    const tipPos = getNozzleTipWorldPos();
+    headLight.position.copy(tipPos);
+    headLight.position.y += 40;
+    headLight.target.position.copy(tipPos);
+
+    // Update position display
+    updatePositionDisplay();
+}
+function updatePositionDisplay() {
+    document.getElementById('x-val').textContent = STATE.pos.x.toFixed(2);
+    document.getElementById('y-val').textContent = STATE.pos.y.toFixed(2);
+    document.getElementById('z-val').textContent = STATE.nozzleZ.toFixed(2);
+    document.getElementById('r-val').textContent = STATE.rotation + '°';
+    
+    const xPct = (STATE.pos.x - CFG.xyRange.x[0]) / (CFG.xyRange.x[1] - CFG.xyRange.x[0]) * 100;
+    const yPct = (STATE.pos.y - CFG.xyRange.y[0]) / (CFG.xyRange.y[1] - CFG.xyRange.y[0]) * 100;
+    const zPct = (STATE.nozzleZ - CFG.zRange.min) / (CFG.zRange.max - CFG.zRange.min) * 100;
+    const rPct = STATE.rotation / 360 * 100;
+    
+    document.getElementById('x-bar').style.width = xPct + '%';
+    document.getElementById('y-bar').style.width = yPct + '%';
+    document.getElementById('z-bar').style.width = zPct + '%';
+    document.getElementById('r-bar').style.width = rPct + '%';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CAMERA SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════════
+let camTheta = Math.PI / 4;
+let camPhi = Math.PI / 4;
+let camRadius = 500;
+let camTarget = new THREE.Vector3(0, 80, 0);
+let isDragging = false;
+let isPanning = false;
+let lastMouse = { x: 0, y: 0 };
+
+renderer.domElement.addEventListener('mousedown', e => {
+    if (STATE.cameraMode === 'LOCKED') return;
+    if (e.button === 0) isDragging = true;
+    if (e.button === 2) isPanning = true;
+    lastMouse = { x: e.clientX, y: e.clientY };
+});
+
+renderer.domElement.addEventListener('mouseup', () => {
+    isDragging = false;
+    isPanning = false;
+});
+
+renderer.domElement.addEventListener('mousemove', e => {
+    if (STATE.cameraMode === 'LOCKED') return;
+    
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    
+    if (isDragging && STATE.cameraMode === 'FREE') {
+        camTheta -= dx * 0.005;
+        camPhi = Math.max(0.1, Math.min(Math.PI/2 - 0.05, camPhi - dy * 0.005));
+    }
+    
+    if (isPanning) {
+        const right = new THREE.Vector3();
+        camera.getWorldDirection(right).cross(camera.up).normalize();
+        const up = new THREE.Vector3(0, 1, 0);
+        camTarget.addScaledVector(right, -dx * 0.5);
+        camTarget.addScaledVector(up, dy * 0.5);
+    }
+    
+    lastMouse = { x: e.clientX, y: e.clientY };
+});
+
+renderer.domElement.addEventListener('wheel', e => {
+    if (STATE.cameraMode === 'LOCKED') return;
+    camRadius = Math.max(100, Math.min(1000, camRadius + e.deltaY * 0.5));
+});
+
+renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+
+function cycleCamera() {
+    const modes = ['FREE', 'TOP', 'FRONT', 'SIDE', 'FOLLOW', 'LOCKED'];
+    const idx = modes.indexOf(STATE.cameraMode);
+    setCameraMode(modes[(idx + 1) % modes.length]);
+}
+
+function setCameraMode(mode) {
+    STATE.cameraMode = mode;
+    document.getElementById('camera-mode').textContent = mode;
+    
+    const g = CFG.gantry;
+    
+    switch(mode) {
+        case 'TOP':
+            camTheta = 0;
+            camPhi = 0.05;
+            camRadius = 500;
+            camTarget.set(0, 0, 0);
+            break;
+        case 'FRONT':
+            camTheta = 0;
+            camPhi = Math.PI / 5;
+            camRadius = 550;
+            camTarget.set(50, 100, 0);
+            break;
+        case 'SIDE':
+            camTheta = Math.PI / 2;
+            camPhi = Math.PI / 5;
+            camRadius = 500;
+            camTarget.set(-50, 100, 0);
+            break;
+        case 'FOLLOW':
+            camRadius = 250;
+            break;
+        case 'FREE':
+            // Keep current settings
+            break;
+    }
+    
+    logConsole(`Camera mode: ${mode}`, 'info');
+}
+function updateCamera() {
+    switch(STATE.cameraMode) {
+        case 'FREE':
+        case 'TOP':
+        case 'FRONT':
+        case 'SIDE':
+            camera.position.set(
+                camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta),
+                camTarget.y + camRadius * Math.cos(camPhi),
+                camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta)
+            );
+            camera.lookAt(camTarget);
+            break;
+        case 'FOLLOW':
+            const tipPos = getNozzleTipWorldPos();
+            const followTarget = new THREE.Vector3(tipPos.x, tipPos.y + 40, tipPos.z);
+            camTarget.lerp(followTarget, 0.05);
+            camera.position.set(
+                camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta),
+                camTarget.y + camRadius * Math.cos(camPhi),
+                camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta)
+            );
+            camera.lookAt(camTarget);
+            break;
+        case 'LOCKED':
+            // Don't update camera
+            break;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MINI VIEWS & PRISM VIEW
+// ═══════════════════════════════════════════════════════════════════════════════
+const topViewCanvas = document.getElementById('top-view-canvas');
+const topViewCtx = topViewCanvas.getContext('2d');
+const componentViewCanvas = document.getElementById('component-view-canvas');
+const componentViewCtx = componentViewCanvas.getContext('2d');
+
+function updateMiniViews() {
+    // Top View - Schematic
+    const tw = topViewCanvas.width = topViewCanvas.offsetWidth;
+    const th = topViewCanvas.height = topViewCanvas.offsetHeight;
+    
+    topViewCtx.fillStyle = '#0a0e14';
+    topViewCtx.fillRect(0, 0, tw, th);
+    
+    const scale = Math.min(tw, th) / 500;
+    const cx = tw / 2;
+    const cy = th / 2;
+    
+    // Draw PCB
+    topViewCtx.fillStyle = '#0a5028';
+    topViewCtx.fillRect(
+        cx + (CFG.pcb.x - CFG.pcb.w/2) * scale,
+        cy + (CFG.pcb.z - CFG.pcb.d/2) * scale,
+        CFG.pcb.w * scale,
+        CFG.pcb.d * scale
+    );
+    
+    // Draw placed components
+    topViewCtx.fillStyle = '#e8c840';
+    placedComponents.children.forEach(comp => {
+        topViewCtx.fillRect(
+            cx + (comp.position.x - 2) * scale,
+            cy + (comp.position.z - 2) * scale,
+            4 * scale,
+            4 * scale
+        );
+    });
+    
+    // Draw turntable
+    topViewCtx.strokeStyle = '#505058';
+    topViewCtx.lineWidth = 2;
+    topViewCtx.beginPath();
+    topViewCtx.arc(
+        cx + CFG.turntable.x * scale,
+        cy + CFG.turntable.z * scale,
+        CFG.turntable.r * scale,
+        0, Math.PI * 2
+    );
+    topViewCtx.stroke();
+    
+    // Draw nozzle position
+    topViewCtx.fillStyle = '#00d4aa';
+    topViewCtx.beginPath();
+    topViewCtx.arc(
+        cx + STATE.pos.x * scale,
+        cy + STATE.pos.y * scale,
+        5,
+        0, Math.PI * 2
+    );
+    topViewCtx.fill();
+    
+    // Component View - Magnified view of held component or target
+    const cw = componentViewCanvas.width = componentViewCanvas.offsetWidth;
+    const ch = componentViewCanvas.height = componentViewCanvas.offsetHeight;
+    
+    componentViewCtx.fillStyle = '#0a0e14';
+    componentViewCtx.fillRect(0, 0, cw, ch);
+    
+    if (STATE.heldComponent) {
+        const comp = COMPONENTS[STATE.heldComponent.type];
+        const compScale = Math.min(cw, ch) / (Math.max(comp.w, comp.d) * 3);
+        
+        componentViewCtx.fillStyle = '#' + comp.color.toString(16).padStart(6, '0');
+        componentViewCtx.fillRect(
+            (cw - comp.w * compScale) / 2,
+            (ch - comp.d * compScale) / 2,
+            comp.w * compScale,
+            comp.d * compScale
+        );
+        
+        // Rotation indicator
+        componentViewCtx.strokeStyle = '#00d4aa';
+        componentViewCtx.lineWidth = 2;
+        componentViewCtx.save();
+        componentViewCtx.translate(cw/2, ch/2);
+        componentViewCtx.rotate(STATE.rotation * Math.PI / 180);
+        componentViewCtx.beginPath();
+        componentViewCtx.moveTo(0, -20);
+        componentViewCtx.lineTo(5, -15);
+        componentViewCtx.lineTo(-5, -15);
+        componentViewCtx.closePath();
+        componentViewCtx.fill();
+        componentViewCtx.restore();
+    } else {
+        componentViewCtx.fillStyle = '#64748b';
+        componentViewCtx.font = '10px sans-serif';
+        componentViewCtx.textAlign = 'center';
+        componentViewCtx.fillText('No component', cw/2, ch/2);
+    }
+}
+
+let prismViewVisible = true;
+
+function togglePrismView() {
+    prismViewVisible = !prismViewVisible;
+    document.getElementById('prism-view').style.display = prismViewVisible ? 'block' : 'none';
+}
+
+function updatePrismView() {
+    if (!prismViewVisible) return;
+    
+    // Prism view shows 4 sides of the component
+    const cells = ['prism-top', 'prism-front', 'prism-left', 'prism-right'];
+    const tipPos = getNozzleTipWorldPos();
+    
+    cells.forEach((cellId, i) => {
+        const cell = document.getElementById(cellId);
+        if (!cell) return;
+        
+        if (STATE.heldComponent) {
+            const comp = COMPONENTS[STATE.heldComponent.type];
+            const color = '#' + comp.color.toString(16).padStart(6, '0');
+            
+            // Simple visualization
+            cell.innerHTML = `
+                <div style="
+                    width: ${Math.min(60, comp.w * 15)}px;
+                    height: ${Math.min(40, (i < 2 ? comp.d : comp.h) * 15)}px;
+                    background: ${color};
+                    border-radius: 2px;
+                    box-shadow: 0 0 10px ${color}40;
+                "></div>
+            `;
+        } else {
+            cell.innerHTML = `<span style="color: var(--text-muted); font-size: 9px;">${['TOP', 'FRONT', 'LEFT', 'RIGHT'][i]}</span>`;
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UI FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+function togglePanel(header) {
+    const content = header.nextElementSibling;
+    const toggle = header.querySelector('.toggle');
+    
+    if (content) {
+        content.classList.toggle('collapsed');
+        header.classList.toggle('collapsed');
+        if (toggle) toggle.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
+    }
+}
+
+function setMode(mode) {
+    STATE.mode = mode;
+    STATE.autoState = 'GOTO_FEEDER';
+    
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    
+    document.getElementById('current-mode').textContent = mode.toUpperCase();
+    
+    const descriptions = {
+        manual: 'Full manual control of all axes',
+        semi: 'Manual XY, auto Z and pick/place',
+        auto: 'Fully automatic operation',
+        ai: 'AI-optimized path planning'
+    };
+    document.getElementById('mode-desc').textContent = descriptions[mode] || '';
+    
+    logConsole(`Mode changed to: ${mode.toUpperCase()}`, 'info');
+}
+
+function cycleMode() {
+    const modes = ['manual', 'semi', 'auto', 'ai'];
+    const idx = modes.indexOf(STATE.mode);
+    setMode(modes[(idx + 1) % modes.length]);
+}
+
+function switchFeederTab(type) {
+    document.querySelectorAll('.feeder-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.type === type);
+    });
+    
+    document.getElementById('tape-feeders').style.display = type === 'tape' ? 'flex' : 'none';
+    document.getElementById('turntable-feeders').style.display = type === 'turntable' ? 'flex' : 'none';
+    document.getElementById('stick-feeders').style.display = type === 'stick' ? 'flex' : 'none';
+    document.getElementById('tray-feeders').style.display = type === 'tray' ? 'flex' : 'none';
+    document.getElementById('dispense-options').style.display = type === 'dispense' ? 'flex' : 'none';
+    
+    STATE.feederType = type;
+}
+
+function selectFeeder(type, index) {
+    STATE.feederType = type;
+    STATE.feederIndex = index;
+    
+    document.querySelectorAll('.feeder-slot').forEach(slot => slot.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    
+    let feederName = '';
+    if (type === 'tape') feederName = FEEDERS.tape[index]?.id || 'Unknown';
+    else if (type === 'turntable') feederName = `Slot ${index + 1}`;
+    else if (type === 'stick') feederName = FEEDERS.stick[index]?.id || 'Unknown';
+    else if (type === 'tray') feederName = FEEDERS.tray[index]?.id || 'Unknown';
+    
+    document.getElementById('active-feeder').textContent = feederName;
+}
+
+function rotateTurntable() {
+    currentTurntableSlot = (currentTurntableSlot + 1) % CFG.turntable.slots;
+    turntableTargetAngle = -currentTurntableSlot * (Math.PI * 2 / CFG.turntable.slots);
+    updateTurntableUI();
+    logConsole(`Turntable rotated to slot ${currentTurntableSlot + 1}`, 'info');
+}
+
+function updateFeederUI() {
+    // Update tape feeder counts
+    FEEDERS.tape.forEach((feeder, i) => {
+        const slots = document.querySelectorAll('#tape-feeders .feeder-slot');
+        if (slots[i]) {
+            const countEl = slots[i].querySelector('.count');
+            const fillEl = slots[i].querySelector('.fill');
+            if (countEl) countEl.textContent = feeder.count;
+            if (fillEl) fillEl.style.width = (feeder.count / feeder.maxCount * 100) + '%';
+        }
+    });
+    
+    // Rebuild turntable UI to reflect count changes
+    buildTurntableUI();
+}
+
+function homeAll() {
+    STATE.pos.x = 0;
+    STATE.pos.y = 0;
+    STATE.nozzleZ = 100;
+    STATE.rotation = 0;
+    logConsole('Homing all axes...', 'info');
+    setTimeout(() => logConsole('Homing complete', 'success'), 1000);
+}
+
+function resetJob() {
+    STATE.placedCount = 0;
+    STATE.totalCollisions = 0;
+    STATE.accuracySum = 0;
+    STATE.accuracyCount = 0;
+    STATE.cycleTimes = [];
+    STATE.lastPlaceTime = null;
+    STATE.startTime = Date.now();
+    
+    // Reset targets
+    PCB_TARGETS.forEach(t => t.placed = false);
+    
+    // Clear placed components
+    while (placedComponents.children.length) {
+        placedComponents.remove(placedComponents.children[0]);
+    }
+    
+    // Reset feeder counts
+    FEEDERS.tape.forEach((f, i) => {
+        const defaults = [500, 400, 350, 200, 150, 120, 500, 400, 50, 40];
+        f.count = defaults[i] || 100;
+    });
+    FEEDERS.turntable.forEach((s, i) => {
+        const defaults = [10, 15, 5, 20, 25, 12, 0, 0, 0, 0, 0, 0];
+        s.count = defaults[i] || 0;
+    });
+    
+    // Rebuild
+    buildPCB();
+    buildFeederUI();
+    updateStats();
+    
+    logConsole('Job reset complete', 'success');
+}
+
+function calibrate() {
+    logConsole('Starting calibration sequence...', 'info');
+    
+    // Simulated calibration steps
+    setTimeout(() => logConsole('Step 1: Camera alignment... OK', 'info'), 500);
+    setTimeout(() => logConsole('Step 2: Nozzle offset... OK', 'info'), 1000);
+    setTimeout(() => logConsole('Step 3: Feeder positions... OK', 'info'), 1500);
+    setTimeout(() => logConsole('Step 4: PCB alignment... OK', 'info'), 2000);
+    setTimeout(() => logConsole('Calibration complete!', 'success'), 2500);
+}
+
+// Settings
+function toggleSettings() {
+    document.getElementById('settings-modal').classList.toggle('visible');
+}
+
+function toggleSwitch(el) {
+    el.classList.toggle('active');
+    
+    const id = el.id;
+    const active = el.classList.contains('active');
+    
+    switch(id) {
+        case 'set-shadows':
+            renderer.shadowMap.enabled = active;
+            break;
+        case 'set-grid':
+            gridHelper.visible = active;
+            break;
+        case 'set-crosshair':
+            document.getElementById('crosshair').style.display = active ? 'block' : 'none';
+            break;
+    }
+}
+
+// Setup slider events
+document.querySelectorAll('.slider-input input[type="range"]').forEach(slider => {
+    slider.addEventListener('input', () => {
+        const valEl = document.getElementById(slider.id + '-val');
+        if (valEl) valEl.textContent = parseFloat(slider.value).toFixed(slider.step < 1 ? 2 : 0);
+        
+        // Apply settings
+        switch(slider.id) {
+            case 'set-xy-speed': CFG.speed.xy = parseFloat(slider.value); break;
+            case 'set-z-speed': CFG.speed.z = parseFloat(slider.value); break;
+            case 'set-accel': CFG.speed.accel = parseFloat(slider.value); break;
+            case 'set-width': CFG.workArea.w = parseInt(slider.value); break;
+            case 'set-depth': CFG.workArea.d = parseInt(slider.value); break;
+        }
+    });
+});
+
+// Console
+function toggleConsole() {
+    document.getElementById('dev-console').classList.toggle('visible');
+}
+
+function logConsole(msg, type = '') {
+    const content = document.getElementById('dev-console-content');
+    const time = ((Date.now() - STATE.startTime) / 1000).toFixed(1);
+    
+    const line = document.createElement('div');
+    line.className = `console-line ${type}`;
+    line.innerHTML = `<span class="time">[${time}s]</span><span class="msg">${msg}</span>`;
+    content.appendChild(line);
+    content.scrollTop = content.scrollHeight;
+    
+    // Limit lines
+    while (content.children.length > 100) {
+        content.removeChild(content.firstChild);
+    }
+    
+    console.log(`[PnP ${type}]`, msg);
+}
+
+// Stats update
+function updateStats() {
+    const elapsed = Math.floor((Date.now() - STATE.startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+    
+    document.getElementById('stat-time').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    document.getElementById('stat-placed').innerHTML = `${STATE.placedCount}<span style="font-size:12px;color:var(--text-muted);">/${PCB_TARGETS.length}</span>`;
+    
+    const avgAccuracy = STATE.accuracyCount > 0 ? (STATE.accuracySum / STATE.accuracyCount) : 100;
+    document.getElementById('stat-accuracy').textContent = avgAccuracy.toFixed(1) + '%';
+    document.getElementById('stat-accuracy').style.color = avgAccuracy > 90 ? 'var(--success)' : avgAccuracy > 70 ? 'var(--warning)' : 'var(--danger)';
+    
+    const cph = elapsed > 0 ? Math.floor(STATE.placedCount / elapsed * 3600) : 0;
+    document.getElementById('stat-cph').textContent = cph.toString();
+    
+    const avgCycle = STATE.cycleTimes.length > 0 ? 
+        (STATE.cycleTimes.reduce((a, b) => a + b, 0) / STATE.cycleTimes.length).toFixed(1) : '--';
+    document.getElementById('stat-cycle').textContent = avgCycle;
+    
+    // Update job queue progress
+    const progress = Math.round((STATE.placedCount / PCB_TARGETS.length) * 100);
+    const jobItems = document.querySelectorAll('.job-item');
+    if (jobItems[0]) {
+        const progressPath = jobItems[0].querySelector('path:last-child');
+        const progressValue = jobItems[0].querySelector('.progress .value');
+        if (progressPath) progressPath.setAttribute('stroke-dasharray', `${progress}, 100`);
+        if (progressValue) progressValue.textContent = progress + '%';
+    }
+}
+
+// Utility
+function hexToRgb(hex) {
+    const r = (hex >> 16) & 255;
+    const g = (hex >> 8) & 255;
+    const b = hex & 255;
+    return `${r},${g},${b}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FPS COUNTER
+// ═══════════════════════════════════════════════════════════════════════════════
+let frameCount = 0;
+let lastFPSTime = Date.now();
+let currentFPS = 60;
+
+function updateFPS() {
+    frameCount++;
+    const now = Date.now();
+    if (now - lastFPSTime >= 500) {
+        currentFPS = Math.round(frameCount / ((now - lastFPSTime) / 1000));
+        frameCount = 0;
+        lastFPSTime = now;
+        document.getElementById('fps').textContent = currentFPS;
+        document.getElementById('obj-count').textContent = renderer.info.render.triangles;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ANIMATION LOOP
+// ═══════════════════════════════════════════════════════════════════════════════
+function animate() {
+    requestAnimationFrame(animate);
+    
+    updateAutoMode(1/60);
+    updateMovement();
+    checkCollisions();
+    updateCamera();
+    updateEffects();
+    updateMiniViews();
+    updatePrismView();
+    updateStats();
+    updateFPS();
+    
+    renderer.render(scene, camera);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WINDOW RESIZE
+// ═══════════════════════════════════════════════════════════════════════════════
+window.addEventListener('resize', () => {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+function init() {
+    applyMachineProfile('standard');
+    buildMachine();
+    buildPCB();
+    buildFeeders();
+    buildTurntable();
+    buildFeederUI();
+    buildJobQueue();
+    updateMachineState('IDLE');
+    
+    logConsole('═══════════════════════════════════════════', 'info');
+    logConsole('PRISMPLACE Pro - Advanced SMD Pick & Place', 'success');
+    logConsole('Air-Suspended Linear Arm Design', 'info');
+    logConsole('═══════════════════════════════════════════', 'info');
+    logConsole('Press Tab to cycle operation modes', 'info');
+    logConsole('Press Space to pick/place components', 'info');
+    logConsole('Press F1 to toggle console', 'info');
+    logConsole('System ready!', 'success');
+    
+    animate();
+}
+
+// Expose functions to global scope for HTML onclick handlers
+window.togglePanel = togglePanel;
+window.setMode = setMode;
+window.switchFeederTab = switchFeederTab;
+window.selectFeeder = selectFeeder;
+window.homeAll = homeAll;
+window.resetJob = resetJob;
+window.calibrate = calibrate;
+window.toggleConsole = toggleConsole;
+window.toggleSettings = toggleSettings;
+window.applyMachineProfile = applyMachineProfile;
+window.runPlacementOptimization = runPlacementOptimization;
+window.runFeederOptimization = runFeederOptimization;
+window.runTrayOptimization = runTrayOptimization;
+window.runFeederOptimization = runFeederOptimization;
+window.runTrayOptimization = runTrayOptimization;
+window.toggleSwitch = toggleSwitch;
+
+init();
+
+})();
+</script>
+</body>
+</html>

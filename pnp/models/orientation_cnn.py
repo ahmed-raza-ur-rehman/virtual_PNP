@@ -1,62 +1,86 @@
-"""Lightweight CNN for component orientation classification (numpy-based)."""
+"""Orientation CNN model for component alignment."""
+from __future__ import annotations
 
 import numpy as np
 
+from pnp.ml.layers import Activation, BatchNorm, Conv2D, Dense, Dropout, Flatten, MaxPool2D
+from pnp.ml.models import Sequential
 
-class SimpleCNN:
-    def __init__(self, input_size=32, num_classes=4):
-        self.input_size = input_size
-        self.num_classes = num_classes
-        rng = np.random.default_rng(42)
-        # conv 3x3 -> 8 filters
-        self.W1 = rng.normal(0, 0.1, (8, 1, 3, 3))
-        self.b1 = np.zeros(8)
-        # fc
-        feat = (input_size - 2) // 2
-        self.W2 = rng.normal(0, 0.1, (num_classes, 8 * feat * feat))
-        self.b2 = np.zeros(num_classes)
 
-    def _conv(self, x):
-        # x: (1,H,W)
-        H, W = x.shape[1], x.shape[2]
-        out = np.zeros((8, H - 2, W - 2))
-        for f in range(8):
-            for i in range(H - 2):
-                for j in range(W - 2):
-                    out[f, i, j] = np.sum(x[:, i : i + 3, j : j + 3] * self.W1[f]) + self.b1[f]
-        return np.maximum(out, 0)  # relu
+def build_orientation_cnn(input_shape: tuple = (1, 64, 64), num_classes: int = 360) -> Sequential:
+    model = Sequential()
+    model.add(Conv2D(input_shape[0], 32, kernel_size=3, padding=1))
+    model.add(BatchNorm(32))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Conv2D(32, 64, kernel_size=3, padding=1))
+    model.add(BatchNorm(64))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Conv2D(64, 128, kernel_size=3, padding=1))
+    model.add(BatchNorm(128))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Flatten())
+    model.add(Dense(128 * (input_shape[1]//8) * (input_shape[2]//8), 256))
+    model.add(Activation("relu"))
+    model.add(Dropout(0.5))
+    model.add(Dense(256, num_classes))
+    model.add(Activation("softmax"))
+    return model
 
-    def _pool(self, x):
-        # 2x2 max pool
-        c, h, w = x.shape
-        out = np.zeros((c, h // 2, w // 2))
-        for ci in range(c):
-            for i in range(0, h - 1, 2):
-                for j in range(0, w - 1, 2):
-                    out[ci, i // 2, j // 2] = x[ci, i : i + 2, j : j + 2].max()
-        return out
 
-    def forward(self, x: np.ndarray) -> np.ndarray:
-        x = np.asarray(x, dtype=float)
-        if x.ndim == 2:
-            x = x[None, None, :, :]
-        elif x.ndim == 3:
-            x = x[None, :, :, :]
-        conv = self._conv(x[0])
-        pool = self._pool(conv)
-        flat = pool.flatten()
-        # resize weights if needed
-        if flat.shape[0] != self.W2.shape[1]:
-            # pad/truncate
-            w = np.zeros(self.W2.shape[1])
-            n = min(len(flat), len(w))
-            w[:n] = flat[:n]
-            flat = w
-        logits = self.W2 @ flat + self.b2
-        # softmax
-        e = np.exp(logits - logits.max())
-        return e / e.sum()
+class OrientationPredictor:
+    def __init__(self, model: Sequential | None = None):
+        self.model = model if model is not None else build_orientation_cnn()
+        self.classes = np.arange(360)
 
-    def predict(self, x):
-        p = self.forward(x)
-        return int(np.argmax(p)), float(p.max())
+    def predict(self, image: np.ndarray) -> tuple[float, float]:
+        # image: (H, W) or (C, H, W)
+        if image.ndim == 2:
+            image = image[np.newaxis, np.newaxis, :, :]
+        elif image.ndim == 3:
+            image = image[np.newaxis, :, :, :]
+        image = image.astype(np.float32) / 255.0
+        out = self.model(image)
+        idx = int(np.argmax(out[0]))
+        confidence = float(out[0, idx])
+        return float(idx), confidence
+
+    def predict_batch(self, images: np.ndarray) -> list[tuple[float, float]]:
+        return [self.predict(img) for img in images]
+
+
+def build_defect_detector(input_shape: tuple = (3, 224, 224)) -> Sequential:
+    model = Sequential()
+    model.add(Conv2D(input_shape[0], 16, kernel_size=3, padding=1))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Conv2D(16, 32, kernel_size=3, padding=1))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Conv2D(32, 64, kernel_size=3, padding=1))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Flatten())
+    model.add(Dense(64 * (input_shape[1]//8) * (input_shape[2]//8), 128))
+    model.add(Activation("relu"))
+    model.add(Dense(128, 2))
+    model.add(Activation("softmax"))
+    return model
+
+
+def build_component_classifier(num_classes: int = 10, input_shape: tuple = (3, 64, 64)) -> Sequential:
+    model = Sequential()
+    model.add(Conv2D(input_shape[0], 32, kernel_size=3, padding=1))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Conv2D(32, 64, kernel_size=3, padding=1))
+    model.add(Activation("relu"))
+    model.add(MaxPool2D(2, 2))
+    model.add(Flatten())
+    model.add(Dense(64 * (input_shape[1]//4) * (input_shape[2]//4), 128))
+    model.add(Activation("relu"))
+    model.add(Dense(128, num_classes))
+    model.add(Activation("softmax"))
+    return model

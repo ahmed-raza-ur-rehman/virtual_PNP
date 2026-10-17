@@ -1,6 +1,5 @@
 """GDSII writer (simplified)."""
 import struct
-import typing
 
 
 class GDSIIWriter:
@@ -14,7 +13,7 @@ class GDSIIWriter:
         name_bytes = name.encode().ljust(32, b"\x00")
         self.records.append(b"STRNAME" + name_bytes)
 
-    def add_boundary(self, layer: int, datatype: int, points: list[typing.Tuple[int, int]]):
+    def add_boundary(self, layer: int, datatype: int, points: list[tuple[int, int]]):
         self.records.append(struct.pack(">HH", layer, datatype))
         for x, y in points:
             self.records.append(struct.pack(">ii", x, y))
